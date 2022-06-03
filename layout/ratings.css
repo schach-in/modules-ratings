@@ -1,0 +1,26 @@
+/*
+ * ratings module
+ * CSS
+ *
+ * Part of »Zugzwang Project«
+ * https://www.zugzwang.org/modules/ratings
+ *
+ * @author Gustaf Mossakowski <gustaf@koenige.org>
+ * @copyright Copyright © 2022 Gustaf Mossakowski
+ * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
+ */
+
+
+table.toplist td.number, table.toplist th.number
+			{ width: 3em; }
+table.toplist td.index
+			{ width: .5em; }
+table.toplist tr td:nth-child(2)
+			{ width: 16em; }
+table.toplist tr td:nth-child(4)
+			{ width: 16em; }
+table.toplist tr td:nth-child(4).number
+			{ width: 3em; }
+
+.searchform
+			{ margin: 2em 0; }
