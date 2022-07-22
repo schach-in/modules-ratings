@@ -28,7 +28,7 @@ kann es sich um einen Fehler handeln!</li>
 <tr class="%%% loopposition uneven "un" %%%even">
 <td>%%% condition if checkbox %%%<input type="checkbox" name="%%% item checkbox %%%">%%% condition endif %%%</td>
 <td>%%% item person_id %%%</td>
-<td><a href="/intern/personen/?q=%%% item spieler_vor %%%">%%% item spieler %%%</a></td>
+<td><a href="%%% item link %%%">%%% item spieler %%%</a></td>
 <td%%% item error " class='error' style="background: red;"" %%%>%%% item note %%%</td></tr>
 %%% loop end %%%
 </table>

@@ -14,17 +14,14 @@
 
 
 function mod_ratings_make_personupdate() {
-	global $zz_conf;
-	require_once $zz_conf['dir'].'/zzform.php';
-
 	// FIDE-ID
 	$sql = 'SELECT persons.contact_id, person_id, fide.identifier AS fide_id
 			, CONCAT(IFNULL(CONCAT(name_particle, " "), ""), last_name, ",", first_name) AS spieler
-			, contact AS spieler_vor
 			, YEAR(date_of_birth) AS geburtsjahr
 			, UCASE(IF(SUBSTRING(sex, 1, 1) = "f", "W", SUBSTRING(sex, 1, 1))) AS sex
 			, zps.identifier AS zps_code
 			, zps.contact_identifier_id AS zps_pk_id
+			, contacts.identifier
 		FROM persons
 		LEFT JOIN contacts USING (contact_id)
 		LEFT JOIN contacts_identifiers fide USING (contact_id)
@@ -59,12 +56,12 @@ function mod_ratings_make_personupdate() {
 
 	$sql = 'SELECT persons.contact_id, person_id, fide.identifier AS fide_id
 			, CONCAT(IFNULL(CONCAT(name_particle, " "), ""), last_name, ",", first_name) AS spieler
-			, contact AS spieler_vor
 			, YEAR(date_of_birth) AS geburtsjahr
 			, UCASE(IF(SUBSTRING(sex, 1, 1) = "f", "W", SUBSTRING(sex, 1, 1))) AS sex
 			, zps.identifier AS zps_code
 			, zps.contact_identifier_id AS zps_pk_id
 			, fide.contact_identifier_id AS fide_pk_id
+			, contacts.identifier
 		FROM persons
 		LEFT JOIN contacts USING (contact_id)
 		LEFT JOIN contacts_identifiers zps USING (contact_id)
@@ -173,6 +170,7 @@ function mod_ratings_make_personupdate() {
 		if ($last_note === $note['note'])
 			unset($notes[$index]);
 		$last_note = $note['note'];
+		$notes[$index]['link'] = wrap_path('contacts_profile[person]', $note['identifier']);
 	}
 	
 	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -246,7 +244,7 @@ function mod_ratings_make_personupdate_add_fide_id($new, $contact_id) {
 	}
 	$values = [];
 	$values['action'] = 'insert';
-	$values['ids'] = ['contact_id'];
+	$values['ids'] = ['contact_id', 'identifier_category_id'];
 	$values['POST']['contact_id'] = $contact_id;
 	$values['POST']['identifier_category_id'] = wrap_category_id('kennungen/fide-id');
 	$values['POST']['identifier'] = $new;
@@ -350,7 +348,7 @@ function mod_ratings_make_personupdate_add_zps_code($new, $contact_id) {
 		$values['POST']['contact_identifier_id'] = $pk_id;
 	} else {
 		$values['action'] = 'insert';
-		$values['ids'] = ['contact_id'];
+		$values['ids'] = ['contact_id', 'identifier_category_id'];
 		$values['POST']['contact_id'] = $contact_id;
 		$values['POST']['identifier_category_id'] = wrap_category_id('kennungen/zps');
 		$values['POST']['identifier'] = $new;
@@ -478,6 +476,7 @@ function mod_ratings_make_personupdate_change_identifier($contact_id, $old) {
 	$values['ids'] = ['contact_id'];
 	$values['POST']['contact_id'] = $contact_id;
 	$values['POST']['kennung_aendern'] = 'ja';
+	// @todo move to script from contacts module
 	$ops = zzform_multi('../zzbrick_forms/persons', $values);
 	if (!$ops['id']) {
 		$note['note'] = 'Kennung konnte nicht aktualisiert werden. '.implode($ops['error']);
