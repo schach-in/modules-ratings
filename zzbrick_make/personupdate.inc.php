@@ -169,8 +169,9 @@ function mod_ratings_make_personupdate() {
 		// remove duplicate notes
 		if ($last_note === $note['note'])
 			unset($notes[$index]);
+		else
+			$notes[$index]['link'] = wrap_path('contacts_profile[person]', $note['identifier']);
 		$last_note = $note['note'];
-		$notes[$index]['link'] = wrap_path('contacts_profile[person]', $note['identifier']);
 	}
 	
 	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
