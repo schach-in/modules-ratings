@@ -1,0 +1,38 @@
+# ratings module
+# HTML output: person update
+#
+# Part of »Zugzwang Project«
+# https://www.zugzwang.org/modules/ratings
+#
+# @author Gustaf Mossakowski <gustaf@koenige.org>
+# @copyright Copyright © 2015-2016, 2019, 2022 Gustaf Mossakowski
+# @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
+#
+<div class="results">
+<form action="" method="POST">
+<p>
+Hier ist es möglich, die aktuellen Daten von Personen automatisch mit den Daten in den
+Datenbanken der FIDE und des DSB abzugleichen. <strong>Hinweis:</strong> Bitte
+prüfe die Änderungen sorgfältig.</p>
+
+<ul>
+<li>Namensschreibweisen können in den externen Daten auch deswegen
+abweichen, da die externen Datenbanken Fehler enthalten.
+</li>
+<li>Das Geschlecht wird automatisch geändert, falls es Abweichungen gibt, aber auch hier 
+kann es sich um einen Fehler handeln!</li>
+</ul>
+
+<table>
+%%% loop start %%%
+<tr class="%%% loopposition uneven "un" %%%even">
+<td>%%% condition if checkbox %%%<input type="checkbox" name="%%% item checkbox %%%">%%% condition endif %%%</td>
+<td>%%% item person_id %%%</td>
+<td><a href="/intern/personen/?q=%%% item spieler_vor %%%">%%% item spieler %%%</a></td>
+<td%%% item error " class='error' style="background: red;"" %%%>%%% item note %%%</td></tr>
+%%% loop end %%%
+</table>
+<input type="submit" value="Personenupdate starten">
+
+</form>
+</div>
