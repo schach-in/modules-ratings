@@ -1,0 +1,63 @@
+# ratings module
+# Translations to German
+#
+# Part of »Zugzwang Project«
+# https://www.zugzwang.org/modules/ratings
+#
+# @author Gustaf Mossakowski <gustaf@koenige.org>
+# @copyright Copyright © 2020-2022 Gustaf Mossakowski
+# @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Zugzwang Project -- ratings module\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: Gustaf Mossakowski <gustaf@koenige.org>\n"
+"Language-Team: \n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 1.8.12\n"
+
+#: configuration/settings.cfg
+msgid "URL under which the current FIDE Elo data is available in TXT format"
+msgstr "URL, unter der die aktuellen FIDE-Elo-Daten im TXT-Format vorliegen"
+
+#: configuration/settings.cfg
+msgid ""
+"URL under which the current DWZ data of the German Chess Federation is "
+"available in SQL format"
+msgstr "URL, unter der die aktuellen DSB-DWZ-Daten im SQL-Format vorliegen"
+
+#: configuration/settings.cfg
+msgid "Last imported status of the FIDE Elo database"
+msgstr "Letzter importierter Stand der FIDE-Elo-Datenbank"
+
+#: configuration/settings.cfg
+msgid "Last imported status of the German DWZ database"
+msgstr "Letzter importierter Stand der DSB-DWZ-Datenbank"
+
+#: zzbrick_make/ratings.inc.php
+msgid "Error while unpacking file %s, Code %s"
+msgstr "Fehler beim entpacken der Datei %s, Code %s"
+
+#: zzbrick_make/ratings.inc.php
+msgid "Please wait. Rating sync is only allowed to run once every %s."
+msgstr ""
+"Bitte warten. Die Synchronisierung der Ratingzahlen darf nur einmal alle %s "
+"laufen."
+
+#: zzbrick_make/ratings-download.inc.php
+msgid "Failed to download rating file for %s."
+msgstr "Herunterladen der Rating-Datei für %s fehlgeschlagen."
+
+#: zzbrick_make/ratings-download.inc.php
+msgid "File path for downloaded rating file for %s is wrong: %s/%s."
+msgstr "Dateipfad für die Rating-Datei %s ist falsch: %s/%s."
+
+#: zzbrick_make/ratings-import-dwz.inc.php
+msgid "File not found for rating import: %s"
+msgstr "Datei %s für den Rating-Import nicht gefunden."
