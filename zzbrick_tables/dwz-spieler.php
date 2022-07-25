@@ -86,4 +86,4 @@ $zz['sqlorder'] = ' ORDER BY Spielername, Geburtsjahr, Mgl_Nr';
 
 $zz['access'] = 'none';
 
-$zz['explanation'] = sprintf('<p>DWZ-Datenbank des Deutschen Schachbundes, Stand: %s</p>', wrap_date($zz_setting['rating_status']['DWZ']));
+$zz['explanation'] = sprintf('<p>DWZ-Datenbank des Deutschen Schachbundes, Stand: %s</p>', wrap_date($zz_setting['ratings_status']['DWZ']));

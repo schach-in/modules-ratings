@@ -28,8 +28,8 @@ function mod_ratings_make_ratings_import($params) {
 	$dl = mod_ratings_make_ratings_download([$params[0]]);
 	$dl = json_decode($dl['text'], true);
 	$update = false;
-	if (empty($zz_setting['rating_status'][$params[0]])) $update = true;
-	elseif ($zz_setting['rating_status'][$params[0]] < $dl['date']) $update = true;
+	if (empty($zz_setting['ratings_status'][$params[0]])) $update = true;
+	elseif ($zz_setting['ratings_status'][$params[0]] < $dl['date']) $update = true;
 	if (!$update) return false;
 
 	$path = strtolower($params[0]);
@@ -41,7 +41,7 @@ function mod_ratings_make_ratings_import($params) {
 	$data = $function([$dest_folder]);
 	if (empty($data)) {
 		rmdir($dest_folder);
-		wrap_setting_write('rating_status['.$params[0].']', $dl['date']);
+		wrap_setting_write('ratings_status['.$params[0].']', $dl['date']);
 		$data['import_successful'] = true;
 	}
 	$page['text'] = json_encode($data);

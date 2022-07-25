@@ -9,6 +9,6 @@
 # @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
 #
 <p><em>
-Stand DWZ: %%% setting rating_status[DWZ] %%%,
-Stand Elo: %%% setting rating_status[Elo] %%%
+Stand DWZ: %%% setting ratings_status[DWZ] %%%,
+Stand Elo: %%% setting ratings_status[Elo] %%%
 </em></p>

@@ -41,8 +41,8 @@ function mod_ratings_ratingimport() {
 			$data[$index]['not_found'] = true;
 			$data[$index]['date'] = '';
 		}
-		$data[$index]['stand'] = !empty($zz_setting['rating_status'][$rating])
-			? $zz_setting['rating_status'][$rating] : '';
+		$data[$index]['stand'] = !empty($zz_setting['ratings_status'][$rating])
+			? $zz_setting['ratings_status'][$rating] : '';
 		if ($data[$index]['stand'] === $data[$index]['date']) {
 			$data[$index]['aktueller_stand'] = true;
 		} elseif ($data[$index]['stand'] > $data[$index]['date']) {
