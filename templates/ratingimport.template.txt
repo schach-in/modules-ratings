@@ -1,0 +1,52 @@
+# ratings module
+# HTML output: import rating data
+#
+# Part of »Zugzwang Project«
+# https://www.zugzwang.org/modules/ratings
+#
+# @author Jacob Roggon
+# @author Gustaf Mossakowski <gustaf@koenige.org>
+# @copyright Copyright © 2012 Jacob Roggon
+# @copyright Copyright © 2012-2014, 2016-2017, 2020, 2022 Gustaf Mossakowski
+# @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
+#
+%%% loop start %%%
+<h2>Import %%% item rating %%%</h2>
+
+<ul>
+%%% condition if please_wait %%%
+<li><strong>Bitte warten</strong>, aktuell ist kein Abgleich der Daten möglich.</li>
+%%% condition else %%%
+<li>Aktueller Datenstand, heruntergeladen vom 
+<a href="%%% item url %%%">Server</a>:
+<strong>%%% item date wrap_date %%%</strong></li>
+%%% condition endif %%%
+<li>Letzter Import der %%% item rating %%%-Daten in die Datenbank auf diesem Server: 
+<strong>%%% item stand wrap_date %%%</strong></li>
+</ul>
+
+%%% condition if erfolgreich %%%
+<p><strong>Import erfolgreich abgeschlossen!</strong></p>
+
+%%% condition elseif errors %%%
+%%% loop errors %%%
+<p>%%% item msg %%%</p>
+%%% loop end %%%
+
+%%% condition elseif please_wait %%%
+%%% condition elseif aktueller_stand %%%
+<p><strong>Die Daten sind bereits auf dem aktuellen Stand.</strong></p>
+%%% condition elseif zukuenftiger_stand %%%
+<p><strong>Die Daten sind neuer, als sie sein könnten.</strong> Vermutlich liegt ein Fehler vor?</p>
+%%% condition else %%%
+<p class="error">Die Daten sind nicht aktuell.</p>
+
+%%% condition if formular %%%
+<div>
+<form enctype="multipart/form-data" action="%%% page url_path %%%" method="post">
+<p><input type="submit" name="submit_%%% item path %%%" value="Import starten"> – danach geduldig sein! </p>
+</form>
+</div>
+%%% condition endif %%%
+%%% condition endif %%%
+%%% loop end %%%
