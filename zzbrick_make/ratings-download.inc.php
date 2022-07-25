@@ -10,7 +10,7 @@
  * @author Jacob Roggon
  * @author Gustaf Mossakowski <gustaf@koenige.org>
  * @copyright Copyright © ... Jacob Roggon
- * @copyright Copyright © 2013-2014, 2016-2017, 2019-2020 Gustaf Mossakowski
+ * @copyright Copyright © 2013-2014, 2016-2017, 2019-2020, 2022 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
@@ -29,9 +29,10 @@ function mod_ratings_make_ratings_download($params) {
 	$data = [];
 	$data['rating'] = $params[0];
 	$data['path'] = strtolower($data['rating']);
-	if (empty($zz_setting['rating_download'])) return false; // @todo log error
-	if (!array_key_exists($data['rating'], $zz_setting['rating_download'])) return false; // @todo log error
-	$data['url'] = $zz_setting['rating_download'][$data['rating']];
+	$downloads = wrap_get_setting('ratings_download');
+	if (!$downloads) return false; // @todo log error
+	if (!array_key_exists($data['rating'], $downloads)) return false; // @todo log error
+	$data['url'] = $downloads[$data['rating']];
 	if (!$data['url']) return false;
 
 	// fetches the rating file from the server

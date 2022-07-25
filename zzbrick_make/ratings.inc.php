@@ -24,6 +24,7 @@
 function mod_ratings_make_ratings($params) {
 	global $zz_setting;
 	require_once $zz_setting['core'].'/syndication.inc.php';
+	$downloads = wrap_get_setting('ratings_download');
 
 	// @todo show webpage with possible downloads if there are no parameters,
 	// allow to trigger downloads
@@ -33,7 +34,7 @@ function mod_ratings_make_ratings($params) {
 
 	if (count($params) !== 2) return false;
 	if (!in_array($params[0], ['download', 'import'])) return false;
-	if (empty($zz_setting['rating_download'][$params[1]])) return false;
+	if (empty($downloads[$params[1]])) return false;
 
 	// big files, no timeout please
 	$zz_setting['syndication_timeout_ms'] = false;
