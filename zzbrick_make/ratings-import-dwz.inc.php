@@ -10,7 +10,7 @@
  * @author Jacob Roggon
  * @author Gustaf Mossakowski <gustaf@koenige.org>
  * @copyright Copyright © ... Jacob Roggon
- * @copyright Copyright © 2013-2014, 2016-2017, 2019-2020 Gustaf Mossakowski
+ * @copyright Copyright © 2013-2014, 2016-2017, 2019-2022 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
@@ -49,7 +49,11 @@ function mod_ratings_make_ratings_import_dwz($params) {
 	foreach ($files AS $file) {
 		$filename = $params[0].'/'.$file['filename'];
 		if (!file_exists($filename)) {
-			$data['errors'][]['msg'] = sprintf(wrap_text('File not found for rating import: %s'), $file['filename']);
+			$data['errors'][]['msg'] = sprintf(wrap_text('File %s not found for rating import.'), $file['filename']);
+			continue;
+		}
+		if (!filesize($filename)) {
+			$data['errors'][]['msg'] = sprintf(wrap_text('File for rating import %s is empty.'), $file['filename']);
 			continue;
 		}
 		if ($handle = fopen($filename, 'r')) {
