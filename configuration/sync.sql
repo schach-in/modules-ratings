@@ -29,7 +29,8 @@ LEFT JOIN contacts USING (contact_id)
 WHERE ok.identifier NOT IN (%s)
 AND ok.current = 'yes'
 AND identifier_category_id = /*_ID categories kennungen/zps _*/
-AND contacts.contact_category_id = /*_ID categories contact/federation _*/;
+AND contacts.contact_category_id = /*_ID categories contact/federation _*/
+AND ISNULL(end_date);
 
 -- verbaende_static1 --
 contact_category_id = /*_ID categories contact/federation _*/;
@@ -48,7 +49,7 @@ contacts_identifiers[0][current] = 'yes'
  */
 -- vereine_source --
 SELECT ZPS, Vereinname
-, IF(Vereinname REGEXP 'SABT', /*_ID categories contact/chess-department _*/, *_ID contact/club _*/) AS contact_category_id
+, IF(Vereinname REGEXP 'SABT', /*_ID categories contact/chess-department _*/, /*_ID categories contact/club _*/) AS contact_category_id
 , CONCAT(Verband, ' ') AS Verband
 FROM dwz_vereine;
 
