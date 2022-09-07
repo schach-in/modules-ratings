@@ -25,7 +25,8 @@
 %%% condition endif %%%
 <div class="searchform">
 <form method="GET" action="/zahlen/suche/">
-<label for id="playersearch">Suche nach Verein bzw. Spielerin oder Spieler:<br>
-<input type="text" name="name" id="playersearch" value="%%% item searchword wrap_html_escape %%%"></label>
+<p><label for id="playersearch">Suche nach Verein bzw. Spielerin oder Spieler:<br>
+<input type="search" name="name" id="playersearch" value="%%% item searchword wrap_html_escape %%%"></label>
+<input type="submit" value="Suchen!"></p>
 </form>
 </div>
