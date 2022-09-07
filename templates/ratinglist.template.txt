@@ -20,6 +20,7 @@
 <th><abbr title="Platz">Pl.</abbr></th>
 <th>Name</th>
 <th>Land</th>
+<th><abbr title="Status">St.</abbr></th>
 %%% condition unless club_identifier %%%
 <th>Verein</th>
 <th>ZPS</th>
@@ -35,6 +36,7 @@
 <td class="index">%%% loopposition counter %%%</td>
 <td class="player">%%% item title %%% %%% item contact %%%</td>
 <td class="append600">%%% item federation %%%</td>
+<td>%%% condition if passive %%%<abbr title="passives Mitglied">P</abbr>%%% condition endif %%%</td>
 %%% condition if club_identifier %%%
 <td class="indent"><a href="/%%% item club_identifier %%%/">%%% item club %%%</a></td>
 <td class="append600"><a href="/zahlen/%%% item zps_code %%%/">%%% item zps_code %%%</a></td>

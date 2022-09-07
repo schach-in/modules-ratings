@@ -18,9 +18,9 @@
 				{ width: .5em; white-space: nowrap; }
 	table.toplist tr td:nth-child(2)
 				{ width: 16em; }
-	table.toplist tr td:nth-child(4)
+	table.toplist tr td:nth-child(5)
 				{ width: 16em; }
-	table.toplist tr td:nth-child(4).number
+	table.toplist tr td:nth-child(5).number
 				{ width: 3em; }
 }
 

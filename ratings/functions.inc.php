@@ -23,6 +23,7 @@ function mf_ratings_ratinglist($conditions, $limit = 1000) {
 			, player_id AS fide_id
 			, title, title_women, title_other
 			, standard_rating, rapid_rating, blitz_rating, federation
+			, IF(Status = "P", 1, NULL) as passive
 	    FROM dwz_spieler
 	    LEFT JOIN fide_players
 	    	ON dwz_spieler.fide_id = fide_players.player_id
