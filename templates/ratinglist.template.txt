@@ -32,18 +32,18 @@
 <tbody>
 %%% loop start %%%
 <tr class="%%% loopposition uneven "un" %%%even">
-<td>%%% loopposition counter %%%</td>
-<td>%%% item title %%% %%% item contact %%%</td>
-<td>%%% item federation %%%</td>
+<td class="index">%%% loopposition counter %%%</td>
+<td class="player">%%% item title %%% %%% item contact %%%</td>
+<td class="append600">%%% item federation %%%</td>
 %%% condition if club_identifier %%%
-<td><a href="/%%% item club_identifier %%%/">%%% item club %%%</a></td>
-<td><a href="/zahlen/%%% item zps_code %%%/">%%% item zps_code %%%</a></td>
+<td class="indent"><a href="/%%% item club_identifier %%%/">%%% item club %%%</a></td>
+<td class="append600"><a href="/zahlen/%%% item zps_code %%%/">%%% item zps_code %%%</a></td>
 %%% condition endif %%%
-<td class="number">%%% item dwz %%%</td>
-<td class="index">–&nbsp;%%% item dwz_index %%%</td>
-<td class="number">%%% item standard_rating %%%</td>
-<td class="number">%%% item rapid_rating %%%</td>
-<td class="number">%%% item blitz_rating %%%</td>
+<td data-label="DWZ&nbsp;" class="indent number">%%% item dwz %%%</td>
+<td class="index inline600">–&nbsp;%%% item dwz_index %%%</td>
+<td data-label="Elo&nbsp;" class="indent number">%%% item standard_rating %%%</td>
+<td data-label="Rapid&nbsp;" class="number">%%% item rapid_rating %%%</td>
+<td data-label="Blitz&nbsp;" class="number">%%% item blitz_rating %%%</td>
 </tr>
 %%% loop end %%%
 </tbody>
