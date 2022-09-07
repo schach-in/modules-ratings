@@ -32,6 +32,7 @@
 </thead>
 <tbody>
 %%% loop start %%%
+%%% condition if dwz | standard_rating | rapid_rating | blitz_rating %%%
 <tr class="%%% loopposition uneven "un" %%%even">
 <td class="index">%%% loopposition counter %%%</td>
 <td class="player">%%% item title %%% %%% item contact %%%</td>
@@ -47,6 +48,7 @@
 <td data-label="Rapid&nbsp;" class="number">%%% item rapid_rating %%%</td>
 <td data-label="Blitz&nbsp;" class="number">%%% item blitz_rating %%%</td>
 </tr>
+%%% condition endif %%%
 %%% loop end %%%
 </tbody>
 </table>
