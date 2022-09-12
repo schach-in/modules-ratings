@@ -19,8 +19,8 @@ prüfe die Änderungen sorgfältig.</p>
 <li>Namensschreibweisen können in den externen Daten auch deswegen
 abweichen, da die externen Datenbanken Fehler enthalten.
 </li>
-<li>Das Geschlecht wird automatisch geändert, falls es Abweichungen gibt, aber auch hier 
-kann es sich um einen Fehler handeln!</li>
+<li>Geschlecht und Geburtsjahr werden nur auf Wunsch geändert falls es Abweichungen gibt, da auch hier 
+es sich um Fehler handeln kann.</li>
 </ul>
 
 <table>
