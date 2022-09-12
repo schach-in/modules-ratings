@@ -14,7 +14,7 @@
 %%% condition if searchword %%%
 <h2>Suche nach »%%% item searchword wrap_html_escape %%%«</h2>
 %%% condition endif %%%
-<table class="list toplist">
+<table class="toplist">
 <thead>
 <tr>
 <th><abbr title="Platz">Pl.</abbr></th>

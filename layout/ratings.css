@@ -11,6 +11,20 @@
  */
 
 
+.toplist	{ border-collapse: collapse; }
+.toplist th	{ color: #666; }
+.toplist th, .toplist td
+			{ text-align: left; vertical-align: top; padding: .25em .75em 0 0; }
+.toplist th.number, .toplist td.number
+			{ text-align: right; }
+.toplist thead th
+			{ border-bottom: 1px solid black; }
+.toplist .even
+			{ background-color: #EEE; }
+@media screen and (max-width: 640px) {
+	.toplist		{ margin: 1em .75em; overflow: auto; }
+}
+
 @media screen and (min-width: 481px) {
 	table.toplist td.number, table.toplist th.number
 				{ width: 3em; }
