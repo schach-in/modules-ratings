@@ -39,8 +39,8 @@
 <td class="append600">%%% item federation %%%</td>
 <td>%%% condition if passive %%%<abbr title="passives Mitglied">P</abbr>%%% condition endif %%%</td>
 %%% condition if club_identifier %%%
-<td class="indent"><a href="/%%% item club_identifier %%%/">%%% item club %%%</a></td>
-<td class="append600"><a href="/zahlen/%%% item zps_code %%%/">%%% item zps_code %%%</a></td>
+<td class="indent club"><a href="/%%% item club_identifier %%%/">%%% item club %%%</a></td>
+<td class="append600 clubcode"><a href="/zahlen/%%% item zps_code %%%/">%%% item zps_code %%%</a></td>
 %%% condition endif %%%
 <td data-label="DWZ&nbsp;" class="indent number">%%% item dwz %%%</td>
 <td class="index inline600">–&nbsp;%%% item dwz_index %%%</td>

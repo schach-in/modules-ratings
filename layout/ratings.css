@@ -30,11 +30,11 @@
 				{ width: 3em; }
 	table.toplist td.index
 				{ width: .5em; white-space: nowrap; }
-	table.toplist tr td:nth-child(2)
+	table.toplist tr td.player
 				{ width: 16em; }
-	table.toplist tr td:nth-child(5)
+	table.toplist tr td.club
 				{ width: 16em; }
-	table.toplist tr td:nth-child(5).number
+	table.toplist tr td.clubcode
 				{ width: 3em; }
 }
 
