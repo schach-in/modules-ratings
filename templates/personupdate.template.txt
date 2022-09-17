@@ -8,7 +8,7 @@
 # @copyright Copyright © 2015-2016, 2019, 2022 Gustaf Mossakowski
 # @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
 #
-<div class="results">
+<div>
 <form action="" method="POST">
 <p>
 Hier ist es möglich, die aktuellen Daten von Personen automatisch mit den Daten in den
@@ -23,7 +23,16 @@ abweichen, da die externen Datenbanken Fehler enthalten.
 es sich um Fehler handeln kann.</li>
 </ul>
 
-<table>
+<table class="toplist">
+<thead>
+<tr>
+<th>[x]</th>
+<th>%%% text ID %%%</th>
+<th>%%% text Person %%%</th>
+<th>%%% text Changes %%%</th>
+</tr>
+</thead>
+<tbody>
 %%% loop start %%%
 <tr class="%%% loopposition uneven "un" %%%even">
 <td>%%% condition if checkbox %%%<input type="checkbox" name="%%% item checkbox %%%">%%% condition endif %%%</td>
@@ -31,8 +40,9 @@ es sich um Fehler handeln kann.</li>
 <td><a href="%%% item link %%%">%%% item spieler %%%</a></td>
 <td%%% item error " class='error' style="background: red;"" %%%>%%% item note %%%</td></tr>
 %%% loop end %%%
+</tbody>
 </table>
-<input type="submit" value="Personenupdate starten">
 
+<p><input type="submit" value="Personenupdate starten"></p>
 </form>
 </div>
