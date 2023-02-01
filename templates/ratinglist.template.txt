@@ -5,7 +5,7 @@
 # https://www.zugzwang.org/modules/ratings
 #
 # @author Gustaf Mossakowski <gustaf@koenige.org>
-# @copyright Copyright © 2022 Gustaf Mossakowski
+# @copyright Copyright © 2022-2023 Gustaf Mossakowski
 # @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
 #
 %%% condition if club_identifier %%%
@@ -44,9 +44,9 @@
 %%% condition endif %%%
 <td data-label="DWZ&nbsp;" class="indent number">%%% item dwz %%%</td>
 <td class="index inline600">–&nbsp;%%% item dwz_index %%%</td>
-<td data-label="Elo&nbsp;" class="indent number">%%% item standard_rating %%%</td>
-<td data-label="Rapid&nbsp;" class="number">%%% item rapid_rating %%%</td>
-<td data-label="Blitz&nbsp;" class="number">%%% item blitz_rating %%%</td>
+<td data-label="Elo&nbsp;" class="indent number">%%% condition if fide_id %%%<a href="%%% path ratings_fide_profile fide_id %%%">%%% condition endif %%%%%% item standard_rating %%%%%% item fide_id </a> %%%</td>
+<td data-label="Rapid&nbsp;" class="number">%%% condition if fide_id %%%<a href="%%% path ratings_fide_profile fide_id %%%">%%% condition endif %%%%%% item rapid_rating %%%%%% item fide_id </a> %%%</td>
+<td data-label="Blitz&nbsp;" class="number">%%% condition if fide_id %%%<a href="%%% path ratings_fide_profile fide_id %%%">%%% condition endif %%%%%% item blitz_rating %%%%%% item fide_id </a> %%%</td>
 </tr>
 %%% condition endif %%%
 %%% loop end %%%
