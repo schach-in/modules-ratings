@@ -10,7 +10,7 @@
  * @author Jacob Roggon
  * @author Gustaf Mossakowski <gustaf@koenige.org>
  * @copyright Copyright © ... Jacob Roggon
- * @copyright Copyright © 2013-2014, 2016-2017, 2019-2022 Gustaf Mossakowski
+ * @copyright Copyright © 2013-2014, 2016-2017, 2019-2023 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
@@ -22,9 +22,8 @@
  * @return array $data
  */
 function mod_ratings_make_ratings($params) {
-	global $zz_setting;
-	require_once $zz_setting['core'].'/syndication.inc.php';
-	$downloads = wrap_get_setting('ratings_download');
+	require_once wrap_setting('core').'/syndication.inc.php';
+	$downloads = wrap_setting('ratings_download');
 
 	// @todo show webpage with possible downloads if there are no parameters,
 	// allow to trigger downloads
@@ -37,7 +36,7 @@ function mod_ratings_make_ratings($params) {
 	if (empty($downloads[$params[1]])) return false;
 
 	// big files, no timeout please
-	$zz_setting['syndication_timeout_ms'] = false;
+	wrap_setting('syndication_timeout_ms', false);
 
 	$lock_realm = strtolower(implode('-', $params));
 	$wait_seconds = 300;

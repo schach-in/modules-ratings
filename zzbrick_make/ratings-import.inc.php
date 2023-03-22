@@ -10,7 +10,7 @@
  * @author Jacob Roggon
  * @author Gustaf Mossakowski <gustaf@koenige.org>
  * @copyright Copyright © ... Jacob Roggon
- * @copyright Copyright © 2013-2014, 2016-2017, 2019-2021 Gustaf Mossakowski
+ * @copyright Copyright © 2013-2014, 2016-2017, 2019-2021, 2023 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
@@ -22,14 +22,12 @@
  * @return array $data
  */
 function mod_ratings_make_ratings_import($params) {
-	global $zz_setting;
-
 	require_once __DIR__.'/ratings-download.inc.php';
 	$dl = mod_ratings_make_ratings_download([$params[0]]);
 	$dl = json_decode($dl['text'], true);
 	$update = false;
-	if (empty($zz_setting['ratings_status'][$params[0]])) $update = true;
-	elseif ($zz_setting['ratings_status'][$params[0]] < $dl['date']) $update = true;
+	if (empty(wrap_setting('ratings_status['.$params[0].']'))) $update = true;
+	elseif (wrap_setting('ratings_status['.$params[0].']') < $dl['date']) $update = true;
 	if (!$update) return false;
 
 	$path = strtolower($params[0]);
@@ -57,10 +55,8 @@ function mod_ratings_make_ratings_import($params) {
  * @return mixed string $dest_folder = successful, false: error
  */
 function mod_ratings_make_ratings_unzip($rating, $archive) {
-	global $zz_setting;
-
 	$path = strtolower($rating);
-	$tmp_dir = $zz_setting['tmp_dir'].'/'.$path;
+	$tmp_dir = wrap_setting('tmp_dir').'/'.$path;
 	if (!file_exists($tmp_dir)) mkdir($tmp_dir);
 	$dest_folder = tempnam($tmp_dir, $path);
 	unlink($dest_folder);

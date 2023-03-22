@@ -8,7 +8,7 @@
  * https://www.zugzwang.org/modules/clubs
  *
  * @author Gustaf Mossakowski <gustaf@koenige.org>
- * @copyright Copyright © 2013-2017, 2020, 2022 Gustaf Mossakowski
+ * @copyright Copyright © 2013-2017, 2020, 2022-2023 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
@@ -86,4 +86,4 @@ $zz['sqlorder'] = ' ORDER BY Spielername, Geburtsjahr, Mgl_Nr';
 
 $zz['access'] = 'none';
 
-$zz['explanation'] = sprintf('<p>DWZ-Datenbank des Deutschen Schachbundes, Stand: %s</p>', wrap_date($zz_setting['ratings_status']['DWZ']));
+$zz['explanation'] = sprintf('<p>DWZ-Datenbank des Deutschen Schachbundes, Stand: %s</p>', wrap_date(wrap_setting('ratings_status[DWZ]')));

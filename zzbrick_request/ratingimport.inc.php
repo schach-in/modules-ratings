@@ -10,24 +10,23 @@
  * @author Jacob Roggon
  * @author Gustaf Mossakowski <gustaf@koenige.org>
  * @copyright Copyright © 2012 Jacob Roggon
- * @copyright Copyright © 2013-2014, 2016-2017, 2019, 2021-2022 Gustaf Mossakowski
+ * @copyright Copyright © 2013-2014, 2016-2017, 2019, 2021-2023 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
 
 function mod_ratings_ratingimport() {
-	global $zz_setting;
-	$zz_setting['syndication_timeout_ms'] = false; // big files ahead
+	wrap_setting('syndication_timeout_ms', false); // big files ahead
 	ini_set('max_execution_time', 120);
 
 	// get rating data
-	$downloads = wrap_get_setting('ratings_download');
+	$downloads = wrap_setting('ratings_download');
 	if (!$downloads) return false; // @todo show error
 	$index = 0;
 	$data = [];
 	foreach (array_keys($downloads) as $rating) {
 		list($status, $headers, $content)
-			= wrap_get_protected_url('/_jobs/ratings/download/'.$rating, [], 'POST', [], $zz_setting['robot_username']);
+			= wrap_get_protected_url('/_jobs/ratings/download/'.$rating, [], 'POST', [], wrap_setting('robot_username'));
 		if ($status === 200) {
 			$data[$index] = json_decode($content, true);
 		} elseif ($status === 202) {
@@ -41,8 +40,8 @@ function mod_ratings_ratingimport() {
 			$data[$index]['not_found'] = true;
 			$data[$index]['date'] = '';
 		}
-		$data[$index]['stand'] = !empty($zz_setting['ratings_status'][$rating])
-			? $zz_setting['ratings_status'][$rating] : '';
+		$data[$index]['stand'] = !empty(wrap_setting('ratings_status['.$rating.']'))
+			? wrap_setting('ratings_status['.$rating.']') : '';
 		if ($data[$index]['stand'] === $data[$index]['date']) {
 			$data[$index]['aktueller_stand'] = true;
 		} elseif ($data[$index]['stand'] > $data[$index]['date']) {
@@ -52,7 +51,7 @@ function mod_ratings_ratingimport() {
 			$data[$index]['formular'] = true;
 			if (!empty($_POST['submit_'.$data[$index]['path']])) {
 				list($status, $headers, $content)
-					= wrap_get_protected_url('/_jobs/ratings/import/'.$rating, [], 'POST', [], $zz_setting['robot_username']);
+					= wrap_get_protected_url('/_jobs/ratings/import/'.$rating, [], 'POST', [], wrap_setting('robot_username'));
 				if ($status === 200) {
 					$return = json_decode($content, true);
 					if (!empty($return['import_successful'])) {

@@ -10,7 +10,7 @@
  * @author Jacob Roggon
  * @author Gustaf Mossakowski <gustaf@koenige.org>
  * @copyright Copyright © ... Jacob Roggon
- * @copyright Copyright © 2013-2014, 2016-2017, 2019-2020, 2022 Gustaf Mossakowski
+ * @copyright Copyright © 2013-2014, 2016-2017, 2019-2020, 2022-2023 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
@@ -23,13 +23,12 @@
  * @return array $data
  */
 function mod_ratings_make_ratings_download($params) {
-	global $zz_setting;
 	if (count($params) !== 1) return false;
 	
 	$data = [];
 	$data['rating'] = $params[0];
 	$data['path'] = strtolower($data['rating']);
-	$downloads = wrap_get_setting('ratings_download');
+	$downloads = wrap_setting('ratings_download');
 	if (!$downloads) return false; // @todo log error
 	if (!array_key_exists($data['rating'], $downloads)) return false; // @todo log error
 	$data['url'] = $downloads[$data['rating']];
@@ -38,7 +37,7 @@ function mod_ratings_make_ratings_download($params) {
 	// fetches the rating file from the server
 	// might take a little longer, but if possible, If-Modified-Since and 304s
 	// are taken into account
-	require_once $zz_setting['core'].'/syndication.inc.php';
+	require_once wrap_setting('core').'/syndication.inc.php';
 	$rating_data = wrap_syndication_get($data['url'], 'file');
 	if (!$rating_data) {
 		wrap_error(sprintf(wrap_text('Unable to download rating file for %s.'), $params[0]), E_USER_ERROR);
@@ -49,7 +48,7 @@ function mod_ratings_make_ratings_download($params) {
 	// move current rating file into /files/[path] folder unless already done
 	// 1. create folder
 	$year = date('Y', strtotime($meta['Last-Modified']));
-	$destination_folder = sprintf($zz_setting['media_folder'].'/'.$data['path'].'/%d', $year);
+	$destination_folder = sprintf(wrap_setting('media_folder').'/'.$data['path'].'/%d', $year);
 	if (!file_exists($destination_folder)) mkdir($destination_folder);
 
 	// 2. get filename
