@@ -10,7 +10,7 @@
  * @author Jacob Roggon
  * @author Gustaf Mossakowski <gustaf@koenige.org>
  * @copyright Copyright © ... Jacob Roggon
- * @copyright Copyright © 2013-2014, 2016-2017, 2019-2022 Gustaf Mossakowski
+ * @copyright Copyright © 2013-2014, 2016-2017, 2019-2023 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
@@ -24,8 +24,6 @@
  * @return array $data
  */
 function mod_ratings_make_ratings_import_dwz($params) {
-	global $zz_conf;
-
 	$files = [
 //		1 => [
 //			'filename' => 'verband.sql',
@@ -64,7 +62,7 @@ function mod_ratings_make_ratings_import_dwz($params) {
 				$line = iconv("ISO-8859-1", "UTF-8", $line);
 				if (wrap_db_query($line, E_USER_WARNING)) continue;
 //				if (mysql_errno() === 1065) continue;
-				$data['errors'][]['msg'] = mysqli_error($zz_conf['db_connection']).' '.$line;
+				$data['errors'][]['msg'] = mysqli_error(wrap_db_connection()).' '.$line;
 			}
 		}
 		fclose($handle);
