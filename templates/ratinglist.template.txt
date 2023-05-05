@@ -25,8 +25,8 @@
 <th>Verein</th>
 <th>ZPS</th>
 %%% condition endif %%%
-<th class="number" colspan="2">DWZ</th>
-<th class="number">Elo</th>
+<th class="number" colspan="2"><abbr title="Deutsche Wertungszahl">DWZ</abbr></th>
+<th class="number"><abbr title="Elo-Zahl des Weltschachbunds FIDE">Elo</abbr></th>
 <th class="number">Elo Rapid</th>
 <th class="number">Elo Blitz</th>
 </thead>
@@ -52,3 +52,8 @@
 %%% loop end %%%
 </tbody>
 </table>
+
+<hr>
+
+<p><em>Die Deutsche Wertungszahl (DWZ) besteht aus der eigentlichen
+Wertungszahl und einem Index für die Anzahl der gespielten Turniere.</em></p>
