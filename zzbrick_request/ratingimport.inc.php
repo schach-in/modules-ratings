@@ -29,7 +29,7 @@ function mod_ratings_ratingimport() {
 			= wrap_get_protected_url('/_jobs/ratings/download/'.$rating, [], 'POST', [], wrap_setting('robot_username'));
 		if ($status === 200) {
 			$data[$index] = json_decode($content, true);
-		} elseif ($status === 202) {
+		} elseif ($status === 403) {
 			$data[$index]['rating'] = $rating;
 			$data[$index]['path'] = strtolower($rating);
 			$data[$index]['please_wait'] = true;

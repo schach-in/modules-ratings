@@ -42,7 +42,7 @@ function mod_ratings_make_ratings($params) {
 	$wait_seconds = 300;
 	$lock = wrap_lock($lock_realm, 'wait', $wait_seconds);
 	if ($lock) {
-		$page['status'] = 202;
+		$page['status'] = 403;
 		$page['text'] = sprintf(wrap_text(
 			'Please wait. Rating sync is only allowed to run once every %s.'
 		), wrap_duration($wait_seconds));
