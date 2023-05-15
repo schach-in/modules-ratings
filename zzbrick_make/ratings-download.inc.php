@@ -28,10 +28,7 @@ function mod_ratings_make_ratings_download($params) {
 	$data = [];
 	$data['rating'] = $params[0];
 	$data['path'] = strtolower($data['rating']);
-	$downloads = wrap_setting('ratings_download');
-	if (!$downloads) return false; // @todo log error
-	if (!array_key_exists($data['rating'], $downloads)) return false; // @todo log error
-	$data['url'] = $downloads[$data['rating']];
+	$data['url'] = wrap_setting('ratings_download['.$data['rating'].']');
 	if (!$data['url']) return false;
 
 	// fetches the rating file from the server
@@ -39,11 +36,13 @@ function mod_ratings_make_ratings_download($params) {
 	// are taken into account
 	require_once wrap_setting('core').'/syndication.inc.php';
 	$rating_data = wrap_syndication_get($data['url'], 'file');
-	if (!$rating_data) {
+	if (!$rating_data)
 		wrap_error(sprintf(wrap_text('Unable to download rating file for %s.'), $params[0]), E_USER_ERROR);
-	}
+
 	// save metadata
 	$meta = $rating_data['_'];
+	if (empty($meta['filename']))
+		wrap_error(sprintf(wrap_text('No meta data given after download rating file for %s (meta: %s).'), $params[0], json_encode($meta)), E_USER_ERROR);
 
 	// move current rating file into /files/[path] folder unless already done
 	// 1. create folder
