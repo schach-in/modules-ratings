@@ -23,17 +23,19 @@
  */
 function mod_ratings_make_ratings($params) {
 	require_once wrap_setting('core').'/syndication.inc.php';
-	$downloads = wrap_setting('ratings_download');
 
 	// @todo show webpage with possible downloads if there are no parameters,
 	// allow to trigger downloads
 
 	// @todo show webpage form that allows to trigger download for this rating file
-	if ($_SERVER['REQUEST_METHOD'] !== 'POST') return false;
+	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+		$page['text'] = wrap_template('ratingsdownload');
+		return $page;
+	}
 
 	if (count($params) !== 2) return false;
 	if (!in_array($params[0], ['download', 'import'])) return false;
-	if (empty($downloads[$params[1]])) return false;
+	if (!wrap_setting('ratings_download['.$params[1].']')) return false;
 
 	// big files, no timeout please
 	wrap_setting('syndication_timeout_ms', false);

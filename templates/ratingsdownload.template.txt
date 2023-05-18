@@ -1,0 +1,13 @@
+# ratings module
+# HTML output: download rating data
+#
+# Part of »Zugzwang Project«
+# https://www.zugzwang.org/modules/ratings
+#
+# @author Gustaf Mossakowski <gustaf@koenige.org>
+# @copyright Copyright © 2023 Gustaf Mossakowski
+# @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
+#
+<form method="POST" action="">
+<p><input type="submit" value="Start download"></p>
+</form>
