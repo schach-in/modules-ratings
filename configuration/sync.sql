@@ -41,6 +41,12 @@ contacts_identifiers[0][identifier_category_id] = /*_ID categories kennungen/zps
 -- verbaende_static3 --
 contacts_identifiers[0][current] = 'yes'
 
+-- verbaende_field_mother_contact_id --
+SELECT identifier, contact_id FROM contacts_identifiers WHERE identifier IN ('%s') AND current = 'yes';
+
+-- verbaende_field_mother_contact_id__implode --
+/* ', ' */
+
 
 /** 
  * @todo do not change from chess department to club, not all clubs
@@ -76,3 +82,9 @@ contacts_identifiers[0][identifier_category_id] = /*_ID categories kennungen/zps
 
 -- vereine_static2 --
 contacts_identifiers[0][current] = 'yes';
+
+-- vereine_field_mother_contact_id --
+SELECT identifier, contact_id FROM contacts_identifiers WHERE identifier IN ('%s') AND current = 'yes';
+
+-- vereine_field_mother_contact_id__implode --
+/* ', ' */
