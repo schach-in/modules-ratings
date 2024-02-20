@@ -60,6 +60,12 @@ function mod_ratings_make_ratings_import_dwz($params) {
 			wrap_db_query($sql);
 			while ($line = fgets($handle)) {
 				$line = iconv("ISO-8859-1", "UTF-8", $line);
+				// fix data because the new system does not work correctly
+				// 1. passive players without membership no. are dummy entries for
+				// people in the board of a club who are not members
+				if (preg_match('/^REPLACE INTO `dwz_spieler` VALUES \("[0-9A-Z]+",null,"P",.+$/', $line)) continue;
+				// 2. there are some people without names (sic!)
+				if (preg_match('/^REPLACE INTO `dwz_spieler` VALUES \("[0-9A-Z]+","\d+","A","","",.+$/', $line)) continue;
 				if (wrap_db_query($line, E_USER_WARNING)) continue;
 //				if (mysql_errno() === 1065) continue;
 				$data['errors'][]['msg'] = mysqli_error(wrap_db_connection()).' '.$line;
