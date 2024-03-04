@@ -85,13 +85,23 @@ function mf_ratings_player_rating_fide($code, $prefix = 't_') {
 }
 
 /**
+ * search for a player in the database of the German Chess Federation DSB
+ *
+ * @param array $data
+ * @return
+ */
+function mf_ratings_player_search_dsb($data) {
+
+}
+
+/**
  * search for a player in the database of the World Chess Federation FIDE
  *
  * @param array $data (last_name, first_name, date_of_birth)
  * @return array
  */
 function mf_ratings_player_search_fide($data) {
-	$sql = 'SELECT player_id AS id_fide
+	$sql = 'SELECT player_id AS player_id_fide
 			, player
 			, (CASE WHEN sex = "F" THEN "female"
 			WHEN sex = "M" THEN "male"

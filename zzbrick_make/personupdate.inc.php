@@ -15,7 +15,7 @@
 
 function mod_ratings_make_personupdate() {
 	// FIDE-ID
-	$sql = 'SELECT persons.contact_id, person_id, fide.identifier AS id_fide
+	$sql = 'SELECT persons.contact_id, person_id, fide.identifier AS player_id_fide
 			, CONCAT(IFNULL(CONCAT(name_particle, " "), ""), last_name, ",", first_name) AS spieler
 			, YEAR(date_of_birth) AS geburtsjahr
 			, UCASE(IF(SUBSTRING(sex, 1, 1) = "f", "W", SUBSTRING(sex, 1, 1))) AS sex
@@ -35,16 +35,16 @@ function mod_ratings_make_personupdate() {
 		wrap_category_id('kennungen/zps'),
 		wrap_category_id('kennungen/fide-id')
 	);
-	$fide_ids = wrap_db_fetch($sql, 'id_fide');
+	$fide_ids = wrap_db_fetch($sql, 'player_id_fide');
 
 	$sql = 'SELECT
-		FIDE_ID AS id_fide, Spielername AS spieler, Geburtsjahr AS geburtsjahr,
+		FIDE_ID AS player_id_fide, Spielername AS spieler, Geburtsjahr AS geburtsjahr,
 		Geschlecht AS sex, CONCAT(ZPS, "-", Mgl_Nr) AS zps_code
 		FROM dwz_spieler
 		WHERE FIDE_ID IN (%s)
 		AND (ISNULL(Status) OR Status != "P")';
 	$sql = sprintf($sql, implode(',', array_keys($fide_ids)));
-	$dwz_fide_ids = wrap_db_fetch($sql, 'id_fide');
+	$dwz_fide_ids = wrap_db_fetch($sql, 'player_id_fide');
 
 	$i = 0;
 	$notes = [];
@@ -54,7 +54,7 @@ function mod_ratings_make_personupdate() {
 		list($notes, $i) = mod_ratings_make_personupdate_update($diff, $person, $fide_ids[$fide_id], $notes, $i);
 	}
 
-	$sql = 'SELECT persons.contact_id, person_id, fide.identifier AS id_fide
+	$sql = 'SELECT persons.contact_id, person_id, fide.identifier AS player_id_fide
 			, CONCAT(IFNULL(CONCAT(name_particle, " "), ""), last_name, ",", first_name) AS spieler
 			, YEAR(date_of_birth) AS geburtsjahr
 			, UCASE(IF(SUBSTRING(sex, 1, 1) = "f", "W", SUBSTRING(sex, 1, 1))) AS sex
@@ -79,7 +79,7 @@ function mod_ratings_make_personupdate() {
 
 	// FIDE-IDs zu bestehenden ZPS-Codes
 	$sql = 'SELECT
-		FIDE_ID AS id_fide, Spielername AS spieler, Geburtsjahr AS geburtsjahr,
+		FIDE_ID AS player_id_fide, Spielername AS spieler, Geburtsjahr AS geburtsjahr,
 		Geschlecht AS sex, CONCAT(ZPS, "-", Mgl_Nr) AS zps_code
 		FROM dwz_spieler
 		WHERE CONCAT(ZPS, "-", Mgl_Nr) IN ("%s")
@@ -189,13 +189,13 @@ function mod_ratings_make_personupdate_update($diff, $person, $existing, $notes,
 			if ($person['spieler'] === $existing['spieler'].',Dr.') continue;
 		}
 		switch ($field_name) {
-		case 'id_fide':
-			if (!$existing['id_fide']) {
+		case 'player_id_fide':
+			if (!$existing['player_id_fide']) {
 				$notes[$i] = mod_ratings_make_personupdate_add_id_fide($value, $existing['contact_id']);
 			} elseif ($value) {
-				$notes[$i] = mod_ratings_make_personupdate_update_id_fide($value, $existing['fide_pk_id'], $existing['id_fide']);
+				$notes[$i] = mod_ratings_make_personupdate_update_id_fide($value, $existing['fide_pk_id'], $existing['player_id_fide']);
 			} else {
-				$notes[$i]['note'] = sprintf('FIDE-Code löschen? (Alt: %d).', $existing['id_fide']);
+				$notes[$i]['note'] = sprintf('FIDE-Code löschen? (Alt: %d).', $existing['player_id_fide']);
 			}
 			break;
 		case 'zps_code':
