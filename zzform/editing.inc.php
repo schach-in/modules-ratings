@@ -85,13 +85,66 @@ function mf_ratings_player_rating_fide($code, $prefix = 't_') {
 }
 
 /**
+ * search for a player in the databases of the federations
+ *
+ * @param array $data (last_name, first_name, date_of_birth)
+ * @return mixed
+ */
+function mf_ratings_player_search($federation, $data) {
+	$function = sprintf('mf_ratings_player_search_%s', $federation);
+	if (!function_exists($function)) return [];
+	return $function($data);
+}
+
+/**
  * search for a player in the database of the German Chess Federation DSB
  *
- * @param array $data
- * @return
+ * @param array $data (last_name, first_name, date_of_birth)
+ * @return mixed
  */
 function mf_ratings_player_search_dsb($data) {
+	$sql = 'SELECT CONCAT(ZPS, "-", Mgl_Nr) AS player_id_dsb
+			, FIDE_ID AS player_id_fide
+			, (CASE WHEN Geschlecht = "W" THEN "female"
+				WHEN Geschlecht = "M" THEN "male"
+				ELSE "unknown" END
+			) AS sex
+			, CONCAT(clubs.contact, " | ", vk.identifier) AS verein
+			, lvk.contact_id AS federation_contact_id
+			, Spielername
+		FROM dwz_spieler
+		LEFT JOIN contacts_identifiers vk
+			ON dwz_spieler.ZPS = vk.identifier
+			AND vk.identifier_category_id = %d
+			AND vk.current = "yes"
+		LEFT JOIN contacts clubs USING (contact_id)
+		LEFT JOIN contacts_identifiers lvk
+			ON CONCAT(SUBSTRING(dwz_spieler.ZPS, 1, 1), "00") = lvk.identifier
+			AND lvk.identifier_category_id = %d
+			AND lvk.current = "yes"
+		WHERE Spielername LIKE "%s,%s%%"
+		AND Geburtsjahr = %d	
+		AND Status = "A"';
+	$sql = sprintf($sql
+		, wrap_category_id('identifiers/zps')
+		, wrap_category_id('identifiers/zps')
+		, $data['last_name']
+		, $data['first_name']
+		, substr($data['date_of_birth'], 0, 4)
+	);
+	$player = wrap_db_fetch($sql, 'player_id_dsb');
+	// multiple persons with same name and birth year:
+	// no further information can be gathered
+	if (count($player) > 1) return -1;
+	
+	$player = reset($player);
 
+	$name = explode(',', $player['Spielername']);
+	$player['last_name'] = $name[0];
+	$player['first_name'] = $name[1];
+	if (!empty($name[2])) $player['title_prefix'] = $name[1];
+	unset($player['Spielername']);
+	return $player;
 }
 
 /**
@@ -104,8 +157,9 @@ function mf_ratings_player_search_fide($data) {
 	$sql = 'SELECT player_id AS player_id_fide
 			, player
 			, (CASE WHEN sex = "F" THEN "female"
-			WHEN sex = "M" THEN "male"
-			ELSE "unknown" END) AS sex
+				WHEN sex = "M" THEN "male"
+				ELSE "unknown" END
+			) AS sex
 		FROM fide_players
 		WHERE player = "%s, %s"
 		AND birth = %d';
