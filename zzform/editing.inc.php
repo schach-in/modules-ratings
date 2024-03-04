@@ -91,7 +91,7 @@ function mf_ratings_player_rating_fide($code, $prefix = 't_') {
  * @return array
  */
 function mf_ratings_player_search_fide($data) {
-	$sql = 'SELECT player_id AS fide_id
+	$sql = 'SELECT player_id AS id_fide
 			, player
 			, (CASE WHEN sex = "F" THEN "female"
 			WHEN sex = "M" THEN "male"

@@ -27,7 +27,7 @@ function mf_ratings_ratinglist($conditions, $limit = 1000) {
 			, contact as club
 			, contacts.identifier AS club_identifier
 			, ZPS AS zps_code
-			, player_id AS fide_id
+			, player_id AS id_fide
 			, title, title_women, title_other
 			, standard_rating, rapid_rating, blitz_rating, federation
 			, IF(Status = "P", 1, NULL) as passive
