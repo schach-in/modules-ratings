@@ -19,7 +19,7 @@
  * @param mixed $code
  * @return array
  */
-function mf_ratings_playerdata_dwz($code) {
+function mf_ratings_playerdata_dsb($code) {
 	if (!is_array($code)) $code = explode('-', $code);
 	list($zps, $mgl_nr) = $code;
 
