@@ -19,7 +19,7 @@
  * @param mixed $code
  * @return array
  */
-function mf_ratings_playerdata_dsb($code) {
+function mf_ratings_player_data_dsb($code) {
 	if (!is_array($code)) $code = explode('-', $code);
 	list($zps, $mgl_nr) = $code;
 
@@ -44,4 +44,42 @@ function mf_ratings_playerdata_dsb($code) {
 	$player['last_name'] = $player_name[0];
 	$player['first_name'] = $player_name[1];
 	return $player;
+}
+
+/**
+ * get player rating and title from German Chess Federation
+ *
+ * @param string $code
+ * @param string $prefix field prefix
+ * @return array
+ */
+function mf_ratings_player_rating_dsb($code, $prefix = 't_') {
+	$code = explode('-', $code);
+	$sql = 'SELECT DWZ AS %sdwz, FIDE_Elo AS %selo, FIDE_Titel AS %sfidetitel
+		FROM dwz_spieler
+		WHERE ZPS = "%s"
+		AND Mgl_Nr = "%s"';
+	$sql = sprintf($sql
+		, $prefix, $prefix, $prefix
+		, $code[0], $code[1]
+	);
+	return wrap_db_fetch($sql);
+}
+
+/**
+ * get player rating and title from World Chess Federation FIDE
+ *
+ * @param string $code
+ * @param string $prefix field prefix
+ * @return array
+ */
+function mf_ratings_player_rating_fide($code, $prefix = 't_') {
+	$sql = 'SELECT standard_rating AS %selo, title AS %sfidetitel
+		FROM fide_players
+		WHERE player_id = %d';
+	$sql = sprintf($sql
+		, $prefix, $prefix
+		, $code
+	);
+	return wrap_db_fetch($sql);
 }
