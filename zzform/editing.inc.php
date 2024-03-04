@@ -133,6 +133,7 @@ function mf_ratings_player_search_dsb($data) {
 		, substr($data['date_of_birth'], 0, 4)
 	);
 	$player = wrap_db_fetch($sql, 'player_id_dsb');
+	if (!$player) return [];
 	// multiple persons with same name and birth year:
 	// no further information can be gathered
 	if (count($player) > 1) return -1;
