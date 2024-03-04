@@ -14,7 +14,7 @@
 
 
 /**
- * read player data from German ratings database
+ * read player data from ratings database of German Chess Federation DSB
  * 
  * @param mixed $code
  * @return array
@@ -47,7 +47,7 @@ function mf_ratings_player_data_dsb($code) {
 }
 
 /**
- * get player rating and title from German Chess Federation
+ * get player rating and title from German Chess Federation DSB
  *
  * @param string $code
  * @param string $prefix field prefix
@@ -82,4 +82,34 @@ function mf_ratings_player_rating_fide($code, $prefix = 't_') {
 		, $code
 	);
 	return wrap_db_fetch($sql);
+}
+
+/**
+ * search for a player in the database of the World Chess Federation FIDE
+ *
+ * @param array $data (last_name, first_name, date_of_birth)
+ * @return array
+ */
+function mf_ratings_player_search_fide($data) {
+	$sql = 'SELECT player_id AS fide_id
+			, player
+			, (CASE WHEN sex = "F" THEN "female"
+			WHEN sex = "M" THEN "male"
+			ELSE "unknown" END) AS sex
+		FROM fide_players
+		WHERE player = "%s, %s"
+		AND birth = %d';
+	$sql = sprintf($sql
+		, $data['last_name']
+		, $data['first_name']
+		, substr($data['date_of_birth'], 0, 4)
+	);
+	$player = wrap_db_fetch($sql);
+	if (!$player) return $player;
+
+	$name = explode(',', $player['player']);
+	$player['last_name'] = trim($name[0]);
+	$player['first_name'] = trim($name[1]);
+	unset($player['player']);
+	return $player;
 }
