@@ -66,6 +66,7 @@ function mod_ratings_make_ratings_import_dwz($params) {
 				if (preg_match('/^REPLACE INTO `dwz_spieler` VALUES \("[0-9A-Z]+",null,"P",.+$/', $line)) continue;
 				// 2. there are some people without names (sic!)
 				if (preg_match('/^REPLACE INTO `dwz_spieler` VALUES \("[0-9A-Z]+","\d+","A","","",.+$/', $line)) continue;
+				if (preg_match('/^REPLACE INTO `dwz_spieler` VALUES \("[0-9A-Z]+","\d+","P","","",.+$/', $line)) continue;
 				if (wrap_db_query($line, E_USER_WARNING)) continue;
 //				if (mysql_errno() === 1065) continue;
 				$data['errors'][]['msg'] = mysqli_error(wrap_db_connection()).' '.$line;
