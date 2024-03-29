@@ -448,12 +448,10 @@ function mod_ratings_make_personupdate_delete($contact_id) {
 		$note['note'] = sprintf('Person mit Contact ID %d würde gelöscht', $contact_id);
 		return $note;
 	}
-	$values = [];
-	$values['action'] = 'delete';
-	$values['POST']['contact_id'] = $contact_id;
-	$ops = zzform_multi('contacts', $values);
-	if (!$ops['id']) {
-		$note['note'] .= 'Person konnte nicht gelöscht werden. '.implode($ops['error']);
+	
+	$deleted = zzform_delete('contacts', $contact_id);
+	if (!$deleted) {
+		$note['note'] .= 'Person konnte nicht gelöscht werden.';
 		$note['error'] = true;
 	} else {
 		$note['note'] = 'Person gelöscht.';
