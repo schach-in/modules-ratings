@@ -19,7 +19,7 @@ function mod_ratings_make_personupdate() {
 			, CONCAT(IFNULL(CONCAT(name_particle, " "), ""), last_name, ",", first_name) AS spieler
 			, YEAR(date_of_birth) AS geburtsjahr
 			, UCASE(IF(SUBSTRING(sex, 1, 1) = "f", "W", SUBSTRING(sex, 1, 1))) AS sex
-			, zps.identifier AS player_id_dsb
+			, zps.identifier AS player_pass_dsb
 			, zps.contact_identifier_id AS zps_pk_id
 			, contacts.identifier
 		FROM persons
@@ -39,7 +39,7 @@ function mod_ratings_make_personupdate() {
 
 	$sql = 'SELECT
 		FIDE_ID AS player_id_fide, Spielername AS spieler, Geburtsjahr AS geburtsjahr,
-		Geschlecht AS sex, CONCAT(ZPS, "-", Mgl_Nr) AS player_id_dsb
+		Geschlecht AS sex, CONCAT(ZPS, "-", Mgl_Nr) AS player_pass_dsb
 		FROM dwz_spieler
 		WHERE FIDE_ID IN (%s)
 		AND (ISNULL(Status) OR Status != "P")';
@@ -58,7 +58,7 @@ function mod_ratings_make_personupdate() {
 			, CONCAT(IFNULL(CONCAT(name_particle, " "), ""), last_name, ",", first_name) AS spieler
 			, YEAR(date_of_birth) AS geburtsjahr
 			, UCASE(IF(SUBSTRING(sex, 1, 1) = "f", "W", SUBSTRING(sex, 1, 1))) AS sex
-			, zps.identifier AS player_id_dsb
+			, zps.identifier AS player_pass_dsb
 			, zps.contact_identifier_id AS zps_pk_id
 			, fide.contact_identifier_id AS fide_pk_id
 			, contacts.identifier
@@ -75,31 +75,31 @@ function mod_ratings_make_personupdate() {
 		wrap_category_id('kennungen/fide-id'),
 		wrap_category_id('kennungen/zps')
 	);
-	$player_ids_dsb = wrap_db_fetch($sql, 'player_id_dsb');
+	$player_passes_dsb = wrap_db_fetch($sql, 'player_pass_dsb');
 
 	// FIDE-IDs zu bestehenden ZPS-Codes
 	$sql = 'SELECT
 		FIDE_ID AS player_id_fide, Spielername AS spieler, Geburtsjahr AS geburtsjahr,
-		Geschlecht AS sex, CONCAT(ZPS, "-", Mgl_Nr) AS player_id_dsb
+		Geschlecht AS sex, CONCAT(ZPS, "-", Mgl_Nr) AS player_pass_dsb
 		FROM dwz_spieler
 		WHERE CONCAT(ZPS, "-", Mgl_Nr) IN ("%s")
 		AND (ISNULL(Status) OR Status != "P")';
-	$sql = sprintf($sql, implode('","', array_keys($player_ids_dsb)));
-	$dwz_player_ids_dsb = wrap_db_fetch($sql, 'player_id_dsb');
+	$sql = sprintf($sql, implode('","', array_keys($player_passes_dsb)));
+	$dwz_player_passes_dsb = wrap_db_fetch($sql, 'player_pass_dsb');
 
 	// Nicht in aktueller DWZ-Datenbank = inaktiv
-	$zps_inaktiv = array_diff(array_keys($player_ids_dsb), array_keys($dwz_player_ids_dsb));
+	$zps_inaktiv = array_diff(array_keys($player_passes_dsb), array_keys($dwz_player_passes_dsb));
 	foreach ($zps_inaktiv as $code) {
 		if (!$code) continue;
-		$notes[$i] = mod_ratings_make_personupdate_remove_zps_code($player_ids_dsb[$code]['zps_pk_id'], $code);
-		$notes[$i] += $player_ids_dsb[$code];
+		$notes[$i] = mod_ratings_make_personupdate_remove_zps_code($player_passes_dsb[$code]['zps_pk_id'], $code);
+		$notes[$i] += $player_passes_dsb[$code];
 		$i++;
 	}
 
-	foreach ($dwz_player_ids_dsb as $code => $person) {
-		$diff = array_diff($person, $player_ids_dsb[$code]);
+	foreach ($dwz_player_passes_dsb as $code => $person) {
+		$diff = array_diff($person, $player_passes_dsb[$code]);
 		if (!$diff) continue;
-		list($notes, $i) = mod_ratings_make_personupdate_update($diff, $person, $player_ids_dsb[$code], $notes, $i);
+		list($notes, $i) = mod_ratings_make_personupdate_update($diff, $person, $player_passes_dsb[$code], $notes, $i);
 	}
 
 	// Nicht vorhandene ZPS-Codes inaktiv setzen
@@ -198,9 +198,9 @@ function mod_ratings_make_personupdate_update($diff, $person, $existing, $notes,
 				$notes[$i]['note'] = sprintf('FIDE-Code löschen? (Alt: %d).', $existing['player_id_fide']);
 			}
 			break;
-		case 'player_id_dsb':
-			if ($existing['player_id_dsb']) {
-				$notes[$i] = mod_ratings_make_personupdate_remove_zps_code($existing['zps_pk_id'], $existing['player_id_dsb']);
+		case 'player_pass_dsb':
+			if ($existing['player_pass_dsb']) {
+				$notes[$i] = mod_ratings_make_personupdate_remove_zps_code($existing['zps_pk_id'], $existing['player_pass_dsb']);
 			}
 			$notes[$i] = mod_ratings_make_personupdate_add_zps_code($value, $existing['contact_id']);
 			break;

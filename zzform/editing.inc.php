@@ -103,7 +103,7 @@ function mf_ratings_player_search($federation, $data) {
  * @return mixed
  */
 function mf_ratings_player_search_dsb($data) {
-	$sql = 'SELECT CONCAT(ZPS, "-", Mgl_Nr) AS player_id_dsb
+	$sql = 'SELECT CONCAT(ZPS, "-", Mgl_Nr) AS player_pass_dsb
 			, FIDE_ID AS player_id_fide
 			, (CASE WHEN Geschlecht = "W" THEN "female"
 				WHEN Geschlecht = "M" THEN "male"
@@ -132,7 +132,7 @@ function mf_ratings_player_search_dsb($data) {
 		, $data['first_name']
 		, substr($data['date_of_birth'], 0, 4)
 	);
-	$player = wrap_db_fetch($sql, 'player_id_dsb');
+	$player = wrap_db_fetch($sql, 'player_pass_dsb');
 	if (!$player) return [];
 	// multiple persons with same name and birth year:
 	// no further information can be gathered
