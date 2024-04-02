@@ -44,7 +44,7 @@ function mf_ratings_ratinglist($conditions, $limit = 1000) {
 	    LIMIT 0, %d
 	';
 	$sql = sprintf($sql
-		, wrap_category_id('identifiers/zps')
+		, wrap_category_id('identifiers/pass_dsb')
 		, $conditions ? implode(' AND ', $conditions) : ''
 		, $limit
 	);
@@ -83,7 +83,7 @@ function mf_ratings_titles($data) {
 		AND NOT ISNULL(fide_players.title)
 	';
 	$sql = sprintf($sql
-		, wrap_category_id('identifiers/fide-id')
+		, wrap_category_id('identifiers/id_fide')
 		, implode(',', $contact_ids)
 	);
 	$titles += wrap_db_fetch($sql, 'contact_id', 'key/value');
@@ -99,7 +99,7 @@ function mf_ratings_titles($data) {
 		AND NOT ISNULL(dwz_spieler.FIDE_Titel)
 	';
 	$sql = sprintf($sql
-		, wrap_category_id('identifiers/zps')
+		, wrap_category_id('identifiers/pass_dsb')
 		, implode(',', $contact_ids)
 	);
 	$titles += wrap_db_fetch($sql, 'contact_id', 'key/value');
@@ -129,7 +129,7 @@ function mf_ratings_rating_dsb($contact_ids) {
 			AND contacts_identifiers.identifier_category_id = %d
 		WHERE contact_id IN (%s)';
 	$sql = sprintf($sql
-		, wrap_category_id('identifiers/zps')
+		, wrap_category_id('identifiers/pass_dsb')
 		, implode(',', $contact_ids)
 	);
 	return wrap_db_fetch($sql, 'contact_id');
@@ -152,7 +152,7 @@ function mf_ratings_rating_fide($contact_ids) {
 			AND contacts_identifiers.identifier_category_id = %d
 		WHERE contact_id IN (%s)';
 	$sql = sprintf($sql
-		, wrap_category_id('identifiers/fide-id')
+		, wrap_category_id('identifiers/id_fide')
 		, implode(',', $contact_ids)
 	);
 	return wrap_db_fetch($sql, 'contact_id');

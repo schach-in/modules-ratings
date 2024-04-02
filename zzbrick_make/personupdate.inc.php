@@ -32,8 +32,8 @@ function mod_ratings_make_personupdate() {
 		WHERE fide.identifier_category_id = %d
 		AND fide.current = "yes"';
 	$sql = sprintf($sql,
-		wrap_category_id('kennungen/zps'),
-		wrap_category_id('kennungen/fide-id')
+		wrap_category_id('identifiers/pass_dsb'),
+		wrap_category_id('identifiers/id_fide')
 	);
 	$fide_ids = wrap_db_fetch($sql, 'player_id_fide');
 
@@ -72,8 +72,8 @@ function mod_ratings_make_personupdate() {
 		WHERE zps.identifier_category_id = %d
 		AND zps.current = "yes"';
 	$sql = sprintf($sql,
-		wrap_category_id('kennungen/fide-id'),
-		wrap_category_id('kennungen/zps')
+		wrap_category_id('identifiers/id_fide'),
+		wrap_category_id('identifiers/pass_dsb')
 	);
 	$player_passes_dsb = wrap_db_fetch($sql, 'player_pass_dsb');
 
@@ -247,7 +247,7 @@ function mod_ratings_make_personupdate_add_id_fide($new, $contact_id) {
 	$values['action'] = 'insert';
 	$values['ids'] = ['contact_id', 'identifier_category_id'];
 	$values['POST']['contact_id'] = $contact_id;
-	$values['POST']['identifier_category_id'] = wrap_category_id('kennungen/fide-id');
+	$values['POST']['identifier_category_id'] = wrap_category_id('identifiers/id_fide');
 	$values['POST']['identifier'] = $new;
 	$values['POST']['current'] = 'yes';
 	$ops = zzform_multi('contacts-identifiers', $values);
@@ -331,7 +331,7 @@ function mod_ratings_make_personupdate_add_zps_code($new, $contact_id) {
 	$sql = sprintf($sql,
 		$contact_id,
 		$new,
-		wrap_category_id('kennungen/zps')
+		wrap_category_id('identifiers/pass_dsb')
 	);
 	$pk_id = wrap_db_fetch($sql, '', 'single value');
 	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -351,7 +351,7 @@ function mod_ratings_make_personupdate_add_zps_code($new, $contact_id) {
 		$values['action'] = 'insert';
 		$values['ids'] = ['contact_id', 'identifier_category_id'];
 		$values['POST']['contact_id'] = $contact_id;
-		$values['POST']['identifier_category_id'] = wrap_category_id('kennungen/zps');
+		$values['POST']['identifier_category_id'] = wrap_category_id('identifiers/pass_dsb');
 		$values['POST']['identifier'] = $new;
 	}
 	$ops = zzform_multi('contacts-identifiers', $values);

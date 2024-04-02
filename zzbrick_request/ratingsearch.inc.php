@@ -8,7 +8,7 @@
  * https://www.zugzwang.org/modules/clubs
  *
  * @author Gustaf Mossakowski <gustaf@koenige.org>
- * @copyright Copyright © 2022 Gustaf Mossakowski
+ * @copyright Copyright © 2022, 2024 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
@@ -50,7 +50,7 @@ function mod_ratings_ratingsearch($params) {
 			AND ISNULL(end_date)
 		';
 		$sql = sprintf($sql
-			, wrap_category_id('identifiers/zps')
+			, wrap_category_id('identifiers/pass_dsb')
 			, wrap_db_escape($_GET['name'])
 				, wrap_category_id('contact/club')
 				, wrap_category_id('contact/chess-department')
@@ -71,7 +71,7 @@ function mod_ratings_ratingsearch($params) {
 				AND ISNULL(end_date)
 			';
 			$sql = sprintf($sql
-				, wrap_category_id('identifiers/zps')
+				, wrap_category_id('identifiers/pass_dsb')
 				, wrap_db_escape($_GET['name'])
 				, wrap_category_id('contact/club')
 				, wrap_category_id('contact/chess-department')

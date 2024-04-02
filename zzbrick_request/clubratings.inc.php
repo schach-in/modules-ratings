@@ -8,7 +8,7 @@
  * https://www.zugzwang.org/modules/clubs
  *
  * @author Gustaf Mossakowski <gustaf@koenige.org>
- * @copyright Copyright © 2022 Gustaf Mossakowski
+ * @copyright Copyright © 2022, 2024 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
@@ -26,7 +26,7 @@ function mod_ratings_clubratings($params) {
 		WHERE contacts_identifiers.identifier = "%s"
 	';
 	$sql = sprintf($sql
-		, wrap_category_id('identifiers/zps')
+		, wrap_category_id('identifiers/pass_dsb')
 		, wrap_db_escape($params[0])
 	);
 	$data = wrap_db_fetch($sql);

@@ -126,8 +126,8 @@ function mf_ratings_player_search_dsb($data) {
 		AND Geburtsjahr = %d	
 		AND Status = "A"';
 	$sql = sprintf($sql
-		, wrap_category_id('identifiers/zps')
-		, wrap_category_id('identifiers/zps')
+		, wrap_category_id('identifiers/pass_dsb')
+		, wrap_category_id('identifiers/pass_dsb')
 		, $data['last_name']
 		, $data['first_name']
 		, substr($data['date_of_birth'], 0, 4)
