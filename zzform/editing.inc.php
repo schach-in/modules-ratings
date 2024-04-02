@@ -27,7 +27,8 @@ function mf_ratings_player_data_dsb($code) {
 			, dwz_spieler.Spielername, dwz_spieler.Geburtsjahr, dwz_spieler.Geschlecht
 			, dwz_spieler.DWZ, dwz_spieler.FIDE_Elo, dwz_spieler.FIDE_Titel
 			, dwz_spieler.FIDE_ID
-			, contacts.contact_id, contacts.contact
+			, contacts.contact_id AS club_contact_id
+			, contacts.contact AS club_contact
 		FROM dwz_spieler
 		LEFT JOIN contacts_identifiers
 			ON dwz_spieler.ZPS = contacts_identifiers.identifier
