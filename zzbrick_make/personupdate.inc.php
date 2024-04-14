@@ -243,16 +243,15 @@ function mod_ratings_make_personupdate_add_id_fide($new, $contact_id) {
 		$note['note'] = sprintf('FIDE-Code %d würde ergänzt.', $new);
 		return $note;
 	}
-	$values = [];
-	$values['action'] = 'insert';
-	$values['ids'] = ['contact_id', 'identifier_category_id'];
-	$values['POST']['contact_id'] = $contact_id;
-	$values['POST']['identifier_category_id'] = wrap_category_id('identifiers/id_fide');
-	$values['POST']['identifier'] = $new;
-	$values['POST']['current'] = 'yes';
-	$ops = zzform_multi('contacts-identifiers', $values);
+	$line = [
+		'contact_id' => $contact_id,
+		'identifier_category_id' => wrap_category_id('identifiers/id_fide'),
+		'identifier' => $new,
+		'current' => 'yes'
+	];
+	$ops = zzform_insert('contacts-identifiers', $line);
 	if (!$ops['id']) {
-		$note['note'] = 'FIDE-Code konnte nicht ergänzt werden. '.implode($ops['error']);
+		$note['note'] = 'FIDE-Code konnte nicht ergänzt werden.';
 		$note['error'] = true;
 	} else {
 		$note['note'] = 'FIDE-Code ergänzt.';
@@ -273,13 +272,13 @@ function mod_ratings_make_personupdate_update_id_fide($new, $contact_identifier_
 		$note['note'] = sprintf('FIDE-Code %d würde korrigiert zu %d.', $old, $new);
 		return $note;
 	}
-	$values = [];
-	$values['action'] = 'update';
-	$values['POST']['contact_identifier_id'] = $contact_identifier_id;
-	$values['POST']['identifier'] = $new;
-	$ops = zzform_multi('contacts-identifiers', $values);
-	if (!$ops['id']) {
-		$note['note'] = 'FIDE-Code konnte nicht korrigiert werden. '.implode($ops['error']);
+	$line = [
+		'contact_identifier_id' => $contact_identifier_id,
+		'identifier' => $new
+	];
+	$result = zzform_update('contacts-identifiers', $line);
+	if (is_null($result)) {
+		$note['note'] = 'FIDE-Code konnte nicht korrigiert werden.';
 		$note['error'] = true;
 	} else {
 		$note['note'] = sprintf('FIDE-Code korrigert (Alt: %d, neu %d).', $old, $new);
@@ -299,13 +298,13 @@ function mod_ratings_make_personupdate_remove_zps_code($contact_identifier_id, $
 		$note['note'] = sprintf('ZPS-Code %s würde auf inaktiv gesetzt.', $old);
 		return $note;
 	}
-	$values = [];
-	$values['action'] = 'update';
-	$values['POST']['contact_identifier_id'] = $contact_identifier_id;
-	$values['POST']['current'] = '';
-	$ops = zzform_multi('contacts-identifiers', $values);
-	if (!$ops['id']) {
-		$note['note'] = 'ZPS-Code konnte nicht inaktiviert werden. '.implode($ops['error']);
+	$line = [
+		'contact_identifier_id' => $contact_identifier_id,
+		'current' => ''
+	];
+	$result = zzform_update('contacts-identifiers', $line);
+	if (is_null($result)) {
+		$note['note'] = 'ZPS-Code konnte nicht inaktiviert werden.';
 		$note['error'] = true;
 	} else {
 		$note['note'] = 'ZPS-Code auf inaktiv gesetzt.';
@@ -342,21 +341,23 @@ function mod_ratings_make_personupdate_add_zps_code($new, $contact_id) {
 		}
 		return $note;
 	}
-	$values = [];
-	$values['POST']['current'] = 'yes';
 	if ($pk_id) {
-		$values['action'] = 'update';
-		$values['POST']['contact_identifier_id'] = $pk_id;
+		$line = [
+			'contact_identifier_id' => $pk_id,
+			'current' => 'yes'
+		];
+		$result = zzform_update('contacts-identifiers', $line);
 	} else {
-		$values['action'] = 'insert';
-		$values['ids'] = ['contact_id', 'identifier_category_id'];
-		$values['POST']['contact_id'] = $contact_id;
-		$values['POST']['identifier_category_id'] = wrap_category_id('identifiers/pass_dsb');
-		$values['POST']['identifier'] = $new;
+		$line = [
+			'contact_id' => $contact_id,
+			'identifier_category_id' => wrap_category_id('identifiers/pass_dsb'),
+			'identifier' => $new,
+			'current' => 'yes'
+		];
+		$result = zzform_update('contacts-identifiers', $line);
 	}
-	$ops = zzform_multi('contacts-identifiers', $values);
-	if (!$ops['id']) {
-		$note['note'] = sprintf('ZPS-Code %s konnte nicht ergänzt werden. '.implode($ops['error']), $new);
+	if (is_null($result)) {
+		$note['note'] = sprintf('ZPS-Code %s konnte nicht ergänzt werden.', $new);
 		$note['error'] = true;
 	} else {
 		$note['note'] = ' ZPS-Code ergänzt.';
@@ -386,14 +387,13 @@ function mod_ratings_make_personupdate_update_birth($new, $person_id, $old) {
 		$note['note'] = sprintf('Geburtsjahr NICHT geändert von %s zu %s.', $old, $new);
 		return $note;
 	}
-	$values = [];
-	$values['action'] = 'update';
-	$values['ids'] = ['person_id'];
-	$values['POST']['person_id'] = $person_id;
-	$values['POST']['date_of_birth'] = $new;
-	$ops = zzform_multi('persons', $values);
-	if (!$ops['id']) {
-		$note['note'] .= 'Geburtsjahr konnte nicht aktualisiert werden. '.implode($ops['error']);
+	$line = [
+		'person_id' => $person_id,
+		'date_of_birth' => $new
+	];
+	$result = zzform_update('persons', $line);
+	if (is_null($result)) {
+		$note['note'] = 'Geburtsjahr konnte nicht aktualisiert werden.';
 		$note['error'] = true;
 	} elseif ($old) {
 		$note['note'] = sprintf('Geburtsjahr geändert (%d => %d).', $old, $new);
@@ -422,14 +422,13 @@ function mod_ratings_make_personupdate_update_sex($new, $person_id) {
 		return $note;
 	}
 	$new = $new === 'W' ? 'female' : 'male';
-	$values = [];
-	$values['action'] = 'update';
-	$values['ids'] = ['person_id'];
-	$values['POST']['person_id'] = $person_id;
-	$values['POST']['sex'] = $new;
-	$ops = zzform_multi('persons', $values);
-	if (!$ops['id']) {
-		$note['note'] .= 'Geschlecht konnte nicht korrigiert werden. '.implode($ops['error']);
+	$line = [
+		'person_id' => $person_id,
+		'sex' => $new
+	];
+	$result = zzform_update('persons', $line);
+	if (is_null($result)) {
+		$note['note'] = 'Geschlecht konnte nicht korrigiert werden.';
 		$note['error'] = true;
 	} else {
 		$note['note'] = sprintf('Geschlecht korrigiert (%s).', $new);
@@ -451,7 +450,7 @@ function mod_ratings_make_personupdate_delete($contact_id) {
 	
 	$deleted = zzform_delete('contacts', $contact_id);
 	if (!$deleted) {
-		$note['note'] .= 'Person konnte nicht gelöscht werden.';
+		$note['note'] = 'Person konnte nicht gelöscht werden.';
 		$note['error'] = true;
 	} else {
 		$note['note'] = 'Person gelöscht.';
@@ -470,18 +469,18 @@ function mod_ratings_make_personupdate_change_identifier($contact_id, $old) {
 		$note['note'] = sprintf('Kennung %s würde aktualisiert.', $old);
 		return $note;
 	}
-	$values = [];
-	$values['action'] = 'update';
-	$values['ids'] = ['contact_id'];
-	$values['POST']['contact_id'] = $contact_id;
-	$values['POST']['kennung_aendern'] = 'ja';
-	// @todo move to script from contacts module
-	$ops = zzform_multi('../zzbrick_forms/persons', $values);
-	if (!$ops['id']) {
-		$note['note'] = 'Kennung konnte nicht aktualisiert werden. '.implode($ops['error']);
+	$line = [
+		'contact_id' => $contact_id
+	];
+	$contact_id = zzform_update('contacts', $line);
+	if (is_null($contact_id)) {
+		$note['note'] = 'Kennung konnte nicht aktualisiert werden.');
 		$note['error'] = true;
 	} else {
-		$note['note'] = sprintf('Kennung wurde von %s aktualisiert.', $new, $old);
+		$sql = 'SELECT identifier FROM contacts WHERE contact_id = %d';
+		$sql = sprintf($sql, $contact_id);
+		$new = wrap_db_fetch($sql, '', 'single value');
+		$note['note'] = sprintf('Kennung wurde von %s auf %s aktualisiert.', $old, $new);
 	}
 	return $note;
 }
