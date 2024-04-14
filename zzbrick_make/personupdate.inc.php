@@ -16,7 +16,7 @@
 function mod_ratings_make_personupdate() {
 	// FIDE-ID
 	$sql = 'SELECT persons.contact_id, person_id, fide.identifier AS player_id_fide
-			, CONCAT(IFNULL(CONCAT(name_particle, " "), ""), last_name, ",", first_name) AS spieler
+			, CONCAT(IFNULL(CONCAT(name_particle, " "), ""), last_name, ",", first_name) AS player
 			, YEAR(date_of_birth) AS geburtsjahr
 			, UCASE(IF(SUBSTRING(sex, 1, 1) = "f", "W", SUBSTRING(sex, 1, 1))) AS sex
 			, zps.identifier AS player_pass_dsb
@@ -38,7 +38,7 @@ function mod_ratings_make_personupdate() {
 	$fide_ids = wrap_db_fetch($sql, 'player_id_fide');
 
 	$sql = 'SELECT
-		FIDE_ID AS player_id_fide, Spielername AS spieler, Geburtsjahr AS geburtsjahr,
+		FIDE_ID AS player_id_fide, Spielername AS player, Geburtsjahr AS geburtsjahr,
 		Geschlecht AS sex, CONCAT(ZPS, "-", Mgl_Nr) AS player_pass_dsb
 		FROM dwz_spieler
 		WHERE FIDE_ID IN (%s)
@@ -55,7 +55,7 @@ function mod_ratings_make_personupdate() {
 	}
 
 	$sql = 'SELECT persons.contact_id, person_id, fide.identifier AS player_id_fide
-			, CONCAT(IFNULL(CONCAT(name_particle, " "), ""), last_name, ",", first_name) AS spieler
+			, CONCAT(IFNULL(CONCAT(name_particle, " "), ""), last_name, ",", first_name) AS player
 			, YEAR(date_of_birth) AS geburtsjahr
 			, UCASE(IF(SUBSTRING(sex, 1, 1) = "f", "W", SUBSTRING(sex, 1, 1))) AS sex
 			, zps.identifier AS player_pass_dsb
@@ -79,7 +79,7 @@ function mod_ratings_make_personupdate() {
 
 	// FIDE-IDs zu bestehenden ZPS-Codes
 	$sql = 'SELECT
-		FIDE_ID AS player_id_fide, Spielername AS spieler, Geburtsjahr AS geburtsjahr,
+		FIDE_ID AS player_id_fide, Spielername AS player, Geburtsjahr AS geburtsjahr,
 		Geschlecht AS sex, CONCAT(ZPS, "-", Mgl_Nr) AS player_pass_dsb
 		FROM dwz_spieler
 		WHERE CONCAT(ZPS, "-", Mgl_Nr) IN ("%s")
@@ -169,14 +169,11 @@ function mod_ratings_make_personupdate() {
 		// remove duplicate notes
 		if ($last_note === $note['note'])
 			unset($notes[$index]);
-		else
-			$notes[$index]['link'] = wrap_path('contacts_profile[person]', $note['identifier']);
 		$last_note = $note['note'];
 	}
 	
-	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+	if ($_SERVER['REQUEST_METHOD'] !== 'POST')
 		$notes['show_form'] = true;
-	}
 
 	$page['text'] = wrap_template('personupdate', $notes);
 	return $page;
@@ -184,9 +181,9 @@ function mod_ratings_make_personupdate() {
 
 function mod_ratings_make_personupdate_update($diff, $person, $existing, $notes, $i) {
 	foreach ($diff as $field_name => $value) {
-		if ($field_name === 'spieler') {
+		if ($field_name === 'player') {
 			// Doktortitel ist unwichtig
-			if ($person['spieler'] === $existing['spieler'].',Dr.') continue;
+			if ($person['player'] === $existing['player'].',Dr.') continue;
 		}
 		switch ($field_name) {
 		case 'player_id_fide':
@@ -210,10 +207,10 @@ function mod_ratings_make_personupdate_update($diff, $person, $existing, $notes,
 		case 'sex':
 			$notes[$i] = mod_ratings_make_personupdate_update_sex($person['sex'], $existing['person_id']);
 			break;
-		case 'spieler':
+		case 'player':
 			$notes[$i]['note'] = sprintf('Spielername weicht ab: DWZ-DB %s / DSJ %s'
-				, $person['spieler']
-				, $existing['spieler']
+				, $person['player']
+				, $existing['player']
 			);
 			break;
 		default:
@@ -249,9 +246,9 @@ function mod_ratings_make_personupdate_add_id_fide($new, $contact_id) {
 		'identifier' => $new,
 		'current' => 'yes'
 	];
-	$ops = zzform_insert('contacts-identifiers', $line);
-	if (!$ops['id']) {
-		$note['note'] = 'FIDE-Code konnte nicht ergänzt werden.';
+	$result = zzform_insert('contacts-identifiers', $line);
+	if (!$result) {
+		$note['note'] = wrap_text('FIDE-Code %d konnte nicht ergänzt werden.', ['values' => [$new]]);
 		$note['error'] = true;
 	} else {
 		$note['note'] = 'FIDE-Code ergänzt.';
@@ -295,7 +292,7 @@ function mod_ratings_make_personupdate_update_id_fide($new, $contact_identifier_
  */
 function mod_ratings_make_personupdate_remove_zps_code($contact_identifier_id, $old) {
 	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-		$note['note'] = sprintf('ZPS-Code %s würde auf inaktiv gesetzt.', $old);
+		$note['note'] = wrap_text('ZPS-Code %s würde auf inaktiv gesetzt.', ['values' => [$old]]);
 		return $note;
 	}
 	$line = [
@@ -304,10 +301,10 @@ function mod_ratings_make_personupdate_remove_zps_code($contact_identifier_id, $
 	];
 	$result = zzform_update('contacts-identifiers', $line);
 	if (is_null($result)) {
-		$note['note'] = 'ZPS-Code konnte nicht inaktiviert werden.';
+		$note['note'] = wrap_text('ZPS-Code %s konnte nicht inaktiviert werden.', ['values' => [$old]]);
 		$note['error'] = true;
 	} else {
-		$note['note'] = 'ZPS-Code auf inaktiv gesetzt.';
+		$note['note'] = wrap_text('ZPS-Code %s auf inaktiv gesetzt.', ['values' => [$old]]);
 	}
 	return $note;
 }
@@ -354,7 +351,7 @@ function mod_ratings_make_personupdate_add_zps_code($new, $contact_id) {
 			'identifier' => $new,
 			'current' => 'yes'
 		];
-		$result = zzform_update('contacts-identifiers', $line);
+		$result = zzform_insert('contacts-identifiers', $line);
 	}
 	if (is_null($result)) {
 		$note['note'] = sprintf('ZPS-Code %s konnte nicht ergänzt werden.', $new);
@@ -474,7 +471,7 @@ function mod_ratings_make_personupdate_change_identifier($contact_id, $old) {
 	];
 	$contact_id = zzform_update('contacts', $line);
 	if (is_null($contact_id)) {
-		$note['note'] = 'Kennung konnte nicht aktualisiert werden.');
+		$note['note'] = 'Kennung konnte nicht aktualisiert werden.';
 		$note['error'] = true;
 	} else {
 		$sql = 'SELECT identifier FROM contacts WHERE contact_id = %d';
