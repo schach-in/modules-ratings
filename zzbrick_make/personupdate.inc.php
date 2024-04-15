@@ -357,7 +357,7 @@ function mod_ratings_make_personupdate_add_zps_code($new, $contact_id) {
 		$note['note'] = sprintf('ZPS-Code %s konnte nicht ergänzt werden.', $new);
 		$note['error'] = true;
 	} else {
-		$note['note'] = ' ZPS-Code ergänzt.';
+		$note['note'] = wrap_text('ZPS-Code %s ergänzt.', ['values' => [$new]]);
 	}
 	return $note;
 }
@@ -467,9 +467,10 @@ function mod_ratings_make_personupdate_change_identifier($contact_id, $old) {
 		return $note;
 	}
 	$line = [
-		'contact_id' => $contact_id
+		'contact_id' => $contact_id,
+		'change_identifier' => 'yes'
 	];
-	$contact_id = zzform_update('contacts', $line);
+	$contact_id = zzform_update('forms/persons', $line);
 	if (is_null($contact_id)) {
 		$note['note'] = 'Kennung konnte nicht aktualisiert werden.';
 		$note['error'] = true;
