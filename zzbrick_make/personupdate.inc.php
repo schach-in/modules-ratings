@@ -478,7 +478,8 @@ function mod_ratings_make_personupdate_change_identifier($contact_id, $old) {
 		$sql = 'SELECT identifier FROM contacts WHERE contact_id = %d';
 		$sql = sprintf($sql, $contact_id);
 		$new = wrap_db_fetch($sql, '', 'single value');
-		$note['note'] = sprintf('Kennung wurde von %s auf %s aktualisiert.', $old, $new);
+		if ($new)
+			$note['note'] = sprintf('Kennung wurde von %s auf %s aktualisiert.', $old, $new);
 	}
 	return $note;
 }
