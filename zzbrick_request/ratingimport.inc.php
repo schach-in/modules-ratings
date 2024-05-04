@@ -10,7 +10,7 @@
  * @author Jacob Roggon
  * @author Gustaf Mossakowski <gustaf@koenige.org>
  * @copyright Copyright © 2012 Jacob Roggon
- * @copyright Copyright © 2013-2014, 2016-2017, 2019, 2021-2023 Gustaf Mossakowski
+ * @copyright Copyright © 2013-2014, 2016-2017, 2019, 2021-2024 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
@@ -25,23 +25,8 @@ function mod_ratings_ratingimport() {
 	$index = 0;
 	$data = [];
 	foreach (array_keys($downloads) as $rating) {
-		list($status, $headers, $content)
-			= wrap_get_protected_url('/_jobs/ratings/download/'.$rating, [], 'POST', [], wrap_setting('robot_username'));
-		if ($status === 200) {
-			$data[$index] = json_decode($content, true);
-		} elseif ($status === 403) {
-			$data[$index]['rating'] = $rating;
-			$data[$index]['path'] = strtolower($rating);
-			$data[$index]['please_wait'] = true;
-			$data[$index]['date'] = '';
-		} else {
-			$data[$index]['rating'] = $rating;
-			$data[$index]['path'] = strtolower($rating);
-			$data[$index]['not_found'] = true;
-			$data[$index]['date'] = '';
-		}
-		$data[$index]['stand'] = !empty(wrap_setting('ratings_status['.$rating.']'))
-			? wrap_setting('ratings_status['.$rating.']') : '';
+		$data[$index] = mod_ratings_ratingimport_download($rating);
+		$data[$index]['stand'] = wrap_setting('ratings_status['.$rating.']') ?? '';
 		if ($data[$index]['stand'] === $data[$index]['date']) {
 			$data[$index]['aktueller_stand'] = true;
 		} elseif ($data[$index]['stand'] > $data[$index]['date']) {
@@ -70,4 +55,28 @@ function mod_ratings_ratingimport() {
 	}
 	$page['text'] = wrap_template('ratingimport', $data);
 	return $page;
+}
+
+/**
+ * download ratinf file
+ *
+ * @param string $rating
+ * @return array
+ */
+function mod_ratings_ratingimport_download($rating) {
+	list($status, $headers, $content)
+		= wrap_get_protected_url('/_jobs/ratings/download/'.$rating, [], 'POST', [], wrap_setting('robot_username'));
+	if ($status === 200) return json_decode($content, true);
+
+	$line = [
+		'rating' => $rating,
+		'path' => strtolower($rating),
+		'date' => ''
+	];
+	if ($status === 403) {
+		$line['please_wait'] = true;
+		return $line;
+	}
+	$line['not_found'] = true;
+	return $line;
 }
