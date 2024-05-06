@@ -167,9 +167,9 @@ function mod_ratings_make_personupdate() {
 	$last_note = false;
 	foreach ($notes as $index => $note) {
 		// remove duplicate notes
-		if ($last_note === $note['note'])
+		if (isset($note['note']) AND $last_note === $note['note'])
 			unset($notes[$index]);
-		$last_note = $note['note'];
+		$last_note = $note['note'] ?? '';
 	}
 	
 	if ($_SERVER['REQUEST_METHOD'] !== 'POST')
@@ -462,6 +462,7 @@ function mod_ratings_make_personupdate_delete($contact_id) {
  * @return array
  */
 function mod_ratings_make_personupdate_change_identifier($contact_id, $old) {
+	$note = [];
 	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 		$note['note'] = sprintf('Kennung %s würde aktualisiert.', $old);
 		return $note;
