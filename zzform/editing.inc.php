@@ -179,3 +179,117 @@ function mf_ratings_player_search_fide($data) {
 	unset($player['player']);
 	return $player;
 }
+
+/**
+ * add person from dwz_spieler to contacts/persons table
+ *
+ * @param array $player
+ * @return int $contact_id
+ */
+function mf_ratings_person_add($player) {
+	$identifiers = [];
+	if (!empty($player['Mgl_Nr']))
+		$identifiers['pass_dsb'] = $player['ZPS'].'-'.$player['Mgl_Nr'];
+	if (!empty($player['FIDE_ID']))
+		$identifiers['id_fide'] = $player['FIDE_ID'];
+	if (!empty($player['pkz']))
+		$identifiers['id_dsb'] = $player['pkz'];
+
+	$id_text = [];
+	$contact_ids = [];
+	foreach ($identifiers as $category => $identifier) {
+		$sql = 'SELECT contact_id
+			FROM contacts_identifiers
+			WHERE identifier = "%s"
+			AND identifier_category_id = %d';
+		$sql = sprintf($sql
+			, $identifier
+			, wrap_category_id('identifiers/'.$category)
+		);
+		$id = wrap_db_fetch($sql, '', 'single value');
+		if ($id) $contact_ids[] = $id;
+		$id_text[] = sprintf('%s: %s', $identifier, $category);
+	}
+	if (!$identifiers) {
+		// Keine Kennungen vorhanden, Abgleich Vorname, Nachname, Geburtsdatum
+		$sql = 'SELECT contact_id
+			FROM persons
+			WHERE first_name = "%s" AND last_name = "%s" AND date_of_birth = "%s"';
+		$sql = sprintf($sql, $player['first_name'], $player['last_name'], $player['date_of_birth']);
+		$contact_ids = wrap_db_fetch($sql, 'contact_id', 'single value');
+	}
+	$contact_ids = array_unique($contact_ids);
+	if (count($contact_ids) === 1) {
+		$contact_id = reset($contact_ids);
+		// Geburtsdatum vollständig?
+		wrap_include_files('batch', 'zzform');
+		zzform_update_date($player, 'persons', 'contact_id', 'date_of_birth');
+	} else {
+		// Prüfe auf Abweichungen
+		$old_contact_id = '';
+		foreach ($contact_ids as $contact_id) {
+			if ($old_contact_id AND $contact_id !== $old_contact_id) {
+				wrap_error(sprintf(
+					'Abweichende Kontakt-IDs gefunden. Kontakt-IDs: %s, Kennungen: %s'
+					, implode(', ', $contact_ids)
+					, implode(', ', $id_text)
+				));
+			}
+			$old_contact_id = $contact_id;
+		}
+	}
+
+	if (empty($contact_id)) {
+		wrap_include_files('zzform/batch', 'contacts');
+		$person = [];
+		$person['first_name'] = $player['first_name'];
+		$person['last_name'] = $player['last_name'];
+		$person['date_of_birth'] = $player['date_of_birth'] ?? $player['Geburtsjahr'];
+		$person['sex'] = ($player['Geschlecht'] === 'W') ? 'female' : 'male';
+		$contact_id = mf_contacts_add_person($person);
+	}
+	
+	if ($identifiers)
+		mf_ratings_contacts_identifiers($contact_id, $identifiers);
+	return $contact_id;
+}
+
+/**
+ * add contacts identifiers from dwz_spieler
+ *
+ * @param int $contact_id
+ * @param array $identifiers Liste Kategorie-Kennung = Kennung
+ * @return void
+ */
+function mf_ratings_contacts_identifiers($contact_id, $identifiers) {
+	wrap_include_files('zzbrick_request_get/contactdata', 'contacts');
+	$existing = mf_contacts_identifiers([$contact_id]);
+	$existing = $existing[$contact_id]['identifiers'] ?? [];
+
+	foreach ($existing as $identifier) {
+		if (empty($identifiers[$identifier['path']])) continue;
+		if ($identifiers[$identifier['path']] === $identifier['identifier']) {
+			// Eintrag ist bereits in Datenbank, aktuell oder alt
+			unset($identifiers[$identifier['path']]);
+		} elseif ($identifier['current']) {
+			// Veralteter Eintrag ist in Datenbank
+			$line = [
+				'contact_identifier_id' => $identifier['contact_identifier_id'],
+				'current' => ''
+			];
+			zzform_update('contacts_identifiers', $line, E_USER_ERROR);
+		}
+		// current = false: nix
+	}
+
+	foreach ($identifiers as $path => $identifier) {
+		if (!$identifier) continue;
+		$line = [
+			'contact_id' => $contact_id,
+			'current' => 'yes',
+			'identifier' => $identifier,
+			'identifier_category_id' => wrap_category_id('identifiers/'.$path)
+		];
+		zzform_insert('contacts_identifiers', $line, E_USER_ERROR);
+	}
+}
