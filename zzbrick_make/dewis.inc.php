@@ -36,7 +36,9 @@ function mod_ratings_make_dewis_organisations($params) {
 	
 	$sql = 'SELECT id, club, vkz, parent_id, assessor, last_sync_members, last_update
 		FROM dewis_clubs
+		%s
 		ORDER BY vkz';
+	$sql = sprintf($sql, $params[0] !== '000' ? sprintf('WHERE vkz LIKE "%s%%"', $params[0]) : '');
 	$data = wrap_db_fetch($sql, 'id');
 	$data['top_organisation_identifier'] = $params[0];
 
