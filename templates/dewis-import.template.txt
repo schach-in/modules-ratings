@@ -8,8 +8,16 @@
 # @copyright Copyright © 2024 Gustaf Mossakowski
 # @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
 #
-<table>
+<table class="toplist" id="js-import">
 <tbody>
+<thead>
+<tr class="sortable">
+<th>%%% text club_identifier %%%</th>
+<th>%%% text status %%%</th>
+<th>%%% text url %%%</th>
+<th>%%% text time %%%</th>
+<tr>
+</thead>
 %%% loop start %%%
 <tr>
 <td>%%% item club_identifier %%%</td>
@@ -20,3 +28,12 @@
 %%% loop end %%%
 </tbody>
 </table>
+<script src="%%% setting behaviour_path %%%/vxjs/src/core.js"></script>
+<script src="%%% setting behaviour_path %%%/vxjs/src/widgets/sortable.js"></script>
+<script>
+	var sortTableObject = vxJS.widget.sorTable(document.getElementById('js-import'), {
+		columnFormat: [
+			null, null, null, null
+		]
+	});
+</script>

@@ -10,7 +10,18 @@
 #
 <h2>%%% item top_organisation_identifier %%%</h2>
 
-<table>
+<table class="toplist" id="js-org">
+<thead>
+<tr class="sortable">
+<th>%%% text id %%%</th>
+<th>%%% text Club %%%</th>
+<th>%%% text vkz %%%</th>
+<th>%%% text parent_id %%%</th>
+<th>%%% text assessor %%%</th>
+<th>%%% text last_sync_members %%%</th>
+<th>%%% text last_update %%%</th>
+</tr>
+</thead>
 <tbody>
 %%% loop start %%%
 <tr>
@@ -25,3 +36,12 @@
 %%% loop end %%%
 </tbody>
 </table>
+<script src="%%% setting behaviour_path %%%/vxjs/src/core.js"></script>
+<script src="%%% setting behaviour_path %%%/vxjs/src/widgets/sortable.js"></script>
+<script>
+	var sortTableObject = vxJS.widget.sorTable(document.getElementById('js-org'), {
+		columnFormat: [
+			"float", null, null, "float", null, "float", null, null
+		]
+	});
+</script>

@@ -12,7 +12,29 @@
 
 %%% text Type %%%: %%% item organisationsart %%%
 
-<table>
+<table class="toplist" id="js-members">
+<thead>
+<tr class="sortable">
+<th>%%% text pid %%%</th>
+<th>%%% text surname %%%</th>
+<th>%%% text firstname %%%</th>
+<th>%%% text title %%%</th>
+<th class="number">%%% text No. %%%</th>
+<th>%%% text St. %%%</th>
+<th class="number">%%% text rating %%%</th>
+<th class="number">%%% text In. %%%</th>
+<th>%%% text tcode %%%</th>
+<th>%%% text finishedOn %%%</th>
+<th>%%% text S. %%%</th>
+<th class="number">%%% text Birth %%%</th>
+<th class="number">%%% text FIDE ID %%%</th>
+<th class="number">%%% text Elo %%%</th>
+<th>%%% text Title %%%</th>
+<th>%%% text club %%%</th>
+<th>%%% text Updated %%%</th>
+<th>%%% text status %%%</th>
+</tr>
+</thead>
 <tbody>
 %%% loop start %%%
 <tr>
@@ -20,16 +42,16 @@
 <td>%%% item surname %%%</td>
 <td>%%% item firstname %%%</td>
 <td>%%% item title %%%</td>
-<td>%%% item membership %%%</td>
+<td class="number">%%% item membership %%%</td>
 <td>%%% item state %%%</td>
-<td>%%% item rating %%%</td>
-<td>%%% item ratingIndex %%%</td>
+<td class="number">%%% item rating %%%</td>
+<td class="number">%%% item ratingIndex %%%</td>
 <td>%%% item tcode %%%</td>
 <td>%%% item finishedOn %%%</td>
 <td>%%% item gender %%%</td>
-<td>%%% item yearOfBirth %%%</td>
-<td>%%% item idfide %%%</td>
-<td>%%% item elo %%%</td>
+<td class="number">%%% item yearOfBirth %%%</td>
+<td class="number">%%% item idfide %%%</td>
+<td class="number">%%% item elo %%%</td>
 <td>%%% item fideTitle %%%</td>
 <td>%%% item club_id %%%</td>
 <td>%%% item last_update %%%</td>
@@ -38,3 +60,12 @@
 %%% loop end %%%
 </tbody>
 </table>
+<script src="%%% setting behaviour_path %%%/vxjs/src/core.js"></script>
+<script src="%%% setting behaviour_path %%%/vxjs/src/widgets/sortable.js"></script>
+<script>
+	var sortTableObject = vxJS.widget.sorTable(document.getElementById('js-members'), {
+		columnFormat: [
+			'float', null, null, null, 'float', null, 'float', 'float', null, null, null, 'float', 'float', 'float', null, 'float', null, null 
+		]
+	});
+</script>
