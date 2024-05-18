@@ -1,0 +1,27 @@
+# ratings module
+# HTML output: organisations in DeWIS
+#
+# Part of »Zugzwang Project«
+# https://www.zugzwang.org/modules/ratings
+#
+# @author Gustaf Mossakowski <gustaf@koenige.org>
+# @copyright Copyright © 2024 Gustaf Mossakowski
+# @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
+#
+<h2>%%% item top_organisation_identifier %%%</h2>
+
+<table>
+<tbody>
+%%% loop start %%%
+<tr>
+<td>%%% item id %%%</td>
+<td>%%% item club %%%</td>
+<td>%%% item vkz %%%</td>
+<td>%%% item parent_id %%%</td>
+<td>%%% item assessor %%%</td>
+<td>%%% item last_sync_members %%%</td>
+<td>%%% item last_update %%%</td>
+</tr>
+%%% loop end %%%
+</tbody>
+</table>

@@ -1,0 +1,34 @@
+# ratings module
+# HTML output: import status for DeWIS
+#
+# Part of »Zugzwang Project«
+# https://www.zugzwang.org/modules/ratings
+#
+# @author Gustaf Mossakowski <gustaf@koenige.org>
+# @copyright Copyright © 2024 Gustaf Mossakowski
+# @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
+#
+<table>
+<thead>
+<tr>
+<td>%%% text ZPS %%%</td>
+<td>%%% text Mgl_Nr %%%</td>
+<td>%%% text DWZ %%%</td>
+<td>%%% text DWZ_Index %%%</td>
+<td>%%% text rating %%%</td>
+<td>%%% text ratingIndex %%%</td>
+</tr>
+</thead>
+<tbody>
+%%% loop start %%%
+<tr>
+<td>%%% item ZPS %%%</td>
+<td>%%% item Mgl_Nr %%%</td>
+<td>%%% item DWZ %%%</td>
+<td>%%% item DWZ_Index %%%</td>
+<td>%%% item rating %%%</td>
+<td>%%% item ratingIndex %%%</td>
+</tr>
+%%% loop end %%%
+</tbody>
+</table>

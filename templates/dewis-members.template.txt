@@ -1,0 +1,40 @@
+# ratings module
+# HTML output: organisations in DeWIS
+#
+# Part of »Zugzwang Project«
+# https://www.zugzwang.org/modules/ratings
+#
+# @author Gustaf Mossakowski <gustaf@koenige.org>
+# @copyright Copyright © 2024 Gustaf Mossakowski
+# @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
+#
+<h2>%%% item vkz %%% – %%% item name %%%</h2>
+
+%%% text Type %%%: %%% item organisationsart %%%
+
+<table>
+<tbody>
+%%% loop start %%%
+<tr>
+<td>%%% item pid %%%</td>
+<td>%%% item surname %%%</td>
+<td>%%% item firstname %%%</td>
+<td>%%% item title %%%</td>
+<td>%%% item membership %%%</td>
+<td>%%% item state %%%</td>
+<td>%%% item rating %%%</td>
+<td>%%% item ratingIndex %%%</td>
+<td>%%% item tcode %%%</td>
+<td>%%% item finishedOn %%%</td>
+<td>%%% item gender %%%</td>
+<td>%%% item yearOfBirth %%%</td>
+<td>%%% item idfide %%%</td>
+<td>%%% item elo %%%</td>
+<td>%%% item fideTitle %%%</td>
+<td>%%% item club_id %%%</td>
+<td>%%% item last_update %%%</td>
+<td>%%% item status %%%</td>
+</tr>
+%%% loop end %%%
+</tbody>
+</table>
