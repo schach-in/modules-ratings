@@ -127,7 +127,7 @@ function mf_ratings_dewis_save_members($data) {
 
 	$sql = 'SELECT pid, surname, firstname, title,
 		membership, state, rating, ratingIndex, tcode, finishedOn, gender, yearOfBirth,
-		idfide, elo, fideTitle
+		idfide, elo, fideTitle, club_id, last_update
 		FROM dewis_members WHERE club_id = %d';
 	$sql = sprintf($sql, $club_id);
 	$members = wrap_db_fetch($sql, 'membership');
@@ -138,12 +138,15 @@ function mf_ratings_dewis_save_members($data) {
 	$deletes = [];
 	foreach ($data['members'] as $member) {
 		$member = (array) $member;
-		if (in_array($member, $members)) {
-			$no_update[] = $member['membership'];
-			$members[$member['membership']]['status'] = 'no_update';
-		} elseif (array_key_exists($member['membership'], $members)) {
-			$updates[] = $member;
-			$members[$member['membership']]['status'] = 'update';
+		if (array_key_exists($member['membership'], $members)) {
+			$diff = array_diff($member, $members[$member['membership']]);
+			if (!$diff) {
+				$no_update[] = $member['membership'];
+				$members[$member['membership']]['status'] = 'no_update';
+			} else {
+				$updates[] = $member;
+				$members[$member['membership']]['status'] = 'update';
+			}
 		} else {
 			$inserts[] = $member;
 			$members[$member['membership']] = $member;
