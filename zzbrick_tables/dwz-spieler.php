@@ -16,11 +16,9 @@
 $zz['title'] = 'DWZ Spieler';
 $zz['table'] = 'dwz_spieler';
 
-$zz['fields'][4]['field_name'] = 'Spielername';
+$zz['fields'][5]['field_name'] = 'PID';
 
-$zz['fields'][5]['field_name'] = 'Spielername_G';
-$zz['fields'][5]['hide_in_list'] = true;
-$zz['fields'][5]['exclude_from_search'] = true;
+$zz['fields'][4]['field_name'] = 'Spielername';
 
 $zz['fields'][16]['field_name'] = 'Verein';
 $zz['fields'][16]['type'] = 'display';

@@ -12,25 +12,25 @@
 
 -- dwz_spieler --
 CREATE TABLE `dwz_spieler` (
-  `ZPS` varchar(5) NOT NULL DEFAULT '',
-  `Mgl_Nr` varchar(4) NOT NULL DEFAULT '',
-  `Status` char(1) DEFAULT NULL,
-  `Spielername` varchar(100) NOT NULL DEFAULT '',
-  `Spielername_G` varchar(100) NOT NULL DEFAULT '',
-  `Geschlecht` char(1) DEFAULT NULL,
-  `Spielberechtigung` char(1) DEFAULT '',
-  `Geburtsjahr` year NOT NULL DEFAULT '0000',
+  `PID` int unsigned NOT NULL,
+  `ZPS` varchar(5) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `Mgl_Nr` smallint NOT NULL,
+  `Status` char(1) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
+  `Spielername` varchar(60) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
+  `Geschlecht` char(1) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
+  `Spielberechtigung` char(1) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
+  `Geburtsjahr` year DEFAULT NULL,
   `Letzte_Auswertung` mediumint unsigned DEFAULT NULL,
   `DWZ` smallint unsigned DEFAULT NULL,
   `DWZ_Index` smallint unsigned DEFAULT NULL,
   `FIDE_Elo` smallint unsigned DEFAULT NULL,
-  `FIDE_Titel` char(3) DEFAULT NULL,
+  `FIDE_Titel` char(3) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
   `FIDE_ID` int unsigned DEFAULT NULL,
-  `FIDE_Land` char(3) DEFAULT NULL,
+  `FIDE_Land` char(3) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
   PRIMARY KEY (`ZPS`,`Mgl_Nr`),
   KEY `FIDE_ID` (`FIDE_ID`),
   KEY `Spielername` (`Spielername`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
 -- dwz_verbaende --
