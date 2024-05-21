@@ -8,7 +8,7 @@
  * https://www.zugzwang.org/modules/clubs
  *
  * @author Gustaf Mossakowski <gustaf@koenige.org>
- * @copyright Copyright © 2013-2017, 2020, 2022-2023 Gustaf Mossakowski
+ * @copyright Copyright © 2013-2017, 2020, 2022-2024 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
@@ -28,6 +28,7 @@ $zz['fields'][16]['display_field'] = 'Vereinname';
 $zz['fields'][16]['character_set'] = 'utf8';
 
 $zz['fields'][1]['field_name'] = 'ZPS';
+$zz['fields'][1]['explanation'] = 'ZPS-Nummer des Vereins';
 
 $zz['fields'][2]['title'] = 'Mitgliedsnummer';
 $zz['fields'][2]['title_tab'] = 'Mitgl.';
@@ -37,15 +38,25 @@ $zz['fields'][2]['link'] = [
 	'area' => 'ratings_dsb_profile',
 	'fields' => ['ZPS', 'Mgl_Nr']
 ];
+$zz['fields'][1]['explanation'] = 'Mitgliedsnummer im Verein';
 
 $zz['fields'][3]['title_tab'] = 'St';
 $zz['fields'][3]['field_name'] = 'Status';
+$zz['fields'][3]['type'] = 'select';
+$zz['fields'][3]['enum'] = ['A', 'P'];
+$zz['fields'][3]['enum_abbr'] = ['Aktiv', 'Passiv'];
 
 $zz['fields'][6]['title_tab'] = 'G.';
 $zz['fields'][6]['field_name'] = 'Geschlecht';
+$zz['fields'][6]['type'] = 'select';
+$zz['fields'][6]['enum'] = ['M', 'W'];
+$zz['fields'][6]['enum_abbr'] = ['männlich', 'weiblich'];
 
 $zz['fields'][7]['title_tab'] = 'Sb.';
 $zz['fields'][7]['field_name'] = 'Spielberechtigung';
+$zz['fields'][7]['type'] = 'select';
+$zz['fields'][7]['enum'] = ['D', 'G', 'E', 'A', '-', 'J'];
+$zz['fields'][7]['enum_abbr'] = ['Deutscher', 'Gleichgestellt', 'EU-Ausländer', 'Ausländer', '-', 'J'];
 
 $zz['fields'][8]['title_tab'] = 'Geb.';
 $zz['fields'][8]['field_name'] = 'Geburtsjahr';
@@ -54,6 +65,7 @@ $zz['fields'][8]['type'] = 'number';
 $zz['fields'][9]['title_tab'] = 'DWZ Ausw.';
 $zz['fields'][9]['field_name'] = 'Letzte_Auswertung';
 $zz['fields'][9]['type'] = 'number';
+$zz['fields'][9]['explanation'] = 'Woche der letzten Turnierauswertung';
 
 $zz['fields'][10]['field_name'] = 'DWZ';
 $zz['fields'][10]['type'] = 'number';
