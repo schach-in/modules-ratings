@@ -232,7 +232,7 @@ function mf_ratings_dewis_save_members($data) {
  *
  */
 function mod_ratings_make_dewis_import() {
-	wrap_include_files('syndication', 'zzwrap');
+	wrap_include('syndication', 'zzwrap');
 	$sql = 'SELECT * FROM dewis_clubs
 		WHERE LENGTH(vkz) = 5
 		AND ISNULL(last_sync_members)

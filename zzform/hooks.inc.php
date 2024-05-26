@@ -46,7 +46,7 @@ function mf_ratings_person_hook($ops) {
 				$ops['record_new'][0]['contact_id'], $zps_aus_db), E_USER_ERROR
 			);
 	}
-	wrap_include_files('zzform/editing', 'ratings');
+	wrap_include('zzform/editing', 'ratings');
 	$spieler = mf_ratings_player_data_dsb($ops['record_new'][0]['contact_id']);
 	$contact_id = mf_ratings_person_add($spieler);
 	

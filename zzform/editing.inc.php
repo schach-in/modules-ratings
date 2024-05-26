@@ -222,7 +222,7 @@ function mf_ratings_person_add($player) {
 	if (count($contact_ids) === 1) {
 		$contact_id = reset($contact_ids);
 		// Geburtsdatum vollständig?
-		wrap_include_files('batch', 'zzform');
+		wrap_include('batch', 'zzform');
 		zzform_update_date($player, 'persons', 'contact_id', 'date_of_birth');
 	} else {
 		// Prüfe auf Abweichungen
@@ -240,7 +240,7 @@ function mf_ratings_person_add($player) {
 	}
 
 	if (empty($contact_id)) {
-		wrap_include_files('zzform/batch', 'contacts');
+		wrap_include('zzform/batch', 'contacts');
 		$person = [];
 		$person['first_name'] = $player['first_name'];
 		$person['last_name'] = $player['last_name'];
@@ -262,7 +262,7 @@ function mf_ratings_person_add($player) {
  * @return void
  */
 function mf_ratings_contacts_identifiers($contact_id, $identifiers) {
-	wrap_include_files('zzbrick_request_get/contactdata', 'contacts');
+	wrap_include('zzbrick_request_get/contactdata', 'contacts');
 	$existing = mf_contacts_identifiers([$contact_id]);
 	$existing = $existing[$contact_id]['identifiers'] ?? [];
 
