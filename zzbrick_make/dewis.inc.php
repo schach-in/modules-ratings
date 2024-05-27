@@ -164,8 +164,10 @@ function mf_ratings_dewis_save_members($data) {
 	foreach ($updates as $member) {
 		$diff = array_diff($member, $members[$member['membership']]);
 		$fields = [];
-		foreach ($diff as $field_name => $value)
-			$fields[] = sprintf('`%s` = "%s"', $field_name, $value);
+		foreach ($diff as $field_name => $value) {
+			if ($value) $fields[] = sprintf('`%s` = "%s"', $field_name, $value);
+			else $fields[] = sprintf('`%s` = NULL', $field_name);
+		}
 		$sql = 'UPDATE dewis_members
 			SET %s, last_update = NOW()
 			WHERE club_id = %d
@@ -178,25 +180,25 @@ function mf_ratings_dewis_save_members($data) {
 		membership, state, rating, ratingIndex, tcode, finishedOn, gender, yearOfBirth,
 		idfide, elo, fideTitle, club_id, last_update)
 		VALUES 
-		(%s, "%s", "%s", "%s", "%s", "%s", "%s", "%s",
-		 "%s", "%s", "%s", "%s", "%s", "%s", "%s", %d, NOW())';
+		(%s, "%s", "%s", %s, "%s", %s, %s, %s,
+		 %s, %s, %s, %s, %s, %s, %s, %d, NOW())';
 	foreach ($inserts as $member) {
 		$sql = sprintf($template
 			, $member['pid']
 			, wrap_db_escape($member['surname'])
 			, wrap_db_escape($member['firstname'])
-			, $member['title']
+			, mf_ratings_nullstring($member['title'])
 			, $member['membership']
-			, $member['state']
-			, $member['rating']
-			, $member['ratingIndex']
-			, $member['tcode']
-			, $member['finishedOn']
-			, $member['gender']
-			, $member['yearOfBirth']
-			, $member['idfide']
-			, $member['elo']
-			, $member['fideTitle']
+			, mf_ratings_nullstring($member['state'])
+			, mf_ratings_nullstring($member['rating'])
+			, mf_ratings_nullstring($member['ratingIndex'])
+			, mf_ratings_nullstring($member['tcode'])
+			, mf_ratings_nullstring($member['finishedOn'])
+			, mf_ratings_nullstring($member['gender'])
+			, mf_ratings_nullstring($member['yearOfBirth'])
+			, mf_ratings_nullstring($member['idfide'])
+			, mf_ratings_nullstring($member['elo'])
+			, mf_ratings_nullstring($member['fideTitle'])
 			, $club_id
 		);
 		wrap_db_query($sql);
@@ -221,6 +223,17 @@ function mf_ratings_dewis_save_members($data) {
 
 	$page['text'] = wrap_template('dewis-members', $members);
 	return $page;
+}
+
+/**
+ * return NULL or string in parentheses
+ *
+ * @param string $string
+ * @return string
+ */
+function mf_ratings_nullstring($string) {
+	if (!$string) return 'NULL';
+	return sprintf ('"%s"', $string);
 }
 
 /**
