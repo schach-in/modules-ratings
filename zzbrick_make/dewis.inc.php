@@ -313,18 +313,20 @@ function mod_ratings_make_dewis_update() {
  */
 function mf_ratings_dewis_connect() {
 	ini_set('default_socket_timeout', wrap_setting('ratings_dewis_socket_timeout'));
-	$client = new SOAPClient(wrap_setting('ratings_dewis_url'));
+	if (wrap_setting('ratings_dewis_ssl')) {
+		$client = new SOAPClient(wrap_setting('ratings_dewis_url'));
+	} else {
+		$context = stream_context_create([
+			'ssl' => [
+				// set some SSL/TLS specific options
+				'verify_peer' => false,
+				'verify_peer_name' => false,
+				'allow_self_signed' => true
+			]
+		]);
+		$client = new SOAPClient(wrap_setting('ratings_dewis_url'), [
+			'stream_context' => $context
+		]);
+	}
 	return $client;
-
-	$context = stream_context_create([
-		'ssl' => [
-			// set some SSL/TLS specific options
-			'verify_peer' => false,
-			'verify_peer_name' => false,
-			'allow_self_signed' => true
-		]
-	]);
-	$client = new SOAPClient(wrap_setting('ratings_dewis_url'), [
-		'stream_context' => $context
-	]);
 }
