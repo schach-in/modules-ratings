@@ -10,6 +10,22 @@
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
+
+-- dewis_clubs --
+CREATE TABLE `dewis_clubs` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `club` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `vkz` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `parent_id` int DEFAULT NULL,
+  `assessor_id` int DEFAULT NULL,
+  `last_sync_members` datetime DEFAULT NULL,
+  `last_update` timestamp NULL DEFAULT NULL,
+  UNIQUE KEY `id` (`id`),
+  KEY `parent_id` (`parent_id`),
+  KEY `assessor_id` (`assessor_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
 -- dwz_spieler --
 CREATE TABLE `dwz_spieler` (
   `PID` int unsigned NOT NULL,

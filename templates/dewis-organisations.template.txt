@@ -17,7 +17,7 @@
 <th>%%% text Club %%%</th>
 <th>%%% text vkz %%%</th>
 <th>%%% text parent_id %%%</th>
-<th>%%% text assessor %%%</th>
+<th>%%% text assessor_id %%%</th>
 <th>%%% text last_sync_members %%%</th>
 <th>%%% text last_update %%%</th>
 </tr>
@@ -29,7 +29,7 @@
 <td>%%% item club %%%</td>
 <td>%%% item vkz %%%</td>
 <td>%%% item parent_id %%%</td>
-<td>%%% item assessor %%%</td>
+<td>%%% item assessor_id %%%</td>
 <td>%%% item last_sync_members %%%</td>
 <td>%%% item last_update %%%</td>
 </tr>

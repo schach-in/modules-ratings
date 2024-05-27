@@ -34,7 +34,7 @@ function mod_ratings_make_dewis_organisations($params) {
 		mf_ratings_dewis_organisations_c00();
 	mf_ratings_dewis_save_organisations($clubs);
 	
-	$sql = 'SELECT id, club, vkz, parent_id, assessor, last_sync_members, last_update
+	$sql = 'SELECT id, club, vkz, parent_id, assessor_id, last_sync_members, last_update
 		FROM dewis_clubs
 		%s
 		ORDER BY vkz';
@@ -57,7 +57,7 @@ function mf_ratings_dewis_organisation($line) {
 		'club' => $line['club'],
 		'vkz' => $line['vkz'],
 		'parent_id' => $line['p'],
-		'assessor' => $line['assessor'] ?? ''
+		'assessor_id' => $line['assessor'] ?? NULL
 	];
 	if (!empty($line['children'])) {
 		foreach ($line['children'] as $child) {
@@ -101,18 +101,20 @@ function mf_ratings_dewis_save_organisations($clubs) {
 	$sql = 'SELECT * FROM dewis_clubs';
 	$data = wrap_db_fetch($sql, 'id');
 	
-	$template = 'INSERT INTO `dewis_clubs` (id, club, vkz, parent_id, assessor, last_update) VALUES (%s, "%s", "%s", "%s", "%s", NOW())';
+	$template = 'INSERT INTO `dewis_clubs` (id, club, vkz, parent_id, assessor_id, last_update) VALUES (%s, "%s", "%s", %s, %s, NOW())';
 	foreach ($clubs as $index => $club) {
+		if (!$club['parent_id']) $club['parent_id'] = 'NULL';
+		if (!$club['assessor_id']) $club['assessor_id'] = 'NULL';
 		if (!array_key_exists($club['id'], $data)) {
-			$sql = sprintf($template, $club['id'], wrap_db_escape($club['club']), $club['vkz'], $club['parent_id'], $club['assessor']);
+			$sql = sprintf($template, $club['id'], wrap_db_escape($club['club']), $club['vkz'], $club['parent_id'], $club['assessor_id']);
 			wrap_db_query($sql);
 		} else {
 			foreach ($club as $field_name => $value) {
 				if (!empty($data[$club['id']][$field_name]) AND $data[$club['id']][$field_name] === $value) continue 2;
 			}
-			$sql = 'UPDATE dewis_clubs SET club = "%s", vkz = "%s", parent_id = "%s", assessor = "%s", last_update = NOW()
+			$sql = 'UPDATE dewis_clubs SET club = "%s", vkz = "%s", parent_id = %s, assessor_id = %s, last_update = NOW()
 				WHERE id = %d';
-			$sql = sprintf($sql, wrap_db_escape($club['club']), $club['vkz'], $club['parent_id'], $club['assessor']);
+			$sql = sprintf($sql, wrap_db_escape($club['club']), $club['vkz'], $club['parent_id'], $club['assessor_id']);
 			wrap_db_query($sql);
 		}
 	}
