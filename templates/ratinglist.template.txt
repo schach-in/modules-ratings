@@ -48,6 +48,16 @@
 <td data-label="Rapid&nbsp;" class="number">%%% condition if player_id_fide %%%<a href="%%% path ratings_fide_profile player_id_fide %%%">%%% condition endif %%%%%% item rapid_rating %%%%%% item player_id_fide </a> %%%</td>
 <td data-label="Blitz&nbsp;" class="number">%%% condition if player_id_fide %%%<a href="%%% path ratings_fide_profile player_id_fide %%%">%%% condition endif %%%%%% item blitz_rating %%%%%% item player_id_fide </a> %%%</td>
 </tr>
+%%% loop memberships %%%
+<tr class="memberships">
+<td colspan="3"></td>
+<td>%%% condition if passive %%%<abbr title="passives Mitglied">P</abbr>%%% condition endif %%%</td>
+%%% condition if club_identifier %%%
+<td class="indent club"><a href="/%%% item club_identifier %%%/">%%% item club %%%</a></td>
+<td class="append600 clubcode"><a href="/zahlen/%%% item zps_code %%%/">%%% item zps_code %%%</a></td>
+%%% condition endif %%%
+</tr>
+%%% loop end %%%
 %%% condition endif %%%
 %%% loop end %%%
 </tbody>

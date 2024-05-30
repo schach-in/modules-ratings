@@ -21,7 +21,7 @@
  * @return array
  */
 function mf_ratings_ratinglist($conditions, $limit = 1000) {
-	$sql = 'SELECT Spielername AS spielername, Geschlecht AS geschlecht
+	$sql = 'SELECT PID, Spielername AS spielername, Geschlecht AS geschlecht
 			, Letzte_Auswertung AS letzte_auswertung
 			, DWZ AS dwz, DWZ_Index AS dwz_index
 			, contact as club
@@ -40,7 +40,7 @@ function mf_ratings_ratinglist($conditions, $limit = 1000) {
 	    	AND contacts_identifiers.current = "yes"
 	    LEFT JOIN contacts USING (contact_id)
 	    WHERE %s
-	    ORDER BY DWZ DESC, FIDE_Elo DESC
+	    ORDER BY DWZ DESC, FIDE_Elo DESC, PID, Status
 	    LIMIT 0, %d
 	';
 	$sql = sprintf($sql
@@ -49,12 +49,18 @@ function mf_ratings_ratinglist($conditions, $limit = 1000) {
 		, $limit
 	);
 	$data = wrap_db_fetch($sql, '_dummy_', 'numeric');
+	$players = [];
 	foreach ($data as $index => $line) {
-		$contact = explode(',', $line['spielername']);
-		$contact = array_reverse($contact);
-		$data[$index]['contact'] = implode(' ', $contact);
+		if (array_key_exists($line['PID'], $players)) {
+			$players[$line['PID']]['memberships'][] = $line;
+		} else {
+			$players[$line['PID']] = $line;
+			$contact = explode(',', $line['spielername']);
+			$contact = array_reverse($contact);
+			$players[$line['PID']]['contact'] = implode(' ', $contact);
+		}
 	}
-	return $data;
+	return $players;
 }
 
 /**
