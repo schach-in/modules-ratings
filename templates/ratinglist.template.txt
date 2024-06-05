@@ -36,25 +36,25 @@
 <tr class="%%% loopposition uneven "un" %%%even">
 <td class="index">%%% loopposition counter %%%</td>
 <td class="player">%%% item title %%% %%% item contact %%%</td>
-<td class="append600">%%% item federation %%%</td>
-<td>%%% condition if passive %%%<abbr title="passives Mitglied">P</abbr>%%% condition endif %%%</td>
+<td class="federation">%%% item federation %%%</td>
+<td class="status%%% condition unless club_identifier %%% noclub%%% condition endif %%%">%%% condition if passive %%%<abbr title="passives Mitglied">P</abbr>%%% condition endif %%%</td>
 %%% condition if club_identifier %%%
-<td class="indent club"><a href="/%%% item club_identifier %%%/">%%% item club %%%</a></td>
-<td class="append600 clubcode"><a href="/zahlen/%%% item zps_code %%%/">%%% item zps_code %%%</a></td>
+<td class="club"><a href="/%%% item club_identifier %%%/">%%% item club %%%</a></td>
+<td class="clubcode"><a href="/zahlen/%%% item zps_code %%%/">%%% item zps_code %%%</a></td>
 %%% condition endif %%%
-<td data-label="DWZ&nbsp;" class="indent number">%%% item dwz %%%</td>
-<td class="index inline600">–&nbsp;%%% item dwz_index %%%</td>
-<td data-label="Elo&nbsp;" class="indent number">%%% condition if player_id_fide %%%<a href="%%% path ratings_fide_profile player_id_fide %%%">%%% condition endif %%%%%% item standard_rating %%%%%% item player_id_fide </a> %%%</td>
-<td data-label="Rapid&nbsp;" class="number">%%% condition if player_id_fide %%%<a href="%%% path ratings_fide_profile player_id_fide %%%">%%% condition endif %%%%%% item rapid_rating %%%%%% item player_id_fide </a> %%%</td>
-<td data-label="Blitz&nbsp;" class="number">%%% condition if player_id_fide %%%<a href="%%% path ratings_fide_profile player_id_fide %%%">%%% condition endif %%%%%% item blitz_rating %%%%%% item player_id_fide </a> %%%</td>
+<td data-label="DWZ&nbsp;" class="number rating1">%%% item dwz %%%</td>
+<td class="ratingindex rating2">–&nbsp;%%% item dwz_index %%%</td>
+<td %%% condition if standard_rating %%%data-label="Elo&nbsp;" %%% condition endif %%%class="number rating3">%%% condition if player_id_fide %%%<a href="%%% path ratings_fide_profile player_id_fide %%%">%%% condition endif %%%%%% item standard_rating %%%%%% item player_id_fide </a> %%%</td>
+<td %%% condition if rapid_rating %%%data-label="Rapid&nbsp;" %%% condition endif %%%class="number rating4">%%% condition if player_id_fide %%%<a href="%%% path ratings_fide_profile player_id_fide %%%">%%% condition endif %%%%%% item rapid_rating %%%%%% item player_id_fide </a> %%%</td>
+<td %%% condition if blitz_rating %%%data-label="Blitz&nbsp;" %%% condition endif %%%class="number rating5">%%% condition if player_id_fide %%%<a href="%%% path ratings_fide_profile player_id_fide %%%">%%% condition endif %%%%%% item blitz_rating %%%%%% item player_id_fide </a> %%%</td>
 </tr>
 %%% loop memberships %%%
 <tr class="memberships">
-<td colspan="3"></td>
-<td>%%% condition if passive %%%<abbr title="passives Mitglied">P</abbr>%%% condition endif %%%</td>
+<td colspan="3" class="emptycols"></td>
+<td class="status">%%% condition if passive %%%<abbr title="passives Mitglied">P</abbr>%%% condition endif %%%</td>
 %%% condition if club_identifier %%%
-<td class="indent club"><a href="/%%% item club_identifier %%%/">%%% item club %%%</a></td>
-<td class="append600 clubcode"><a href="/zahlen/%%% item zps_code %%%/">%%% item zps_code %%%</a></td>
+<td class="club"><a href="/%%% item club_identifier %%%/">%%% item club %%%</a></td>
+<td class="clubcode"><a href="/zahlen/%%% item zps_code %%%/">%%% item zps_code %%%</a></td>
 %%% condition endif %%%
 </tr>
 %%% loop end %%%

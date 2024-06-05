@@ -25,7 +25,10 @@
 	.toplist		{ margin: 1em .75em; overflow: auto; }
 }
 
-@media screen and (min-width: 481px) {
+.toplist td.ratingindex
+			{ white-space: nowrap; }
+
+@media screen and (min-width: 541px) {
 	table.toplist td.number, table.toplist th.number
 				{ width: 3em; }
 	table.toplist td.index
@@ -41,12 +44,11 @@
 .searchform
 			{ margin: 2em 0; }
 
-@media screen and (max-width: 480px) {
-	#content table.toplist td.number
-			{ text-align: left; }
-  table.toplist {
-    border: 0;
-  }
+@media screen and (max-width: 540px) {
+	.toplist th, .toplist td, #content td.number
+				{ padding: .15rem .5rem 0 0; }
+	table.toplist
+				{ border: 0; }
 
   table.toplist thead {
     border: none;
@@ -60,32 +62,40 @@
   }
   
   table.toplist tr {
-    display: block;
-    margin-bottom: .625em;
-    clear: left;
+    display: grid; grid-template-columns: 1.5rem 4.5rem auto 1fr 1fr 1fr;
+	padding-bottom: .25em;
     border-top: 1px dotted #000;
   }
+   table.toplist tr.memberships
+   				{ border-top: none; }
+	table.toplist td.emptycols
+				{ display: none; }
   
   table.toplist td {
-    float: left;
+    display: block;
     text-align: right;
   }
-  table.toplist td.inline600
-  		{ display: inline-block; }
   table.toplist td.index
-  		{ width: 1em; }
-  table.toplist td.append600
-  		{ float: left; }
-  table.toplist td.append600::before
-  		{ content: '('; float: none; font-weight: normal; width: auto; }
-  table.toplist td.append600::after
-  		{ content: ')'; }
-  table.toplist td.indent
-  		{ margin-left: 1.75em; clear: left; }
+				{ width: 1rem; grid-row: 1 / 1; }
+  table.toplist td.player
+  				{ grid-column: 2 / 6; text-align: left; grid-row: 1 / 1; }
+  table.toplist td.inline600
+				{ display: inline-block; }
+  table.toplist td.club
+  				{ grid-column: 2 / 5; text-align: left;  grid-row: 2 / 2; }
+  table.toplist td.federation
+  				{ grid-column: 6 / 6; grid-row: 1 / 1; padding-left: 1rem; }
+  table.toplist td.status
+  				{ grid-column: 6 / 6; text-align: left; grid-row: 2 / 2;}
+  table.toplist td.status.noclub
+  				{ grid-row: 1 / 1; }
+  table.toplist td.clubcode
+  				{ grid-column: 6 / 6; grid-row: 2 / 2; padding-left: 1rem; }
+  table.toplist td.rating1
+  				{ grid-column: 2 / 2; }
   
   table.toplist td::before {
     content: attr(data-label);
-    float: left;
     font-style: italic;
     width: auto;
   }
@@ -96,3 +106,19 @@
   table.toplist td.player
   	{ font-weight: bold; }
 }
+
+@media screen and (max-width: 400px) {
+	table.toplist tr
+  				{ grid-template-columns: 1.5rem 4.5rem auto 1fr; }
+	table.toplist td.player, table.toplist td.club
+  				{ grid-column: 2 / 5; }
+	table.toplist td.federation, table.toplist td.status,  table.toplist td.clubcode
+				{ grid-column: 5 / 5; }
+	#content table.toplist td.rating3
+  				{ grid-row: 4 / 4; grid-column: 2 / 3; text-align: left; }
+	table.toplist td.rating4
+  				{ grid-row: 4 / 4; grid-column: 4 / 4; }
+	table.toplist td.rating5
+  				{ grid-row: 4 / 4; grid-column: 5 / 5; }
+}
+
