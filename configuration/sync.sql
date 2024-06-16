@@ -41,10 +41,16 @@ contacts_identifiers[0][identifier_category_id] = /*_ID categories identifiers/p
 -- verbaende_static3 --
 contacts_identifiers[0][current] = 'yes'
 
--- verbaende_field_mother_contact_id --
+-- verbaende_static4 --
+contacts_contacts[0][published] = 'yes';
+
+-- verbaende_static5 --
+contacts_contacts[0][relation_category_id] = /*_ID categories relation/member _*/;
+
+-- verbaende_field_contacts_contacts[0][main_contact_id] --
 SELECT identifier, contact_id FROM contacts_identifiers WHERE identifier IN ('%s') AND current = 'yes';
 
--- verbaende_field_mother_contact_id__implode --
+-- verbaende_field_contacts_contacts[0][main_contact_id]__implode --
 /* ', ' */
 
 
@@ -83,8 +89,15 @@ contacts_identifiers[0][identifier_category_id] = /*_ID categories identifiers/p
 -- vereine_static2 --
 contacts_identifiers[0][current] = 'yes';
 
--- vereine_field_mother_contact_id --
+-- vereine_static3 --
+contacts_contacts[0][published] = 'yes';
+
+-- vereine_static4 --
+contacts_contacts[0][relation_category_id] = /*_ID categories relation/member _*/;
+
+-- vereine_field_contacts_contacts[0][main_contact_id] --
 SELECT identifier, contact_id FROM contacts_identifiers WHERE identifier IN ('%s') AND current = 'yes';
 
--- vereine_field_mother_contact_id__implode --
+-- vereine_field_contacts_contacts[0][main_contact_id]__implode --
 /* ', ' */
+
