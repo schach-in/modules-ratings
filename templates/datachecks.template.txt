@@ -1,0 +1,26 @@
+# ratings module
+# HTML output: data checks of rating data
+#
+# Part of »Zugzwang Project«
+# https://www.zugzwang.org/modules/ratings
+#
+# @author Gustaf Mossakowski <gustaf@koenige.org>
+# @copyright Copyright © 2024 Gustaf Mossakowski
+# @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
+#
+<table class="toplist">
+<tbody>
+<thead>
+<tr>
+<th>%%% text Title %%%</th>
+<th class="number">%%% text Count %%%</th>
+<tr>
+</thead>
+%%% loop start %%%
+<tr>
+<td>%%% condition if key %%%<a href="%%% item key %%%/">%%% condition endif %%%%%% item comment %%%%%% condition if key %%%</a>%%% condition endif %%%</td>
+<td class="number">%%% item count %%%</td>
+</tr>
+%%% loop end %%%
+</tbody>
+</table>

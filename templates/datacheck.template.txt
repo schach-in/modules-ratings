@@ -1,0 +1,40 @@
+# ratings module
+# HTML output: data check of rating data, output of single query
+#
+# Part of »Zugzwang Project«
+# https://www.zugzwang.org/modules/ratings
+#
+# @author Gustaf Mossakowski <gustaf@koenige.org>
+# @copyright Copyright © 2024 Gustaf Mossakowski
+# @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
+#
+%%% condition if no_data %%%
+<p>%%% text No data available. %%%</p>
+
+%%% condition else %%%
+<table class="toplist" id="js-data">
+<thead>
+<tr class="sortable">
+%%% loop head %%%
+<th>%%% item title %%%</th>
+%%% loop end %%%
+</tr>
+</thead>
+<tbody>
+%%% loop body %%%
+<tr class="%%% loopposition uneven "un" %%%even">
+%%% loop fields %%%
+<td>%%% condition if path %%%<a href="%%% item path %%%">%%% condition endif %%%%%% item value %%%%%% condition if path %%%</a>%%% condition endif %%%</td>
+%%% loop end %%%
+</tr>
+%%% loop end %%%
+</tbody>
+</table>
+
+%%% text "%s records total" total_records %%%
+%%% condition endif %%%
+<script src="%%% setting behaviour_path %%%/vxjs/src/core.js"></script>
+<script src="%%% setting behaviour_path %%%/vxjs/src/widgets/sortable.js"></script>
+<script>
+	var sortTableObject = vxJS.widget.sorTable(document.getElementById('js-data'));
+</script>
