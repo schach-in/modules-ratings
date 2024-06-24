@@ -32,7 +32,8 @@ OR (NOT ISNULL(dwz_spieler.FIDE_Titel) AND ISNULL(fide_players.title))
 
 -- ratings_debug_fide_dsb_nation --
 /* Nation of player differs between FIDE and DSB data */
-SELECT PID, ZPS, Mgl_Nr, Spielername, FIDE_Titel, FIDE_ID, FIDE_Land, federation
+SELECT PID, ZPS, Mgl_Nr, Spielername, FIDE_Titel, FIDE_ID
+	, FIDE_Land AS DSB_fed, federation AS FIDE_fed
 FROM dwz_spieler
 LEFT JOIN fide_players
 	ON fide_players.player_id = dwz_spieler.FIDE_ID
