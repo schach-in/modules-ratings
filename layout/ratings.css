@@ -19,7 +19,7 @@
 			{ text-align: right; }
 .toplist thead th
 			{ border-bottom: 1px solid black; }
-.toplist .even
+.toplist tr:nth-child(even)
 			{ background-color: #EEE; }
 @media screen and (max-width: 640px) {
 	.toplist		{ margin: 1em .75em; overflow: auto; }
