@@ -70,7 +70,10 @@ CREATE TABLE `dwz_spieler` (
   `FIDE_Land` char(3) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
   PRIMARY KEY (`ZPS`,`Mgl_Nr`),
   KEY `FIDE_ID` (`FIDE_ID`),
-  KEY `Spielername` (`Spielername`)
+  KEY `Spielername` (`Spielername`),
+  KEY `ZPS` (`ZPS`),
+  KEY `Mgl_Nr` (`Mgl_Nr`),
+  KEY `PID` (`PID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
