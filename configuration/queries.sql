@@ -104,3 +104,21 @@ JOIN dwz_spieler duplicates
 	AND dwz_spieler.Status = "A"
 	AND duplicates.Status = "A"
 	AND dwz_spieler.ZPS != duplicates.ZPS
+
+-- ratings_debug_fide_dsb_change_last_first --
+/* Player’s first and last name are interchanged */
+SELECT DISTINCT PID, Spielername, player_id, player
+FROM dwz_spieler
+LEFT JOIN fide_players
+ON dwz_spieler.fide_id = fide_players.player_id
+WHERE REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(Spielername, ",", ", "), "ä", "ae"), "ü", "ue"), "ß", "ss"), "ö", "oe"), "Ö", "Oe"), "Ä", "Ae"), "Ü", "Ue") != REPLACE(REPLACE(REPLACE(player, ", Dr.", ""), ", Prof. Dr.", ""), ", Prof.", "")
+AND SUBSTRING_INDEX(Spielername, ",", -1) = SUBSTRING_INDEX(player, ", ", 1)
+
+-- ratings_debug_fide_dsb_change_name --
+/* Player’s name is different */
+SELECT DISTINCT PID, Spielername, FIDE_ID, player
+FROM dwz_spieler
+LEFT JOIN fide_players
+ON dwz_spieler.fide_id = fide_players.player_id
+WHERE REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(Spielername, ",", ", "), "ä", "ae"), "ü", "ue"), "ß", "ss"), "ö", "oe"), "Ö", "Oe"), "Ä", "Ae"), "Ü", "Ue") != REPLACE(REPLACE(REPLACE(player, ", Dr.", ""), ", Prof. Dr.", ""), ", Prof.", "")
+AND SUBSTRING_INDEX(Spielername, ",", -1) != SUBSTRING_INDEX(player, ", ", 1)
