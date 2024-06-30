@@ -36,21 +36,21 @@ function mf_ratings_ratinglist($conditions, $limit = 1000) {
 	    	ON dwz_spieler.fide_id = fide_players.player_id
 	    LEFT JOIN contacts_identifiers
 	    	ON contacts_identifiers.identifier = dwz_spieler.ZPS
-	    	AND contacts_identifiers.identifier_category_id = %d
+	    	AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
 	    	AND contacts_identifiers.current = "yes"
 	    LEFT JOIN contacts USING (contact_id)
 	    WHERE %s
-	    ORDER BY DWZ DESC, FIDE_Elo DESC, PID, Status
+	    ORDER BY IFNULL(DWZ, FIDE_Elo) DESC, FIDE_Elo DESC, PID, Status
 	    LIMIT 0, %d
 	';
 	$sql = sprintf($sql
-		, wrap_category_id('identifiers/pass_dsb')
 		, $conditions ? implode(' AND ', $conditions) : ''
 		, $limit
 	);
 	$data = wrap_db_fetch($sql, '_dummy_', 'numeric');
 	$players = [];
 	foreach ($data as $index => $line) {
+		$line = mf_ratings_fidetitle($line);
 		if (array_key_exists($line['PID'], $players)) {
 			$players[$line['PID']]['memberships'][] = $line;
 		} else {

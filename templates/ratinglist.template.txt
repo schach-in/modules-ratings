@@ -35,7 +35,7 @@
 %%% condition if dwz | standard_rating | rapid_rating | blitz_rating %%%
 <tr class="%%% loopposition uneven "un" %%%even">
 <td class="index">%%% loopposition counter %%%</td>
-<td class="player">%%% item title %%% %%% item contact %%%</td>
+<td class="player">%%% condition if fide_title %%%<abbr title="%%% item fide_title_long %%%">%%% item fide_title %%%</abbr> %%% condition endif %%%%%% item contact %%%</td>
 <td class="federation">%%% item federation %%%</td>
 <td class="status%%% condition unless club_identifier %%% noclub%%% condition endif %%%">%%% condition if passive %%%<abbr title="passives Mitglied">P</abbr>%%% condition endif %%%</td>
 %%% condition if club_identifier %%%
