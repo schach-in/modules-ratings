@@ -18,7 +18,7 @@ FROM dwz_spieler
 LEFT JOIN fide_players
 	ON fide_players.player_id = dwz_spieler.FIDE_ID
 WHERE IF(sex = "F", "W", "M") != Geschlecht
-AND NOT ISNULL(sex)
+AND NOT ISNULL(sex);
 
 -- ratings_debug_fide_dsb_title --
 /* Title of player differs between FIDE and DSB data */
@@ -28,7 +28,7 @@ LEFT JOIN fide_players
 	ON fide_players.player_id = dwz_spieler.FIDE_ID
 WHERE dwz_spieler.FIDE_Titel != fide_players.title
 OR (ISNULL(dwz_spieler.FIDE_Titel) AND NOT ISNULL(fide_players.title))
-OR (NOT ISNULL(dwz_spieler.FIDE_Titel) AND ISNULL(fide_players.title))
+OR (NOT ISNULL(dwz_spieler.FIDE_Titel) AND ISNULL(fide_players.title));
 
 -- ratings_debug_fide_dsb_nation --
 /* Nation of player differs between FIDE and DSB data */
@@ -37,7 +37,7 @@ SELECT PID, ZPS, Mgl_Nr, Spielername, FIDE_Titel, FIDE_ID
 FROM dwz_spieler
 LEFT JOIN fide_players
 	ON fide_players.player_id = dwz_spieler.FIDE_ID
-WHERE dwz_spieler.FIDE_Land != fide_players.federation
+WHERE dwz_spieler.FIDE_Land != fide_players.federation;
 
 -- ratings_debug_fide_dsb_elo_missing --
 /* Player has FIDE Elo which is missing in DSB database */
@@ -45,7 +45,7 @@ SELECT DISTINCT PID, Spielername, FIDE_Elo, FIDE_Titel, FIDE_ID, FIDE_Land, stan
 FROM dwz_spieler
 LEFT JOIN fide_players
 	ON fide_players.player_id = dwz_spieler.FIDE_ID
-WHERE ISNULL(dwz_spieler.FIDE_Elo) AND NOT ISNULL(fide_players.standard_rating)
+WHERE ISNULL(dwz_spieler.FIDE_Elo) AND NOT ISNULL(fide_players.standard_rating);
 
 -- ratings_debug_fide_dsb_elo_extra --
 /* Player has no FIDE Elo which but there is a rating in the DSB database */
@@ -53,7 +53,7 @@ SELECT DISTINCT PID, Spielername, FIDE_Elo, FIDE_Titel, FIDE_ID, FIDE_Land, stan
 FROM dwz_spieler
 LEFT JOIN fide_players
 	ON fide_players.player_id = dwz_spieler.FIDE_ID
-WHERE NOT ISNULL(dwz_spieler.FIDE_Elo) AND ISNULL(fide_players.standard_rating)
+WHERE NOT ISNULL(dwz_spieler.FIDE_Elo) AND ISNULL(fide_players.standard_rating);
 
 -- ratings_debug_fide_dsb_elo_different_above_2000 --
 /* FIDE Elo rating is different in DSB database, players >= 2000 Elo */
@@ -62,7 +62,7 @@ FROM dwz_spieler
 LEFT JOIN fide_players
 	ON fide_players.player_id = dwz_spieler.FIDE_ID
 WHERE dwz_spieler.FIDE_Elo != fide_players.standard_rating
-AND fide_players.standard_rating >= 2000
+AND fide_players.standard_rating >= 2000;
 
 -- ratings_debug_fide_dsb_elo_different_below_2000 --
 /* FIDE Elo rating is different in DSB database, players < 2000 Elo */
@@ -71,7 +71,7 @@ FROM dwz_spieler
 LEFT JOIN fide_players
 	ON fide_players.player_id = dwz_spieler.FIDE_ID
 WHERE dwz_spieler.FIDE_Elo != fide_players.standard_rating
-AND fide_players.standard_rating < 2000
+AND fide_players.standard_rating < 2000;
 
 -- ratings_debug_fide_dsb_elo_different_below_2000_recalculation_does_not_match --
 /* FIDE Elo rating is different in DSB database, players < 2000 Elo, where substraction of bonus does not match */
@@ -82,7 +82,7 @@ LEFT JOIN fide_players
 	ON fide_players.player_id = dwz_spieler.FIDE_ID
 WHERE dwz_spieler.FIDE_Elo != fide_players.standard_rating
 AND fide_players.standard_rating < 2000
-HAVING adjusted_rating != dwz_spieler.FIDE_Elo
+HAVING adjusted_rating != dwz_spieler.FIDE_Elo;
 
 -- ratings_debug_dsb_player_twice_in_same_club --
 /* Player has more than one membership entry in the same club */
@@ -92,7 +92,7 @@ FROM dwz_spieler
 JOIN dwz_spieler duplicates
 	ON duplicates.PID = dwz_spieler.PID
 	AND dwz_spieler.ZPS = duplicates.ZPS
-	AND dwz_spieler.Mgl_Nr != duplicates.Mgl_Nr
+	AND dwz_spieler.Mgl_Nr != duplicates.Mgl_Nr;
 
 -- ratings_debug_dsb_player_active_in_different_clubs --
 /* Player has active status in more than one club */
@@ -103,7 +103,7 @@ JOIN dwz_spieler duplicates
 	ON duplicates.PID = dwz_spieler.PID
 	AND dwz_spieler.Status = "A"
 	AND duplicates.Status = "A"
-	AND dwz_spieler.ZPS != duplicates.ZPS
+	AND dwz_spieler.ZPS != duplicates.ZPS;
 
 -- ratings_debug_fide_dsb_change_last_first --
 /* Player’s first and last name are interchanged */
@@ -112,7 +112,7 @@ FROM dwz_spieler
 LEFT JOIN fide_players
 ON dwz_spieler.fide_id = fide_players.player_id
 WHERE REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(Spielername, ",", ", "), "ä", "ae"), "ü", "ue"), "ß", "ss"), "ö", "oe"), "Ö", "Oe"), "Ä", "Ae"), "Ü", "Ue") != REPLACE(REPLACE(REPLACE(player, ", Dr.", ""), ", Prof. Dr.", ""), ", Prof.", "")
-AND SUBSTRING_INDEX(Spielername, ",", -1) = SUBSTRING_INDEX(player, ", ", 1)
+AND SUBSTRING_INDEX(Spielername, ",", -1) = SUBSTRING_INDEX(player, ", ", 1);
 
 -- ratings_debug_fide_dsb_change_name --
 /* Player’s name is different */
@@ -121,4 +121,11 @@ FROM dwz_spieler
 LEFT JOIN fide_players
 ON dwz_spieler.fide_id = fide_players.player_id
 WHERE REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(Spielername, ",", ", "), "ä", "ae"), "ü", "ue"), "ß", "ss"), "ö", "oe"), "Ö", "Oe"), "Ä", "Ae"), "Ü", "Ue") != REPLACE(REPLACE(REPLACE(player, ", Dr.", ""), ", Prof. Dr.", ""), ", Prof.", "")
-AND SUBSTRING_INDEX(Spielername, ",", -1) != SUBSTRING_INDEX(player, ", ", 1)
+AND SUBSTRING_INDEX(Spielername, ",", -1) != SUBSTRING_INDEX(player, ", ", 1);
+
+-- ratings_debug_fide_id_for_several_players --
+/* Different players have same FIDE ID */
+SELECT DISTINCT dwz_spieler.PID, dwz_2.PID AS PID2, dwz_spieler.Spielername, dwz_spieler.FIDE_ID FROM dwz_spieler
+LEFT JOIN dwz_spieler dwz_2
+ON dwz_2.FIDE_ID = dwz_spieler.FIDE_ID
+WHERE dwz_2.PID != dwz_spieler.PID;
