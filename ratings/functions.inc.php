@@ -75,45 +75,20 @@ function mf_ratings_titles($data) {
 	foreach ($data as $line)
 		$contact_ids[] = $line['contact_id'];
 
-	$titles = [];
-	// check in FIDE database, German database does not have all titles
-	// why? no players without membership in German federation
-	// players that have a new FIDE ID
-	$sql = 'SELECT contact_id, fide_players.title
+	$sql = 'SELECT contact_id, fide_players.title, fide_players.title_women
 		FROM fide_players
 		LEFT JOIN contacts_identifiers
 			ON fide_players.player_id = contacts_identifiers.identifier
 		WHERE contacts_identifiers.current = "yes"
-		AND contacts_identifiers.identifier_category_id = %d
+		AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/id_fide _*/
 		AND contacts_identifiers.contact_id IN (%s)
 		AND NOT ISNULL(fide_players.title)
 	';
-	$sql = sprintf($sql
-		, wrap_category_id('identifiers/id_fide')
-		, implode(',', $contact_ids)
-	);
-	$titles += wrap_db_fetch($sql, 'contact_id', 'key/value');
+	$sql = sprintf($sql, implode(',', $contact_ids));
+	$titles = wrap_db_fetch($sql, 'contact_id');
 
-	// probably unnecessary query since all titles should be in FIDE database
-	$sql = 'SELECT contact_id, dwz_spieler.FIDE_Titel
-		FROM dwz_spieler
-		LEFT JOIN contacts_identifiers
-			ON contacts_identifiers.identifier = CONCAT(dwz_spieler.ZPS, "-", dwz_spieler.Mgl_Nr)
-		WHERE contacts_identifiers.current = "yes"
-		AND contacts_identifiers.identifier_category_id = %d
-		AND contacts_identifiers.contact_id IN (%s)
-		AND NOT ISNULL(dwz_spieler.FIDE_Titel)
-	';
-	$sql = sprintf($sql
-		, wrap_category_id('identifiers/pass_dsb')
-		, implode(',', $contact_ids)
-	);
-	$titles += wrap_db_fetch($sql, 'contact_id', 'key/value');
-
-	foreach ($data as $index => $line) {
-		if (!array_key_exists($line['contact_id'], $titles)) continue;
-		$data[$index]['fide_title'] = $titles[$line['contact_id']];
-	}
+	foreach ($data as $index => $line)
+		$data[$index] += mf_ratings_fidetitle($titles[$line['contact_id']] ?? []);
 	return $data;
 }
 
@@ -132,12 +107,9 @@ function mf_ratings_rating_dsb($contact_ids) {
 		LEFT JOIN contacts_identifiers
 			ON contacts_identifiers.identifier = CONCAT(ZPS, "-", Mgl_Nr)
 			AND contacts_identifiers.current = "yes"
-			AND contacts_identifiers.identifier_category_id = %d
+			AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
 		WHERE contact_id IN (%s)';
-	$sql = sprintf($sql
-		, wrap_category_id('identifiers/pass_dsb')
-		, implode(',', $contact_ids)
-	);
+	$sql = sprintf($sql, implode(',', $contact_ids));
 	return wrap_db_fetch($sql, 'contact_id');
 }
 
@@ -155,11 +127,8 @@ function mf_ratings_rating_fide($contact_ids) {
 		LEFT JOIN contacts_identifiers
 			ON contacts_identifiers.identifier = player_id
 			AND contacts_identifiers.current = "yes"
-			AND contacts_identifiers.identifier_category_id = %d
+			AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/id_fide _*/
 		WHERE contact_id IN (%s)';
-	$sql = sprintf($sql
-		, wrap_category_id('identifiers/id_fide')
-		, implode(',', $contact_ids)
-	);
+	$sql = sprintf($sql, implode(',', $contact_ids));
 	return wrap_db_fetch($sql, 'contact_id');
 }
