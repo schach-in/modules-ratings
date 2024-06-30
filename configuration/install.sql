@@ -122,3 +122,15 @@ CREATE TABLE `fide_players` (
   KEY `standard_rating` (`standard_rating`),
   KEY `player` (`player`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
+
+
+-- categories --
+INSERT INTO categories (`category`, `description`, `main_category_id`, `path`, `parameters`, `sequence`, `last_update`) VALUES ('FIDE titles', NULL, NULL, 'fide-title', '&alias=fide-title', NULL, NOW());
+INSERT INTO categories (`category`, `description`, `main_category_id`, `path`, `parameters`, `sequence`, `last_update`) VALUES ('Grandmaster', 'GM', NULL, 'fide-title/gm', '&alias=fide-title/gm', NULL, NOW());
+INSERT INTO categories (`category`, `description`, `main_category_id`, `path`, `parameters`, `sequence`, `last_update`) VALUES ('International Master', 'IM', NULL, 'fide-title/im', '&alias=fide-title/im', NULL, NOW());
+INSERT INTO categories (`category`, `description`, `main_category_id`, `path`, `parameters`, `sequence`, `last_update`) VALUES ('Woman Grandmaster', 'WGM', NULL, 'fide-title/wgm', '&alias=fide-title/wgm', NULL, NOW());
+INSERT INTO categories (`category`, `description`, `main_category_id`, `path`, `parameters`, `sequence`, `last_update`) VALUES ('FIDE Master', 'FM', NULL, 'fide-title/fm', '&alias=fide-title/fm', NULL, NOW());
+INSERT INTO categories (`category`, `description`, `main_category_id`, `path`, `parameters`, `sequence`, `last_update`) VALUES ('Woman International Master', 'WIM', NULL, 'fide-title/wim', '&alias=fide-title/wim', NULL, NOW());
+INSERT INTO categories (`category`, `description`, `main_category_id`, `path`, `parameters`, `sequence`, `last_update`) VALUES ('Master Candidate', 'CM', NULL, 'fide-title/cm', '&alias=fide-title/cm', NULL, NOW());
+INSERT INTO categories (`category`, `description`, `main_category_id`, `path`, `parameters`, `sequence`, `last_update`) VALUES ('Woman FIDE Master', 'WFM', NULL, 'fide-title/wfm', '&alias=fide-title/wfm', NULL, NOW());
+INSERT INTO categories (`category`, `description`, `main_category_id`, `path`, `parameters`, `sequence`, `last_update`) VALUES ('Woman Master Candidate', 'WCM', NULL, 'fide-title/wcm', '&alias=fide-title/wcm', NULL, NOW());
