@@ -107,7 +107,7 @@ JOIN dwz_spieler duplicates
 
 -- ratings_debug_fide_dsb_change_last_first --
 /* Player’s first and last name are interchanged */
-SELECT DISTINCT PID, Spielername, player_id, player
+SELECT DISTINCT PID, Spielername, FIDE_ID, player
 FROM dwz_spieler
 LEFT JOIN fide_players
 ON dwz_spieler.fide_id = fide_players.player_id
