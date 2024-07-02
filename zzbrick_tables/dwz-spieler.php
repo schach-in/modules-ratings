@@ -54,7 +54,7 @@ $zz['fields'][7]['title_tab'] = 'Sb.';
 $zz['fields'][7]['field_name'] = 'Spielberechtigung';
 $zz['fields'][7]['type'] = 'select';
 $zz['fields'][7]['enum'] = ['D', 'G', 'E', 'A', '-', 'J'];
-$zz['fields'][7]['enum_abbr'] = ['Deutscher', 'Gleichgestellt', 'EU-Ausländer', 'Ausländer', '-', 'J'];
+$zz['fields'][7]['enum_abbr'] = ['Deutscher', 'Gleichgestellter', 'EU-Ausländer', 'Ausländer', 'keine Angabe', 'Jugendregel'];
 
 $zz['fields'][8]['title_tab'] = 'Geb.';
 $zz['fields'][8]['field_name'] = 'Geburtsjahr';
