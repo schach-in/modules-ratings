@@ -43,18 +43,15 @@ function mod_ratings_ratingsearch($params) {
 			LEFT JOIN contacts_identifiers
 				ON contacts.contact_id = contacts_identifiers.contact_id
 				AND contacts_identifiers.current = "yes"
-				AND contacts_identifiers.identifier_category_id = %d
+				AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
+			LEFT JOIN categories
+				ON contacts.contact_category_id = categories.category_id
 			WHERE contact LIKE "%%%s%%"
 			AND NOT ISNULL(contacts_identifiers.identifier)
-			AND contact_category_id IN (%d, %d)
+			AND (categories.parameters LIKE "%%&ratings_members=1%%" OR contacts.parameters LIKE "%%&ratings_members=1%%")
 			AND ISNULL(end_date)
 		';
-		$sql = sprintf($sql
-			, wrap_category_id('identifiers/pass_dsb')
-			, wrap_db_escape($_GET['name'])
-				, wrap_category_id('contact/club')
-				, wrap_category_id('contact/chess-department')
-		);
+		$sql = sprintf($sql, wrap_db_escape($_GET['name']));
 		$data['clubs'] = wrap_db_fetch($sql, 'contact_id');
 
 		// zps codes?
@@ -65,17 +62,14 @@ function mod_ratings_ratingsearch($params) {
 				LEFT JOIN contacts_identifiers
 					ON contacts.contact_id = contacts_identifiers.contact_id
 					AND contacts_identifiers.current = "yes"
-					AND contacts_identifiers.identifier_category_id = %d
+					AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
+				LEFT JOIN categories
+					ON contacts.contact_category_id = categories.category_id
 				WHERE contacts_identifiers.identifier LIKE "%s%%"
-				AND contact_category_id IN (%d, %d)
+				AND (categories.parameters LIKE "%%&ratings_members=1%%" OR contacts.parameters LIKE "%%&ratings_members=1%%")
 				AND ISNULL(end_date)
 			';
-			$sql = sprintf($sql
-				, wrap_category_id('identifiers/pass_dsb')
-				, wrap_db_escape($_GET['name'])
-				, wrap_category_id('contact/club')
-				, wrap_category_id('contact/chess-department')
-			);
+			$sql = sprintf($sql, wrap_db_escape($_GET['name']));
 			$data['clubs'] = array_merge($data['clubs'], wrap_db_fetch($sql, 'contact_id'));
 		}
 		if (!$ratings AND !$data['clubs'])
