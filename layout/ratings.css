@@ -21,6 +21,23 @@
 			{ border-bottom: 1px solid black; }
 .toplist tr:nth-child(even)
 			{ background-color: #EEE; }
+.toplist tr.row.uneven
+			{ background-color: #FFF; }
+.toplist tr.row.even
+			{ background-color: #EEE; }
+
+.toplist tr.row.uneven + tr.memberships,
+.toplist tr.row.uneven + tr.memberships + tr.memberships,
+.toplist tr.row.uneven + tr.memberships + tr.memberships + tr.memberships,
+.toplist tr.row.uneven + tr.memberships + tr.memberships + tr.memberships + tr.memberships
+			{ background-color: #FFF; }
+.toplist tr.row.even + tr.memberships,
+.toplist tr.row.even + tr.memberships + tr.memberships,
+.toplist tr.row.even + tr.memberships + tr.memberships + tr.memberships,
+.toplist tr.row.even + tr.memberships + tr.memberships + tr.memberships + tr.memberships
+			{ background-color: #EEE; }
+
+
 @media screen and (max-width: 640px) {
 	.toplist		{ margin: 1em .75em; overflow: auto; }
 }

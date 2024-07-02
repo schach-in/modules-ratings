@@ -33,7 +33,7 @@
 <tbody>
 %%% loop start %%%
 %%% condition if dwz | standard_rating | rapid_rating | blitz_rating %%%
-<tr class="%%% loopposition uneven "un" %%%even">
+<tr class="row %%% loopposition uneven "un" %%%even">
 <td class="index">%%% loopposition counter %%%</td>
 <td class="player">%%% condition if fide_title %%%<abbr title="%%% item fide_title_long %%%">%%% item fide_title %%%</abbr> %%% condition endif %%%%%% item contact %%%</td>
 <td class="federation">%%% item federation %%%</td>
@@ -56,6 +56,7 @@
 <td class="club"><a href="/%%% item club_identifier %%%/">%%% item club %%%</a></td>
 <td class="clubcode"><a href="/zahlen/%%% item zps_code %%%/">%%% item zps_code %%%</a></td>
 %%% condition endif %%%
+<td colspan="5" class="emptycols"></td>
 </tr>
 %%% loop end %%%
 %%% condition endif %%%
