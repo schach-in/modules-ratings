@@ -18,6 +18,7 @@ function mod_ratings_clubratings($params) {
 
 	$sql = 'SELECT contact
 			, contacts.identifier AS club_identifier
+			, contacts.parameters
 		FROM contacts
 		LEFT JOIN contacts_identifiers
 			ON contacts.contact_id = contacts_identifiers.contact_id
@@ -31,14 +32,17 @@ function mod_ratings_clubratings($params) {
 	);
 	$data = wrap_db_fetch($sql);
 	if (!$data) return false;
+	if ($data['parameters']) parse_str($data['parameters'], $data['parameters']);
 
 	$conditions = [];
-	$conditions[] = sprintf('ZPS = "%s"', wrap_db_escape($params[0]));
+	$rating_code = $data['parameters']['ratings_club_code'] ?? $params[0];
+	$conditions[] = sprintf('ZPS = "%s"', wrap_db_escape($rating_code));
 	
 	$ratings = mf_ratings_ratinglist($conditions);
-	foreach ($ratings as $index => $line) {
+	if (!$ratings) return false;
+	foreach ($ratings as $index => $line)
 		unset($ratings[$index]['club_identifier']);
-	}
+
 	$data = array_merge($data, $ratings);
 	$page['text'] = wrap_template('ratinglist', $data);
 	$page['text'] .= wrap_template('ratingstatus');

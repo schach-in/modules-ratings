@@ -26,7 +26,7 @@ function mf_ratings_ratinglist($conditions, $limit = 1000) {
 			, DWZ AS dwz, DWZ_Index AS dwz_index
 			, contact as club
 			, contacts.identifier AS club_identifier
-			, ZPS AS zps_code
+			, IFNULL(contacts_identifiers.identifier, federation_identifiers.identifier) AS zps_code
 			, player_id AS player_id_fide
 			, title, title_women, title_other
 			, standard_rating, rapid_rating, blitz_rating, federation
@@ -38,7 +38,12 @@ function mf_ratings_ratinglist($conditions, $limit = 1000) {
 	    	ON contacts_identifiers.identifier = dwz_spieler.ZPS
 	    	AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
 	    	AND contacts_identifiers.current = "yes"
-	    LEFT JOIN contacts USING (contact_id)
+	    LEFT JOIN contacts_identifiers federation_identifiers
+	    	ON federation_identifiers.identifier = SUBSTRING(dwz_spieler.ZPS, 1, 3)
+	    	AND federation_identifiers.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
+	    	AND federation_identifiers.current = "yes"
+	    LEFT JOIN contacts
+	    	ON contacts.contact_id = IFNULL(contacts_identifiers.contact_id, federation_identifiers.contact_id)
 	    WHERE %s
 	    ORDER BY IFNULL(DWZ, FIDE_Elo) DESC, FIDE_Elo DESC, PID, Status
 	    LIMIT 0, %d
