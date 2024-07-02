@@ -8,7 +8,7 @@
  * https://www.zugzwang.org/modules/clubs
  *
  * @author Gustaf Mossakowski <gustaf@koenige.org>
- * @copyright Copyright © 2022 Gustaf Mossakowski
+ * @copyright Copyright © 2022, 2024 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
@@ -20,6 +20,7 @@ function mod_ratings_top($params, $settings) {
 	$limit = array_shift($params);
 	$conditions = [];
 	$conditions[] = 'status = "A"';
+	$conditions[] = '(federation = "GER" OR ISNULL(federation))';
 	if (!empty($settings['female'])) $conditions[] = 'Geschlecht = "W"';
 	if ($params) {
 		if (str_starts_with($params[0], 'u')) {
