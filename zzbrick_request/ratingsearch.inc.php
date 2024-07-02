@@ -46,12 +46,13 @@ function mod_ratings_ratingsearch($params) {
 				AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
 			LEFT JOIN categories
 				ON contacts.contact_category_id = categories.category_id
-			WHERE contact LIKE "%%%s%%"
+			WHERE (contact LIKE "%%%s%%" OR contact_short LIKE "%%%s%%")
 			AND NOT ISNULL(contacts_identifiers.identifier)
 			AND (categories.parameters LIKE "%%&ratings_members=1%%" OR contacts.parameters LIKE "%%&ratings_members=1%%")
 			AND ISNULL(end_date)
+			AND contacts_identifiers.identifier != 10517
 		';
-		$sql = sprintf($sql, wrap_db_escape($_GET['name']));
+		$sql = sprintf($sql, wrap_db_escape($_GET['name']), wrap_db_escape($_GET['name']));
 		$data['clubs'] = wrap_db_fetch($sql, 'contact_id');
 
 		// zps codes?
