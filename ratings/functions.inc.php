@@ -185,3 +185,33 @@ function mf_ratings_toplist($club) {
 function mf_ratings_folder($rating) {
 	return sprintf('%s/%s', wrap_setting('media_folder'), strtolower($rating));
 }
+
+/**
+ * get rating folder per rating
+ *
+ * @param string $rating
+ * @return string
+ */
+function mf_ratings_sqlfile($rating) {
+	return sprintf('%s/%s/%s.sql', wrap_setting('tmp_dir'), $rating, $rating);
+}
+
+/**
+ * write SQL line into .sql file per rating
+ *
+ * @param string $rating
+ * @param string $line (optional)
+ * @return bool
+ */
+function mf_ratings_log($rating, $line = '') {
+	$sql_file = mf_ratings_sqlfile($rating);
+	if (!$line) {
+		if (file_exists($sql_file)) unlink($sql_file);
+		touch($sql_file);
+		return false;
+	}
+	$line = trim($line);
+	$line = rtrim($line, ';');
+	error_log($line.";\n", 3, $sql_file);
+	return true;
+}

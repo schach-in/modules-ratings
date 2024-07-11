@@ -41,8 +41,11 @@ function mod_ratings_make_ratings_import($params) {
 	$data = $function([$dest_folder]);
 	if (empty($data)) {
 		rmdir($dest_folder);
-		wrap_setting_write('ratings_status['.$params[0].']', $dl['date']);
-		$data['import_successful'] = true;
+		$data['errors'] = mod_ratings_make_ratings_db($path);
+		if (!$data['errors']) {
+			wrap_setting_write('ratings_status['.$params[0].']', $dl['date']);
+			$data['import_successful'] = true;
+		}
 	}
 	$page['text'] = json_encode($data);
 	$page['content_type'] = 'json';
@@ -108,4 +111,23 @@ function mod_ratings_make_ratings_import_latest($rating) {
 		}
 	}
 	return [];
+}
+
+/**
+ * import contents of .sql file
+ *
+ * @param string $rating
+ * @return array
+ */
+function mod_ratings_make_ratings_db($rating) {
+	$filename = mf_ratings_sqlfile($rating);
+	$file = fopen($filename, 'r');
+	if (!$file) return;
+	$errors = [];
+	while (($line = fgets($file)) !== false) {
+		if (wrap_db_query($line, E_USER_WARNING)) continue;
+//		if (mysql_errno() === 1065) continue;
+		$errors[]['msg'] = mysqli_error(wrap_db_connection()).' '.$line;
+	}
+	return $errors;
 }

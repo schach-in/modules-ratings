@@ -21,8 +21,8 @@
  * @return array
  */
 function mod_ratings_make_ratings_prepare_elo($params) {
-	$sql = 'TRUNCATE fide_players';
-	wrap_db_query($sql);
+	mf_ratings_log('elo');
+	mf_ratings_log('elo', 'TRUNCATE fide_players');
 
 	$field_names = [
 		'ID_Number' => 'player_id', 'Name' => 'player', 'Fed' => 'federation',
@@ -70,7 +70,7 @@ function mod_ratings_make_ratings_prepare_elo($params) {
 				// sometimes, FIDE exports have errors
 				$sql = 'INSERT INTO fide_players (%s) VALUES (%s)';
 				$sql = sprintf($sql, implode(',', $fieldnames), implode(',', $values));
-				wrap_db_query($sql);
+				mf_ratings_log('elo', $sql);
 				$data['imports']++;
 			}
 		}
