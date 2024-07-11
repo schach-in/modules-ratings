@@ -25,7 +25,7 @@ function mod_ratings_make_ratings_import($params) {
 	$update = false;
 	$dl = mod_ratings_make_ratings_import_latest($params[0]);
 	$latest_update = wrap_setting('ratings_status['.$params[0].']');
-	$corrupt_dates = wrap_setting('ratings_corrupt['.$rating.']');
+	$corrupt_dates = wrap_setting('ratings_corrupt['.$params[0].']');
 
 	if (in_array($latest_update, $corrupt_dates)) $update = true;
 	elseif (!$latest_update) $update = true;
