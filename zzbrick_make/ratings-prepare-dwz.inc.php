@@ -2,7 +2,7 @@
 
 /**
  * ratings module
- * import rating data
+ * prepare DWZ rating data
  *
  * Part of »Zugzwang Project«
  * https://www.zugzwang.org/modules/ratings
@@ -23,7 +23,7 @@
  *		[0]: string folder name
  * @return array $data
  */
-function mod_ratings_make_ratings_import_dwz($params) {
+function mod_ratings_make_ratings_prepare_dwz($params) {
 	$files = [
 //		1 => [
 //			'filename' => 'verband.sql',

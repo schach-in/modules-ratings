@@ -2,7 +2,7 @@
 
 /**
  * ratings module
- * import elo rating data
+ * prepare Elo rating data
  *
  * Part of »Zugzwang Project«
  * https://www.zugzwang.org/modules/ratings
@@ -20,7 +20,7 @@
  *		[0]: string folder name
  * @return array
  */
-function mod_ratings_make_ratings_import_elo($params) {
+function mod_ratings_make_ratings_prepare_elo($params) {
 	$sql = 'TRUNCATE fide_players';
 	wrap_db_query($sql);
 

@@ -33,9 +33,9 @@ function mod_ratings_make_ratings_import($params) {
 	if (!$update) return false;
 
 	$path = strtolower($params[0]);
-	$filename = __DIR__.'/ratings-import-'.$path.'.inc.php';
+	$filename = __DIR__.'/ratings-prepare-'.$path.'.inc.php';
 	require_once $filename;
-	$function = 'mod_ratings_make_ratings_import_'.$path;
+	$function = 'mod_ratings_make_ratings_prepare_'.$path;
 
 	$dest_folder = mod_ratings_make_ratings_unzip($path, $dl['filename']);
 	$data = $function([$dest_folder]);
