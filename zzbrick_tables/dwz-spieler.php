@@ -19,6 +19,7 @@ $zz['table'] = 'dwz_spieler';
 $zz['fields'][5]['field_name'] = 'PID';
 
 $zz['fields'][4]['field_name'] = 'Spielername';
+$zz['fields'][4]['character_set'] = 'utf8';
 
 $zz['fields'][16]['field_name'] = 'Verein';
 $zz['fields'][16]['type'] = 'display';
