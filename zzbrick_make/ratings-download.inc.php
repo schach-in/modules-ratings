@@ -10,7 +10,7 @@
  * @author Jacob Roggon
  * @author Gustaf Mossakowski <gustaf@koenige.org>
  * @copyright Copyright © ... Jacob Roggon
- * @copyright Copyright © 2013-2014, 2016-2017, 2019-2020, 2022-2023 Gustaf Mossakowski
+ * @copyright Copyright © 2013-2014, 2016-2017, 2019-2020, 2022-2024 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
@@ -27,7 +27,7 @@ function mod_ratings_make_ratings_download($params) {
 	
 	$data = [];
 	$data['rating'] = $params[0];
-	$data['path'] = strtolower($data['rating']);
+	$data['path'] = mf_ratings_folder($data['rating']);
 	$data['url'] = wrap_setting('ratings_download['.$data['rating'].']');
 	if (!$data['url']) return false;
 
@@ -47,18 +47,16 @@ function mod_ratings_make_ratings_download($params) {
 	// move current rating file into /files/[path] folder unless already done
 	// 1. create folder
 	$year = date('Y', strtotime($meta['Last-Modified']));
-	$destination_folder = sprintf(wrap_setting('media_folder').'/'.$data['path'].'/%d', $year);
+	$destination_folder = sprintf('%s/%d', $data['path'], $year);
 	if (!file_exists($destination_folder)) mkdir($destination_folder);
 
 	// 2. get filename
 	$data['date'] = date('Y-m-d', strtotime($meta['Last-Modified']));
 	$filename = $meta['filename'];
-	if (strpos($filename, '/') !== false) {
+	if (strpos($filename, '/') !== false)
 		$filename = substr($filename, strrpos($filename, '/') + 1);
-	}
-	if (strpos($filename, '%2F') !== false) {
+	if (strpos($filename, '%2F') !== false)
 		$filename = substr($filename, strrpos($filename, '%2F') + 3);
-	}
 	$filename = sprintf('%s-%s', $data['date'], $filename);
 
 	// 3. archive file
@@ -75,4 +73,14 @@ function mod_ratings_make_ratings_download($params) {
 	$page['text'] = json_encode($data);
 	$page['content_type'] = 'json';
 	return $page;
+}
+
+/**
+ * get rating folder per rating
+ *
+ * @param string $rating
+ * @return string
+ */
+function mf_ratings_folder($rating) {
+	return sprintf('%s/%s', wrap_setting('media_folder'), strtolower($rating));
 }
