@@ -10,7 +10,7 @@
  * @author Jacob Roggon
  * @author Gustaf Mossakowski <gustaf@koenige.org>
  * @copyright Copyright © ... Jacob Roggon
- * @copyright Copyright © 2013-2014, 2016-2017, 2019-2023 Gustaf Mossakowski
+ * @copyright Copyright © 2013-2014, 2016-2017, 2019-2024 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
@@ -22,7 +22,7 @@
  * @return array $data
  */
 function mod_ratings_make_ratings($params) {
-	require_once wrap_setting('core').'/syndication.inc.php';
+	wrap_include('syndication', 'zzwrap');
 
 	// @todo show webpage with possible downloads if there are no parameters,
 	// allow to trigger downloads
@@ -40,15 +40,17 @@ function mod_ratings_make_ratings($params) {
 	// big files, no timeout please
 	wrap_setting('syndication_timeout_ms', false);
 
-	$lock_realm = strtolower(implode('-', $params));
-	$wait_seconds = 300;
-	$lock = wrap_lock($lock_realm, 'wait', $wait_seconds);
-	if ($lock) {
-		$page['status'] = 403;
-		$page['text'] = sprintf(wrap_text(
-			'Please wait. Rating sync is only allowed to run once every %s.'
-		), wrap_duration($wait_seconds));
-		return $page;
+	if (!wrap_setting('local_access')) {
+		$lock_realm = strtolower(implode('-', $params));
+		$wait_seconds = 300;
+		$lock = wrap_lock($lock_realm, 'wait', $wait_seconds);
+		if ($lock) {
+			$page['status'] = 403;
+			$page['text'] = sprintf(wrap_text(
+				'Please wait. Rating sync is only allowed to run once every %s.'
+			), wrap_duration($wait_seconds));
+			return $page;
+		}
 	}
 	
 	$filename = __DIR__.'/ratings-'.$params[0].'.inc.php';
