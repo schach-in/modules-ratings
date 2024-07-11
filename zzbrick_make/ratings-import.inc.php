@@ -88,7 +88,7 @@ function mod_ratings_make_ratings_unzip($rating, $archive) {
  */
 function mod_ratings_make_ratings_import_latest($rating) {
 	$corrupt_dates = wrap_setting('ratings_corrupt['.$rating.']');
-	$ratings_path = wrap_setting('media_folder').'/'.strtolower($rating);
+	$ratings_path = mf_ratings_folder($rating);
 
 	// check all archive files
 	$files = scandir($ratings_path, SCANDIR_SORT_DESCENDING);

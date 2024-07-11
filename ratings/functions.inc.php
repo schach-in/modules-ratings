@@ -175,3 +175,13 @@ function mf_ratings_toplist($club) {
 	}
 	return $data;
 }
+
+/**
+ * get rating folder per rating
+ *
+ * @param string $rating
+ * @return string
+ */
+function mf_ratings_folder($rating) {
+	return sprintf('%s/%s', wrap_setting('media_folder'), strtolower($rating));
+}

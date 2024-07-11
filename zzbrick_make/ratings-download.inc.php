@@ -74,13 +74,3 @@ function mod_ratings_make_ratings_download($params) {
 	$page['content_type'] = 'json';
 	return $page;
 }
-
-/**
- * get rating folder per rating
- *
- * @param string $rating
- * @return string
- */
-function mf_ratings_folder($rating) {
-	return sprintf('%s/%s', wrap_setting('media_folder'), strtolower($rating));
-}
