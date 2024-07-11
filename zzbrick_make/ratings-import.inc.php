@@ -22,16 +22,14 @@
  * @return array $data
  */
 function mod_ratings_make_ratings_import($params) {
-	require_once __DIR__.'/ratings-download.inc.php';
-	$dl = mod_ratings_make_ratings_download([$params[0]]);
-	$dl = json_decode($dl['text'], true);
 	$update = false;
-	$corrupt_dates = wrap_setting('ratings_corrupt['.$params[0].']');
-	if (in_array($dl['date'], $corrupt_dates)) {
-		$dl = mod_ratings_make_ratings_import_latest($params[0]);
-		if ($dl) $update = true;
-	} elseif (empty(wrap_setting('ratings_status['.$params[0].']'))) $update = true;
-	elseif (wrap_setting('ratings_status['.$params[0].']') < $dl['date']) $update = true;
+	$dl = mod_ratings_make_ratings_import_latest($params[0]);
+	$latest_update = wrap_setting('ratings_status['.$params[0].']');
+	$corrupt_dates = wrap_setting('ratings_corrupt['.$rating.']');
+
+	if (in_array($latest_update, $corrupt_dates)) $update = true;
+	elseif (!$latest_update) $update = true;
+	elseif ($latest_update < $dl['date']) $update = true;
 	if (!$update) return false;
 
 	$path = strtolower($params[0]);
