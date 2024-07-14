@@ -101,3 +101,12 @@ SELECT identifier, contact_id FROM contacts_identifiers WHERE identifier IN ('%s
 -- vereine_field_contacts_contacts[0][main_contact_id]__implode --
 /* ', ' */
 
+-- fide-players_existing --
+SELECT player_id, player_id
+FROM fide_players
+WHERE player_id IN (%s);
+
+-- fide-players_deletable --
+SELECT player_id, player_id
+FROM fide_players
+WHERE player_id NOT IN (%s);

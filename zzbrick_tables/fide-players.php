@@ -21,7 +21,8 @@ $zz['fields'][1]['field_name'] = 'player_id';
 $zz['fields'][1]['type'] = 'id';
 $zz['fields'][1]['show_id'] = true;
 $zz['fields'][1]['explanation'] = 'identification number of a player within FIDE database';
- 
+$zz['fields'][1]['import_id_value'] = true;
+
 $zz['fields'][2]['field_name'] = 'player';
 $zz['fields'][2]['explanation'] = 'name of a player';
 
@@ -121,6 +122,6 @@ $zz['sql'] = 'SELECT fide_players.*
 	FROM fide_players';
 $zz['sqlorder'] = ' ORDER BY player, birth, player_id';
 
-$zz['access'] = 'none';
+$zz['access'] = '';
 
 $zz['explanation'] = sprintf('<p>FIDE Elo rating databse, Stand: %s</p>', wrap_date(wrap_setting('ratings_status[Elo]')));
