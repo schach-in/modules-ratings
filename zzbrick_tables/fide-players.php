@@ -122,6 +122,7 @@ $zz['sql'] = 'SELECT fide_players.*
 	FROM fide_players';
 $zz['sqlorder'] = ' ORDER BY player, birth, player_id';
 
-$zz['access'] = '';
+$zz['access'] = 'none';
+$zz['if']['batch']['access'] = '';
 
 $zz['explanation'] = sprintf('<p>FIDE Elo rating databse, Stand: %s</p>', wrap_date(wrap_setting('ratings_status[Elo]')));
