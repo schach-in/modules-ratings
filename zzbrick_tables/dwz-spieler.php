@@ -89,6 +89,10 @@ $zz['fields'][14]['link'] = [
 
 $zz['fields'][15]['field_name'] = 'FIDE_Land';
 
+$zz['fields'][99]['field_name'] = 'last_update';
+$zz['fields'][99]['type'] = 'timestamp';
+$zz['fields'][99]['hide_in_list'] = true;
+
 
 $zz['sql'] = 'SELECT dwz_spieler.*, dwz_vereine.Vereinname
 	FROM dwz_spieler

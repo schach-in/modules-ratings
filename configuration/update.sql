@@ -17,3 +17,5 @@
 /* 2024-06-24-1 */	ALTER TABLE `dwz_spieler` ADD INDEX `ZPS` (`ZPS`);
 /* 2024-06-24-2 */	ALTER TABLE `dwz_spieler` ADD INDEX `Mgl_Nr` (`Mgl_Nr`);
 /* 2024-06-24-3 */	ALTER TABLE `dwz_spieler` ADD INDEX `PID` (`PID`);
+/* 2024-07-15-1 */	ALTER TABLE `dwz_spieler` ADD `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+/* 2024-07-15-2 */	ALTER TABLE `fide_players` ADD `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;

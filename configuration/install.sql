@@ -68,6 +68,7 @@ CREATE TABLE `dwz_spieler` (
   `FIDE_Titel` char(3) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
   `FIDE_ID` int unsigned DEFAULT NULL,
   `FIDE_Land` char(3) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
+  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`ZPS`,`Mgl_Nr`),
   KEY `FIDE_ID` (`FIDE_ID`),
   KEY `Spielername` (`Spielername`),
@@ -118,6 +119,7 @@ CREATE TABLE `fide_players` (
   `blitz_k_factor` tinyint DEFAULT NULL,
   `birth` smallint unsigned DEFAULT NULL,
   `flag` varchar(2) DEFAULT NULL,
+  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`player_id`),
   KEY `standard_rating` (`standard_rating`),
   KEY `player` (`player`)

@@ -118,6 +118,11 @@ $zz['fields'][19]['type'] = 'select';
 $zz['fields'][19]['enum'] = [NULL, 'i', 'w', 'wi'];
 $zz['fields'][19]['enum_abbr'] = ['none', 'inactive', 'woman', 'woman inactive'];
 
+$zz['fields'][99]['field_name'] = 'last_update';
+$zz['fields'][99]['type'] = 'timestamp';
+$zz['fields'][99]['hide_in_list'] = true;
+
+
 $zz['sql'] = 'SELECT fide_players.*
 	FROM fide_players';
 $zz['sqlorder'] = ' ORDER BY player, birth, player_id';
