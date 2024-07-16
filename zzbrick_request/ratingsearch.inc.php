@@ -29,7 +29,7 @@ function mod_ratings_ratingsearch($params) {
 			$name = array_reverse($name);
 			$name = implode(',', $name);
 		}
-		$conditions[] = sprintf('Spielername LIKE "%%%s%%"', wrap_db_escape($name));
+		$conditions[] = sprintf('CONVERT(Spielername USING utf8) LIKE "%%%s%%"', wrap_db_escape($name));
 		$ratings = mf_ratings_ratinglist($conditions);
 		if ($ratings) {
 			$ratings['searchword'] = $_GET['name'];
