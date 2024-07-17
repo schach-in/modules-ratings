@@ -22,23 +22,17 @@
  * @return array $data
  */
 function mod_ratings_make_ratings_import($params) {
-	// get latest download file
-	$dl = mod_ratings_make_ratings_latest($params[0]);
+	$dl = mf_ratings_file($params[0]);
 	if (!$dl) return false;
-
-	// check if update is necessary
-	$update = mod_ratings_make_ratings_update($params[0], $dl['date']);
-	if (!$update) return false;
 
 	$path = strtolower($params[0]);
 	$filename = __DIR__.'/ratings-prepare-'.$path.'.inc.php';
 	require_once $filename;
 	$function = 'mod_ratings_make_ratings_prepare_'.$path;
 
-	$dest_folder = mod_ratings_make_ratings_unzip($path, $dl['filename']);
-	$data = $function([$dest_folder]);
+	$data = $function([$dl['destination_folder']]);
 	if (empty($data)) {
-		rmdir($dest_folder);
+		rmdir($dl['destination_folder']);
 		$data['errors'] = mod_ratings_make_ratings_db($path);
 		if (!$data['errors']) {
 			wrap_setting_write('ratings_status['.$params[0].']', $dl['date']);
@@ -51,13 +45,33 @@ function mod_ratings_make_ratings_import($params) {
 }
 
 /**
+ * get latest download folder and date with files for update
+ *
+ * @param string $rating
+ * @return array
+ */
+function mf_ratings_file($rating) {
+	// get latest download file
+	$dl = mf_ratings_latest($rating);
+	if (!$dl) return [];
+
+	// check if update is necessary
+	$update = mf_ratings_update($rating, $dl['date']);
+	if (!$update) return [];
+
+	// unzip data
+	$dl['destination_folder'] = mf_ratings_unzip($rating, $dl['filename']);
+	return $dl;
+}
+
+/**
  * unpack archive
  *
- * @param string $archive filename of archive
- * @param string $dest_folder name of destination folder
- * @return mixed string $dest_folder = successful, false: error
+ * @param string $rating
+ * @param string $archive name of destination folder
+ * @return string string $dest_folder = successful, false: error
  */
-function mod_ratings_make_ratings_unzip($rating, $archive) {
+function mf_ratings_unzip($rating, $archive) {
 	$path = strtolower($rating);
 	$tmp_dir = wrap_setting('tmp_dir').'/'.$path;
 	if (!file_exists($tmp_dir)) mkdir($tmp_dir);
@@ -72,7 +86,7 @@ function mod_ratings_make_ratings_unzip($rating, $archive) {
 	$res = $zip->open($archive);
 	if ($res !== true) {
 		wrap_error(sprintf(wrap_text('Error while unpacking file %s, Code %s'), $archive, $res), E_USER_ERROR);
-		return false;
+		return '';
 	}
 	$zip->extractTo($dest_folder);
 	$zip->close();
@@ -85,7 +99,7 @@ function mod_ratings_make_ratings_unzip($rating, $archive) {
  * @param string $rating
  * @return array
  */
-function mod_ratings_make_ratings_latest($rating) {
+function mf_ratings_latest($rating) {
 	$corrupt_dates = wrap_setting('ratings_corrupt['.$rating.']');
 	$ratings_path = mf_ratings_folder($rating);
 
@@ -118,7 +132,7 @@ function mod_ratings_make_ratings_latest($rating) {
  * @param string $date
  * @return bool
  */
-function mod_ratings_make_ratings_update($rating, $date) {
+function mf_ratings_update($rating, $date) {
 	$latest_update = wrap_setting('ratings_status['.$rating.']');
 	$corrupt_dates = wrap_setting('ratings_corrupt['.$rating.']');
 
