@@ -22,14 +22,12 @@
  * @return array $data
  */
 function mod_ratings_make_ratings_import($params) {
-	$update = false;
-	$dl = mod_ratings_make_ratings_import_latest($params[0]);
-	$latest_update = wrap_setting('ratings_status['.$params[0].']');
-	$corrupt_dates = wrap_setting('ratings_corrupt['.$params[0].']');
+	// get latest download file
+	$dl = mod_ratings_make_ratings_latest($params[0]);
+	if (!$dl) return false;
 
-	if (in_array($latest_update, $corrupt_dates)) $update = true;
-	elseif (!$latest_update) $update = true;
-	elseif ($latest_update < $dl['date']) $update = true;
+	// check if update is necessary
+	$update = mod_ratings_make_ratings_update($params[0], $dl['date']);
 	if (!$update) return false;
 
 	$path = strtolower($params[0]);
@@ -87,7 +85,7 @@ function mod_ratings_make_ratings_unzip($rating, $archive) {
  * @param string $rating
  * @return array
  */
-function mod_ratings_make_ratings_import_latest($rating) {
+function mod_ratings_make_ratings_latest($rating) {
 	$corrupt_dates = wrap_setting('ratings_corrupt['.$rating.']');
 	$ratings_path = mf_ratings_folder($rating);
 
@@ -111,6 +109,27 @@ function mod_ratings_make_ratings_import_latest($rating) {
 		}
 	}
 	return [];
+}
+
+/**
+ * check if update is necessary
+ *
+ * @param string $rating
+ * @param string $date
+ * @return bool
+ */
+function mod_ratings_make_ratings_update($rating, $date) {
+	$latest_update = wrap_setting('ratings_status['.$rating.']');
+	$corrupt_dates = wrap_setting('ratings_corrupt['.$rating.']');
+
+	// no data so far
+	if (!$latest_update) return true;
+	// is current data corrupt?
+	if (in_array($latest_update, $corrupt_dates)) return true;
+	// newer version available
+	if ($latest_update < $date) return true;
+	// no update necessary
+	return false;
 }
 
 /**
