@@ -22,7 +22,9 @@
  * @return array $data
  */
 function mod_ratings_make_ratings($params) {
-	wrap_include('syndication', 'zzwrap');
+	if (count($params) !== 2) return false;
+	if (!in_array($params[0], ['download', 'import', 'sync'])) return false;
+	if (!wrap_setting('ratings_download['.$params[1].']')) return false;
 
 	// @todo show webpage with possible downloads if there are no parameters,
 	// allow to trigger downloads
@@ -33,14 +35,11 @@ function mod_ratings_make_ratings($params) {
 		return $page;
 	}
 
-	if (count($params) !== 2) return false;
-	if (!in_array($params[0], ['download', 'import'])) return false;
-	if (!wrap_setting('ratings_download['.$params[1].']')) return false;
-
 	// big files, no timeout please
 	wrap_setting('syndication_timeout_ms', false);
 
 	if (!wrap_setting('local_access')) {
+		wrap_include('syndication', 'zzwrap');
 		$lock_realm = strtolower(implode('-', $params));
 		$wait_seconds = 300;
 		$lock = wrap_lock($lock_realm, 'wait', $wait_seconds);
