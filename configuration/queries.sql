@@ -48,7 +48,7 @@ LEFT JOIN fide_players
 WHERE ISNULL(dwz_spieler.FIDE_Elo) AND NOT ISNULL(fide_players.standard_rating);
 
 -- ratings_debug_fide_dsb_elo_extra --
-/* Player has no FIDE Elo which but there is a rating in the DSB database */
+/* Player has no FIDE Elo, but there is a rating in the DSB database */
 SELECT DISTINCT PID, Spielername, FIDE_Elo, FIDE_Titel, FIDE_ID, FIDE_Land, standard_rating
 FROM dwz_spieler
 LEFT JOIN fide_players
