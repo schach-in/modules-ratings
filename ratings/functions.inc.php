@@ -31,6 +31,7 @@ function mf_ratings_ratinglist($conditions, $limit = 1000) {
 			, title, title_women, title_other
 			, standard_rating, rapid_rating, blitz_rating, federation
 			, IF(Status = "P", 1, NULL) as passive
+			, title_other
 	    FROM dwz_spieler
 	    LEFT JOIN fide_players
 	    	ON dwz_spieler.fide_id = fide_players.player_id
@@ -56,6 +57,7 @@ function mf_ratings_ratinglist($conditions, $limit = 1000) {
 	$players = [];
 	foreach ($data as $index => $line) {
 		$line = mf_ratings_fidetitle($line);
+		$line = mf_ratings_fideother($line);
 		if (array_key_exists($line['PID'], $players)) {
 			$players[$line['PID']]['memberships'][] = $line;
 		} else {

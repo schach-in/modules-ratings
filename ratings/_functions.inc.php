@@ -47,3 +47,38 @@ function mf_ratings_fidetitle($line) {
 	}
 	return $line;
 }
+
+/**
+ * psrse FIDE title_other field for other titles
+ *
+ * @param array $line
+ * @return array
+ */
+function mf_ratings_fideother($line) {
+	static $titles = [];
+	if (!$titles) {
+		$titles = wrap_category_id('fide-title', 'list');
+		$sql = 'SELECT categories.category_id, categories.category, categories.category_short
+			FROM categories
+			LEFT JOIN categories main_categories
+				ON categories.main_category_id = main_categories.category_id
+		    WHERE categories.category_id IN (%s)
+		    ORDER BY LENGTH(categories.path) - LENGTH(REPLACE(categories.path, "/", "")),
+			    main_categories.sequence, categories.sequence';
+		$sql = sprintf($sql, implode(', ', $titles));
+		$titles = wrap_db_fetch($sql, 'category_id');
+	}
+	if (empty($line['title_other'])) return $line;
+	$other_titles = explode(',', $line['title_other']);
+	foreach ($other_titles as $other_title) {
+		$other_title = trim($other_title);
+		foreach ($titles as $title) {
+			if ($title['category_short'] !== $other_title) continue;
+			$line['other_titles'][] = [
+				'title' => $title['category_short'],
+				'title_long' => $title['category']
+			];
+		}
+	}
+	return $line;
+}
