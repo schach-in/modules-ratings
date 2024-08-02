@@ -12,7 +12,10 @@
 <p><a href="/%%% item club_identifier %%%/">%%% item contact %%% bei schach.in</a></p>
 %%% condition endif %%%
 %%% condition if searchword %%%
-<h2>Suche nach »%%% item searchword wrap_html_escape %%%«</h2>
+<h2>Suche nach »%%% item searchword wrap_html_escape %%%«
+%%% condition if exact_match %%% %%% text (exact match) %%%%%% condition endif %%%
+%%% condition if partial_match %%% %%% text (partial match) %%%%%% condition endif %%%
+</h2>
 %%% condition endif %%%
 <table class="toplist">
 <thead>

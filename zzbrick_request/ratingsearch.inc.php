@@ -36,7 +36,29 @@ function mod_ratings_ratingsearch($params) {
 		$ratings = mf_ratings_ratinglist($conditions);
 		if ($ratings) {
 			$ratings['searchword'] = $_GET['name'];
-			$page['text'] .= wrap_template('ratinglist', $ratings);
+			// normalize search term
+			$parts = str_replace(',', ' ', $_GET['name']);
+			$parts = explode(' ', $parts);
+			foreach ($parts as $index => $part) $parts[$index] = trim($part);
+			sort($parts);
+			// check if there are exact matches
+			$exact_matches = [];
+			foreach ($ratings as $id => $rating) {
+				if (!is_numeric($id)) continue;
+				if (array_diff($parts, $rating['search_parts'])) continue;
+				$exact_matches[$id] = $rating;
+				unset($ratings[$id]);
+			}
+			if ($exact_matches) {
+				$exact_matches['searchword'] = $ratings['searchword'];
+				$exact_matches['exact_match'] = true;
+				$page['text'] .= wrap_template('ratinglist', $exact_matches);
+			}
+			if (count($ratings) > 1) {
+				if ($exact_matches)
+					$ratings['partial_match'] = true;
+				$page['text'] .= wrap_template('ratinglist', $ratings);
+			}
 		}
 
 		// clubs?

@@ -63,6 +63,8 @@ function mf_ratings_ratinglist($conditions, $limit = 1000) {
 		} else {
 			$players[$line['PID']] = $line;
 			$contact = explode(',', $line['spielername']);
+			$players[$line['PID']]['search_parts'] = $contact;
+			sort($players[$line['PID']]['search_parts']);
 			$contact = array_reverse($contact);
 			$players[$line['PID']]['contact'] = implode(' ', $contact);
 		}
