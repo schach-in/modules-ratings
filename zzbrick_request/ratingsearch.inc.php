@@ -20,16 +20,19 @@ function mod_ratings_ratingsearch($params) {
 	if (!empty($_GET['name'])) {
 		$_GET['name'] = trim($_GET['name']);
 		$conditions = [];
-		$name = $_GET['name'];
-		if (strstr($name, ', ')) {
-			$name = str_replace(', ', ',', $name);
+		$names[0] = $_GET['name'];
+		if (strstr($names[0], ', ')) {
+			$names[0] = str_replace(', ', ',', $names[0]);
 		}
-		if (strstr($name, ' ')) {
-			$name = explode(' ', $name);
+		if (strstr($names[0], ' ')) {
+			$name = explode(' ', $names[0]);
+			$names[0] = implode(',', $name);
 			$name = array_reverse($name);
-			$name = implode(',', $name);
+			$names[1] = implode(',', $name);
 		}
-		$conditions[] = sprintf('CONVERT(Spielername USING utf8) LIKE "%%%s%%"', wrap_db_escape($name));
+		foreach ($names as $name)
+			$conditions[] = sprintf('CONVERT(Spielername USING utf8) LIKE "%%%s%%"', wrap_db_escape($name));
+		$conditions = [implode(' OR ', $conditions)];
 		$ratings = mf_ratings_ratinglist($conditions);
 		if ($ratings) {
 			$ratings['searchword'] = $_GET['name'];
