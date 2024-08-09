@@ -158,3 +158,29 @@ INSERT INTO categories (`category`, `category_short`, `description`, `main_categ
 INSERT INTO categories (`category`, `category_short`, `description`, `main_category_id`, `path`, `parameters`, `sequence`, `last_update`) VALUES ('Lead School Instructor', 'LSI', NULL, /*_ID categories fide-title/education _*/, 'fide-title/education/lsi', '&alias=fide-title/education/lsi', 1, NOW());
 INSERT INTO categories (`category`, `category_short`, `description`, `main_category_id`, `path`, `parameters`, `sequence`, `last_update`) VALUES ('Senior Lead Instructor', 'SLI', NULL, /*_ID categories fide-title/education _*/, 'fide-title/education/sli', '&alias=fide-title/education/sli', 2, NOW());
 INSERT INTO categories (`category`, `category_short`, `description`, `main_category_id`, `path`, `parameters`, `sequence`, `last_update`) VALUES ('School Instructor', 'SI', NULL, /*_ID categories fide-title/education _*/, 'fide-title/education/si', '&alias=fide-title/education/si', 3, NOW());
+
+
+-- wikidata_players --
+CREATE TABLE `wikidata_players` (
+  `wikidata_id` int unsigned NOT NULL,
+  `fide_id` int unsigned NOT NULL,
+  `person` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `last_update` timestamp NOT NULL,
+  PRIMARY KEY (`wikidata_id`),
+  UNIQUE KEY `fide_id` (`fide_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- wikidata_uris --
+CREATE TABLE `wikidata_uris` (
+  `uri_id` int unsigned NOT NULL AUTO_INCREMENT,
+  `wikidata_id` int unsigned NOT NULL,
+  `uri` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `uri_lang` varchar(2) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `last_update` timestamp NOT NULL,
+  PRIMARY KEY (`uri_id`),
+  UNIQUE KEY `wikidata_id_uri_lang` (`wikidata_id`,`uri_lang`),
+  KEY `url_lang` (`uri_lang`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO _relations (`master_db`, `master_table`, `master_field`, `detail_db`, `detail_table`, `detail_id_field`, `detail_field`, `delete`) VALUES ((SELECT DATABASE()), 'wikidata_players', 'wikidata_id', (SELECT DATABASE()), 'wikidata_uris', 'uri_id', 'wikidata_id', 'delete');
