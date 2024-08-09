@@ -38,7 +38,10 @@
 %%% condition if dwz | standard_rating | rapid_rating | blitz_rating %%%
 <tr class="row %%% loopposition uneven "un" %%%even">
 <td class="index">%%% loopposition counter %%%</td>
-<td class="player">%%% condition if fide_title %%%<abbr title="%%% item fide_title_long %%%">%%% item fide_title %%%</abbr> %%% condition endif %%%%%% item contact %%%
+<td class="player">%%% condition if fide_title %%%<abbr title="%%% item fide_title_long %%%">%%% item fide_title %%%</abbr> %%% condition endif %%%
+%%% condition if wikipedia_url %%%<a href="%%% item wikipedia_url %%%" title="Wikipedia">%%% condition endif %%%
+%%% item contact %%%
+%%% condition if wikipedia_url %%%</a>%%% condition endif %%%
 %%% condition if other_titles %%% (%%% loop other_titles %%%<abbr title="%%% item title_long %%%">%%% item title %%%</abbr>%%% loopposition first|middle ", " %%%%%% loop end %%%)%%% condition endif %%%
 </td>
 <td class="federation">%%% item federation %%%</td>

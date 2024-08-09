@@ -32,9 +32,16 @@ function mf_ratings_ratinglist($conditions, $limit = 1000) {
 			, standard_rating, rapid_rating, blitz_rating, federation
 			, IF(Status = "P", 1, NULL) as passive
 			, title_other
+			, wikidata_players.person
+			, (SELECT uri FROM wikidata_uris
+				WHERE wikidata_uris.wikidata_id = wikidata_players.wikidata_id
+				ORDER BY uri_lang ASC LIMIT 1
+			) AS wikipedia_url
 	    FROM dwz_spieler
 	    LEFT JOIN fide_players
 	    	ON dwz_spieler.fide_id = fide_players.player_id
+	    LEFT JOIN wikidata_players
+	    	ON wikidata_players.fide_id = fide_players.player_id
 	    LEFT JOIN contacts_identifiers
 	    	ON contacts_identifiers.identifier = dwz_spieler.ZPS
 	    	AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
@@ -70,6 +77,8 @@ function mf_ratings_ratinglist($conditions, $limit = 1000) {
 			sort($players[$line['PID']]['search_parts']);
 			$contact = array_reverse($contact);
 			$players[$line['PID']]['contact'] = implode(' ', $contact);
+			if ($line['person'])
+				$players[$line['PID']]['contact'] = $line['person'];
 		}
 	}
 	return $players;
