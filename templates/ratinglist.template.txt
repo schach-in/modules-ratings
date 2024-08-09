@@ -75,4 +75,4 @@
 <hr>
 
 <p><em>Die Deutsche Wertungszahl (DWZ) besteht aus der eigentlichen
-Wertungszahl und einem Index für die Anzahl der gespielten Turniere.</em></p>
+Wertungszahl und einem Index für die Anzahl der Auswertungen.</em></p>
