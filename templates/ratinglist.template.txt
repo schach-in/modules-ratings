@@ -12,7 +12,10 @@
 <p><a href="/%%% item club_identifier %%%/">%%% item contact %%% bei schach.in</a></p>
 %%% condition endif %%%
 %%% condition if searchword %%%
-<h2>Suche nach »%%% item searchword wrap_html_escape %%%«</h2>
+<h2>Suche nach »%%% item searchword wrap_html_escape %%%«
+%%% condition if exact_match %%% %%% text (exact match) %%%%%% condition endif %%%
+%%% condition if partial_match %%% %%% text (partial match) %%%%%% condition endif %%%
+</h2>
 %%% condition endif %%%
 <table class="toplist">
 <thead>
@@ -36,7 +39,7 @@
 <tr class="row %%% loopposition uneven "un" %%%even">
 <td class="index">%%% loopposition counter %%%</td>
 <td class="player">%%% condition if fide_title %%%<abbr title="%%% item fide_title_long %%%">%%% item fide_title %%%</abbr> %%% condition endif %%%%%% item contact %%%
-%%% condition if other_titles %%% (%%% loop other_titles %%%%%% loopposition middle|end ", " %%%<abbr title="%%% item title_long %%%">%%% item title %%%</abbr>%%% loop end %%%)%%% condition endif %%%
+%%% condition if other_titles %%% (%%% loop other_titles %%%<abbr title="%%% item title_long %%%">%%% item title %%%</abbr>%%% loopposition first|middle ", " %%%%%% loop end %%%)%%% condition endif %%%
 </td>
 <td class="federation">%%% item federation %%%</td>
 <td class="status%%% condition unless club_identifier %%% noclub%%% condition endif %%%">%%% condition if passive %%%<abbr title="passives Mitglied">P</abbr>%%% condition endif %%%</td>

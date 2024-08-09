@@ -20,20 +20,45 @@ function mod_ratings_ratingsearch($params) {
 	if (!empty($_GET['name'])) {
 		$_GET['name'] = trim($_GET['name']);
 		$conditions = [];
-		$name = $_GET['name'];
-		if (strstr($name, ', ')) {
-			$name = str_replace(', ', ',', $name);
+		$names[0] = $_GET['name'];
+		if (strstr($names[0], ', ')) {
+			$names[0] = str_replace(', ', ',', $names[0]);
 		}
-		if (strstr($name, ' ')) {
-			$name = explode(' ', $name);
+		if (strstr($names[0], ' ')) {
+			$name = explode(' ', $names[0]);
+			$names[0] = implode(',', $name);
 			$name = array_reverse($name);
-			$name = implode(',', $name);
+			$names[1] = implode(',', $name);
 		}
-		$conditions[] = sprintf('CONVERT(Spielername USING utf8) LIKE "%%%s%%"', wrap_db_escape($name));
+		foreach ($names as $name)
+			$conditions[] = sprintf('CONVERT(Spielername USING utf8) LIKE "%%%s%%"', wrap_db_escape($name));
+		$conditions = [implode(' OR ', $conditions)];
 		$ratings = mf_ratings_ratinglist($conditions);
 		if ($ratings) {
 			$ratings['searchword'] = $_GET['name'];
-			$page['text'] .= wrap_template('ratinglist', $ratings);
+			// normalize search term
+			$parts = str_replace(',', ' ', $_GET['name']);
+			$parts = explode(' ', $parts);
+			foreach ($parts as $index => $part) $parts[$index] = trim($part);
+			sort($parts);
+			// check if there are exact matches
+			$exact_matches = [];
+			foreach ($ratings as $id => $rating) {
+				if (!is_numeric($id)) continue;
+				if (array_diff($parts, $rating['search_parts'])) continue;
+				$exact_matches[$id] = $rating;
+				unset($ratings[$id]);
+			}
+			if ($exact_matches) {
+				$exact_matches['searchword'] = $ratings['searchword'];
+				$exact_matches['exact_match'] = true;
+				$page['text'] .= wrap_template('ratinglist', $exact_matches);
+			}
+			if (count($ratings) > 1) {
+				if ($exact_matches)
+					$ratings['partial_match'] = true;
+				$page['text'] .= wrap_template('ratinglist', $ratings);
+			}
 		}
 
 		// clubs?

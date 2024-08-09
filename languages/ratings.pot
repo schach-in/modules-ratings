@@ -5,7 +5,7 @@
 # https://www.zugzwang.org/modules/ratings
 #
 # @author Gustaf Mossakowski <gustaf@koenige.org>
-# @copyright Copyright © 2022 Gustaf Mossakowski
+# @copyright Copyright © 2022, 2024 Gustaf Mossakowski
 # @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
 #
 msgid ""
@@ -36,6 +36,14 @@ msgstr ""
 
 #: configuration/settings.cfg
 msgid "Last imported status of the German DWZ database"
+msgstr ""
+
+#: templates/ratinglist.template.txt
+msgid "(exact match)"
+msgstr ""
+
+#: templates/ratinglist.template.txt
+msgid "(partial match)"
 msgstr ""
 
 #: zzbrick_make/ratings.inc.php

@@ -56,6 +56,9 @@ function mf_ratings_ratinglist($conditions, $limit = 1000) {
 	$data = wrap_db_fetch($sql, '_dummy_', 'numeric');
 	$players = [];
 	foreach ($data as $index => $line) {
+		// only show players with at least one rating
+		if (!$line['dwz'] AND !$line['standard_rating'] AND !$line['rapid_rating'] AND !$line['blitz_rating'])
+			continue;
 		$line = mf_ratings_fidetitle($line);
 		$line = mf_ratings_fideother($line);
 		if (array_key_exists($line['PID'], $players)) {
@@ -63,6 +66,8 @@ function mf_ratings_ratinglist($conditions, $limit = 1000) {
 		} else {
 			$players[$line['PID']] = $line;
 			$contact = explode(',', $line['spielername']);
+			$players[$line['PID']]['search_parts'] = $contact;
+			sort($players[$line['PID']]['search_parts']);
 			$contact = array_reverse($contact);
 			$players[$line['PID']]['contact'] = implode(' ', $contact);
 		}
