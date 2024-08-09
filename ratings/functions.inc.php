@@ -217,3 +217,35 @@ function mf_ratings_log($rating, $line = '') {
 	error_log($line.";\n", 3, $sql_file);
 	return true;
 }
+
+/**
+ * format wikidata data
+ *
+ * @param array $raw
+ * @return array
+ */
+function mf_ratings_wikidata_format($raw) {
+	if (empty($raw['results']['bindings'])) return [[], 0];
+	
+	$count = count($raw['results']['bindings']);
+	$data = [];
+	foreach ($raw['results']['bindings'] as $line) {
+		$qid = $line['personId']['value'];
+		if (!array_key_exists($qid, $data)) {
+			$data[$qid] = [
+				'wikidata_id' => $qid,
+				'fide_id' => $line['fideId']['value'],
+				'person' => $line['personLabel']['value'],
+				'wikidata_uris[de][uri]' => NULL,
+				'wikidata_uris[de][uri_lang]' => NULL,
+				'wikidata_uris[en][uri]' => NULL,
+				'wikidata_uris[en][uri_lang]' => NULL
+			];
+		}
+		if (!empty($line['wikipediaUrl']['value'])) {
+			$data[$qid]['wikidata_uris['.$line['langCode']['value'].'][uri]'] = $line['wikipediaUrl']['value'];
+			$data[$qid]['wikidata_uris['.$line['langCode']['value'].'][uri_lang]'] = $line['langCode']['value'];
+		}
+	}
+	return [$data, $count];
+}

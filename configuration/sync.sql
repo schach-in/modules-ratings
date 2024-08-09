@@ -110,3 +110,23 @@ WHERE player_id IN (%s);
 SELECT player_id, player_id
 FROM fide_players
 WHERE player_id NOT IN (%s);
+
+-- wikidata-players_source --
+SELECT (SUBSTR(STR(?person), 33) AS ?personId) ?personLabel ?fideId ?wikipediaUrl ?langCode
+WHERE {
+  ?person wdt:P31 wd:Q5;
+		 wdt:P1440 ?fideId.
+  OPTIONAL {
+	?wikipediaPage schema:about ?person;
+					schema:isPartOf / wikibase:wikiGroup "wikipedia";
+					schema:inLanguage ?langCode.
+	FILTER(?langCode IN ("de", "en"))
+	BIND(IRI(CONCAT("https://", ?langCode, ".wikipedia.org/wiki/", SUBSTR(STR(?wikipediaPage), 31))) AS ?wikipediaUrl)
+  }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],de,en". }
+}
+
+-- wikidata-players_existing --
+SELECT wikidata_id, wikidata_id
+FROM wikidata_players;
+
