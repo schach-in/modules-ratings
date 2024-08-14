@@ -60,6 +60,8 @@
 
 .searchform
 			{ margin: 2em 0; }
+nav .searchform
+			{ margin: 0; }
 
 @media screen and (max-width: 540px) {
 	.toplist th, .toplist td, #content td.number
@@ -79,7 +81,7 @@
   }
   
   table.toplist tr {
-    display: grid; grid-template-columns: 1.5rem 4.5rem auto 1fr 1fr 1fr;
+    display: grid; grid-template-columns: 1.75rem 4.5rem auto 1fr 1fr 1fr;
 	padding-bottom: .25em;
     border-top: 1px dotted #000;
   }
