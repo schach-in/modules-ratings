@@ -77,7 +77,8 @@ function mf_ratings_ratinglist($conditions, $limit = 1000) {
 			sort($players[$line['PID']]['search_parts']);
 			$contact = array_reverse($contact);
 			$players[$line['PID']]['contact'] = implode(' ', $contact);
-			if ($line['person'])
+			// only take Wikipedia name for the accents etc.
+			if ($line['person'] AND wrap_filename($line['person']) === wrap_filename($players[$line['PID']]['contact']))
 				$players[$line['PID']]['contact'] = $line['person'];
 		}
 	}
