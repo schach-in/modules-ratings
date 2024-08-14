@@ -81,7 +81,7 @@ nav .searchform
   }
   
   table.toplist tr {
-    display: grid; grid-template-columns: 1.75rem 4.5rem auto 1fr 1fr 1fr;
+    display: grid; grid-template-columns: 2rem 4.5rem auto 1fr 1fr 1fr;
 	padding-bottom: .25em;
     border-top: 1px dotted #000;
   }
