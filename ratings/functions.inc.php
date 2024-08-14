@@ -53,7 +53,7 @@ function mf_ratings_ratinglist($conditions, $limit = 1000) {
 	    LEFT JOIN contacts
 	    	ON contacts.contact_id = IFNULL(contacts_identifiers.contact_id, federation_identifiers.contact_id)
 	    WHERE %s
-	    ORDER BY IFNULL(DWZ, FIDE_Elo) DESC, FIDE_Elo DESC, PID, Status
+	    ORDER BY IFNULL(DWZ, standard_rating) DESC, standard_rating DESC, PID, Status
 	    LIMIT 0, %d
 	';
 	$sql = sprintf($sql
