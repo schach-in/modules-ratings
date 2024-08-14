@@ -48,6 +48,14 @@ msgstr "(genaue Übereinstimmung)"
 msgid "(partial match)"
 msgstr "(teilweise Übereinstimmung)"
 
+#: templates/ratingstatus.template.txt
+msgid "Latest DWZ: %s"
+msgstr "Stand DWZ: %s"
+
+#: templates/ratingstatus.template.txt
+msgid "Latest Elo: %s"
+msgstr "Stand Elo: %s"
+
 #: zzbrick_make/ratings.inc.php
 msgid "Error while unpacking file %s, Code %s"
 msgstr "Fehler beim entpacken der Datei %s, Code %s"
