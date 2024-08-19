@@ -26,30 +26,50 @@ function mf_ratings_person_hook($ops) {
 		return false;
 	}
 	// already a contact ID?
-	if (!strstr($ops['record_new'][0]['contact_id'], '-')) {
+	if (!strstr($ops['record_new'][0]['contact_id'], '-'))
 		return [];
-	}
 
-	list($zps, $mgl_nr) = explode('-', $ops['record_new'][0]['contact_id']);
-	if (!brick_access_rights('Webmaster') AND !empty($ops['record_new'][0]['club_contact_id'])) {
-		$club_contact_id = $ops['record_new'][0]['club_contact_id'];
-		$sql = 'SELECT DISTINCT ZPS
-			FROM dwz_spieler
-			LEFT JOIN contacts_identifiers ok
-				ON dwz_spieler.ZPS = ok.identifier
-			WHERE contact_id = %d
-			AND ok.current = "yes"';
-		$sql = sprintf($sql, $club_contact_id);
-		$zps_aus_db = wrap_db_fetch($sql, '', 'single value');
-		if ($zps != $zps_aus_db)
-			wrap_error(sprintf('Falsche Übermittlung: ZPS vom Verein weicht von ZPS der Person ab: %s, Verein: %s',
-				$ops['record_new'][0]['contact_id'], $zps_aus_db), E_USER_ERROR
-			);
-	}
+	mf_ratings_person_hook_restrict_to_club($ops['record_new'][0]);
 	wrap_include('zzform/editing', 'ratings');
 	$spieler = mf_ratings_player_data_dsb($ops['record_new'][0]['contact_id']);
 	$contact_id = mf_ratings_person_add($spieler);
 	
 	$replace['record_replace'][0]['contact_id'] = $contact_id;
 	return $replace;
+}
+
+/**
+ * if persons are restricted to club, check if this is true
+ *
+ * @todo check if this function really is necessary
+ * @param
+ * @return bool
+ */
+function mf_ratings_person_hook_restrict_to_club($record) {
+	$event_rights = sprintf('event_id:%d', $record['event_id']);
+	if (wrap_access('tournaments_teams_registrations', $event_rights)) return true;
+	if (empty($record['club_contact_id'])) return true;
+
+	// JOIN dwz_vereine because this data always represents the current state
+	$sql = 'SELECT ZPS
+		FROM dwz_vereine
+		LEFT JOIN contacts_identifiers
+			ON dwz_vereine.ZPS = contacts_identifiers.identifier
+		WHERE contacts_identifiers.contact_id = %d
+		AND contacts_identifiers.current = "yes"';
+	/* simpler query
+	$sql = 'SELECT identifier
+		FROM contacts_identifiers
+		WHERE contact_id = %d
+		AND current = "yes"';
+	*/		
+	$sql = sprintf($sql, $record['club_contact_id']);
+	$club_code_from_id = wrap_db_fetch($sql, '', 'single value');
+	list($club_code, $membership_no) = explode('-', $record['contact_id']);
+	if ($club_code == $club_code_from_id) return true;
+
+	wrap_error(wrap_text(
+		'Falsche Übermittlung: ZPS vom Verein weicht von ZPS der Person ab: %s, Verein: %s',
+		$record['contact_id'], $club_code_from_id), E_USER_ERROR
+	);
 }
