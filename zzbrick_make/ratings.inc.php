@@ -23,21 +23,21 @@
  */
 function mod_ratings_make_ratings($params) {
 	if (count($params) !== 2) return false;
-	if (!in_array($params[0], ['download', 'import', 'sync'])) return false;
-	if (!wrap_setting('ratings_download['.$params[1].']')) return false;
-
 	$data = [
 		'action' => $params[0],
-		'ratings' => $params[1]
+		'rating' => $params[1]
 	];
+	if (!in_array($data['action'], ['download', 'import', 'sync'])) return false;
+	if (!wrap_setting('ratings_download['.$data['rating'].']')) return false;
+
 	switch ($data['action']) {
 		case 'download': $title = 'Download %s rating data'; break;
 		case 'import': $title = 'Import %s rating data'; break;
 		case 'sync': $title = 'Synchronize %s rating data'; break;
 	}
-	$page['title'] = wrap_text($title, ['values' => [$data['ratings']]]);
+	$page['title'] = wrap_text($title, ['values' => [$data['rating']]]);
 	// @todo think of translating breadcrumb, too
-	$page['breadcrumbs'][]['title'] = sprintf('%s %s', ucfirst($data['action']), $data['ratings']);
+	$page['breadcrumbs'][]['title'] = sprintf('%s %s', ucfirst($data['action']), $data['rating']);
 	
 	// @todo show webpage with possible downloads if there are no parameters,
 	// allow to trigger downloads
@@ -65,8 +65,8 @@ function mod_ratings_make_ratings($params) {
 		}
 	}
 	
-	$filename = __DIR__.'/ratings-'.$params[0].'.inc.php';
+	$filename = __DIR__.'/ratings-'.$data['action'].'.inc.php';
 	require_once $filename;
-	$function = 'mod_ratings_make_ratings_'.strtolower($params[0]);
-	return $function([$params[1]]);
+	$function = 'mod_ratings_make_ratings_'.strtolower($data['action']);
+	return $function([$data['rating']]);
 }

@@ -101,3 +101,7 @@ msgstr "Dateipfad für die Rating-Datei %s ist falsch: %s/%s."
 #: zzbrick_make/ratings-import-dwz.inc.php
 msgid "File not found for rating import: %s"
 msgstr "Datei %s für den Rating-Import nicht gefunden."
+
+#: zzbrick_make/ratings-sync.inc.php
+msgid "No rating sync required for %s."
+msgstr "Keine Synchronisation für die %s-Wertungsdaten erforderlich."

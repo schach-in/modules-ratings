@@ -95,3 +95,7 @@ msgstr ""
 #: zzbrick_make/ratings-import-dwz.inc.php
 msgid "File not found for rating import: %s"
 msgstr ""
+
+#: zzbrick_make/ratings-sync.inc.php
+msgid "No rating sync required for %s."
+msgstr ""
