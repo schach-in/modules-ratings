@@ -26,12 +26,25 @@ function mod_ratings_make_ratings($params) {
 	if (!in_array($params[0], ['download', 'import', 'sync'])) return false;
 	if (!wrap_setting('ratings_download['.$params[1].']')) return false;
 
+	$data = [
+		'action' => $params[0],
+		'ratings' => $params[1]
+	];
+	switch ($data['action']) {
+		case 'download': $title = 'Download %s rating data'; break;
+		case 'import': $title = 'Import %s rating data'; break;
+		case 'sync': $title = 'Synchronize %s rating data'; break;
+	}
+	$page['title'] = wrap_text($title, ['values' => [$data['ratings']]]);
+	// @todo think of translating breadcrumb, too
+	$page['breadcrumbs'][]['title'] = sprintf('%s %s', ucfirst($data['action']), $data['ratings']);
+	
 	// @todo show webpage with possible downloads if there are no parameters,
 	// allow to trigger downloads
 
 	// @todo show webpage form that allows to trigger download for this rating file
 	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-		$page['text'] = wrap_template('ratingsdownload');
+		$page['text'] = wrap_template('ratingsync', $data);
 		return $page;
 	}
 

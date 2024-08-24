@@ -56,6 +56,18 @@ msgstr "Stand DWZ: %s"
 msgid "Latest Elo: %s"
 msgstr "Stand Elo: %s"
 
+#: templates/ratingsync.template.txt
+msgid "Start download"
+msgstr "Download starten"
+
+#: templates/ratingsync.template.txt
+msgid "Start synchronization"
+msgstr "Synchronisierung starten"
+
+#: templates/ratingsync.template.txt
+msgid "Start import"
+msgstr "Import starten"
+
 #: zzbrick_make/ratings.inc.php
 msgid "Error while unpacking file %s, Code %s"
 msgstr "Fehler beim entpacken der Datei %s, Code %s"
@@ -65,6 +77,18 @@ msgid "Please wait. Rating sync is only allowed to run once every %s."
 msgstr ""
 "Bitte warten. Die Synchronisierung der Ratingzahlen darf nur einmal alle %s "
 "laufen."
+
+#: zzbrick_make/ratings.inc.php
+msgid "Download %s rating data"
+msgstr "%s-Wertungsdaten herunterladen"
+
+#: zzbrick_make/ratings.inc.php
+msgid "Import %s rating data"
+msgstr "%s-Wertungsdaten importieren"
+
+#: zzbrick_make/ratings.inc.php
+msgid "Synchronize %s rating data"
+msgstr "%s-Wertungsdaten synchronisieren"
 
 #: zzbrick_make/ratings-download.inc.php
 msgid "Failed to download rating file for %s."

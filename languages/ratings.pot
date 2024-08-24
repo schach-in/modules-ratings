@@ -52,12 +52,36 @@ msgstr ""
 msgid "Latest Elo: %s"
 msgstr ""
 
+#: templates/ratingsync.template.txt
+msgid "Start download"
+msgstr ""
+
+#: templates/ratingsync.template.txt
+msgid "Start synchronization"
+msgstr ""
+
+#: templates/ratingsync.template.txt
+msgid "Start import"
+msgstr ""
+
 #: zzbrick_make/ratings.inc.php
 msgid "Error while unpacking file %s, Code %s"
 msgstr ""
 
 #: zzbrick_make/ratings.inc.php
 msgid "Please wait. Rating sync is only allowed to run once every %s."
+msgstr ""
+
+#: zzbrick_make/ratings.inc.php
+msgid "Download %s rating data"
+msgstr ""
+
+#: zzbrick_make/ratings.inc.php
+msgid "Import %s rating data"
+msgstr ""
+
+#: zzbrick_make/ratings.inc.php
+msgid "Synchronize %s rating data"
 msgstr ""
 
 #: zzbrick_make/ratings-download.inc.php
