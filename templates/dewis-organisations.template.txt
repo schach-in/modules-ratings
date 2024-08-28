@@ -27,7 +27,7 @@
 <tr>
 <td>%%% item id %%%</td>
 <td>%%% item club %%%</td>
-<td>%%% item vkz %%%</td>
+<td><a href="../../members/%%% item vkz %%%/">%%% item vkz %%%</a></td>
 <td>%%% item parent_id %%%</td>
 <td>%%% item assessor_id %%%</td>
 <td>%%% item last_sync_members %%%</td>
