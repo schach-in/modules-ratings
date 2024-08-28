@@ -39,7 +39,7 @@ contact_category_id = /*_ID categories contact/federation _*/;
 contacts_identifiers[0][identifier_category_id] = /*_ID categories identifiers/pass_dsb _*/;
 
 -- verbaende_static3 --
-contacts_identifiers[0][current] = 'yes'
+contacts_identifiers[0][current] = 'yes';
 
 -- verbaende_static4 --
 contacts_contacts[0][published] = 'yes';
