@@ -23,6 +23,29 @@ function mod_ratings_make_dewis($params) {
  * -----------------------------------------------
  */
 
+/**
+ * show all organisations on top level, i. e. no clubs
+ * (clubs that are new will be shown, too)
+ *
+ * @return array
+ */
+function mod_ratings_make_dewis_federations() {
+	wrap_package_activate('zzform'); // CSS
+	$sql = 'SELECT id, club, vkz, parent_id, last_update
+		FROM dewis_clubs
+		WHERE ISNULL(last_sync_members)
+		ORDER BY vkz';
+	$data = wrap_db_fetch($sql, 'id');
+	foreach ($data as $id => $line) {
+		$data[$id]['level'] = isset($data[$line['parent_id']]['level']) ? $data[$line['parent_id']]['level'] + 1 : 0;
+		if (strlen($line['vkz']) === 5 AND $line['parent_id'] !== '1')
+			$data[$id]['new'] = 1;
+	}
+	
+	$page['text'] = wrap_template('dewis-federations', $data);
+	return $page;
+}
+
 function mod_ratings_make_dewis_organisations($params) {
 	$pattern = '/^[A-Z0-9]{3,5}$/';
 	if (!preg_match($pattern, $params[0])) return false;

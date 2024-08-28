@@ -1,0 +1,39 @@
+# ratings module
+# HTML output: federations in DeWIS
+#
+# Part of »Zugzwang Project«
+# https://www.zugzwang.org/modules/ratings
+#
+# @author Gustaf Mossakowski <gustaf@koenige.org>
+# @copyright Copyright © 2024 Gustaf Mossakowski
+# @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
+#
+<div id="zzform">
+<table class="toplist" id="js-org">
+<thead>
+<tr class="sortable">
+<th class="number" style="padding-right: 1rem;">%%% text vkz %%%</th>
+<th>%%% text Club %%%</th>
+<th>%%% text last_update %%%</th>
+</tr>
+</thead>
+<tbody>
+%%% loop start %%%
+<tr%%% condition if new %%% class="current_record"%%% condition endif %%%>
+<td class="number" style="padding-right: 1rem;"><a href="%%% item vkz %%%/">%%% item vkz %%%</a></td>
+<td class="level%%% item level %%%">%%% item club %%%</td>
+<td>%%% item last_update %%%</td>
+</tr>
+%%% loop end %%%
+</tbody>
+</table>
+<script src="%%% setting behaviour_path %%%/vxjs/src/core.js"></script>
+<script src="%%% setting behaviour_path %%%/vxjs/src/widgets/sortable.js"></script>
+<script>
+	var sortTableObject = vxJS.widget.sorTable(document.getElementById('js-org'), {
+		columnFormat: [
+			null, null, null
+		]
+	});
+</script>
+</div>
