@@ -107,6 +107,36 @@ function mf_ratings_dewis_organisations_c00() {
 	}
 }
 
+function mod_ratings_make_dewis_clubimport() {
+	$sql = 'SELECT dewis_clubs.id, dewis_clubs.club, dewis_clubs.vkz
+			, parent_federation.vkz AS federation_vkz
+			, SUBSTRING(parent_federation.vkz, 1, 1) AS confederation_vkz
+			, dewis_clubs.last_update
+		FROM dewis_clubs
+		LEFT JOIN dewis_clubs parent_federation
+			ON dewis_clubs.parent_id = parent_federation.id
+		LEFT JOIN dwz_vereine
+			ON dewis_clubs.vkz = dwz_vereine.ZPS
+		WHERE ISNULL(dwz_vereine.ZPS)
+		AND LENGTH(dewis_clubs.vkz) > 3
+		AND parent_federation.vkz != "000"'; // no L0001, M0001
+	$data = wrap_db_fetch($sql, 'vkz');
+
+	if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+		$id = substr(key($_POST), 3);
+		$line = $data[$id] ?? [];
+		if ($line) {
+			$sql = 'INSERT INTO dwz_vereine (ZPS, LV, Verband, Vereinname) VALUES ("%s", "%s", "%s", "%s")';
+			$sql = sprintf($sql, $line['vkz'], $line['confederation_vkz'], $line['federation_vkz'], $line['club']);
+			$success = wrap_db_query($sql);
+			wrap_redirect_change();
+		}
+	}
+	
+	$page['text'] = wrap_template('dewis-clubimport', $data);
+	return $page;
+}
+
 /**
  * -----------------------------------------------
  * members
