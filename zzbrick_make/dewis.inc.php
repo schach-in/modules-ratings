@@ -33,7 +33,7 @@ function mod_ratings_make_dewis_federations() {
 	wrap_package_activate('zzform'); // CSS
 	$sql = 'SELECT id, club, vkz, parent_id, last_update
 		FROM dewis_clubs
-		WHERE ISNULL(last_sync_members)
+		WHERE ISNULL(last_sync_members) OR last_sync_members = ""
 		ORDER BY vkz';
 	$data = wrap_db_fetch($sql, 'id');
 	foreach ($data as $id => $line) {
