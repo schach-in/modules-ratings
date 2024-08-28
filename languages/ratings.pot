@@ -64,6 +64,10 @@ msgstr ""
 msgid "Start import"
 msgstr ""
 
+#: zzbrick_make/dewis.inc.php
+msgid "There is no organisation with the code %s."
+msgstr ""
+
 #: zzbrick_make/ratings.inc.php
 msgid "Error while unpacking file %s, Code %s"
 msgstr ""

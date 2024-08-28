@@ -68,6 +68,10 @@ msgstr "Synchronisierung starten"
 msgid "Start import"
 msgstr "Import starten"
 
+#: zzbrick_make/dewis.inc.php
+msgid "There is no organisation with the code %s."
+msgstr "Es gibt keine Organisation mit dem Code %s."
+
 #: zzbrick_make/ratings.inc.php
 msgid "Error while unpacking file %s, Code %s"
 msgstr "Fehler beim entpacken der Datei %s, Code %s"

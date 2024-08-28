@@ -29,6 +29,9 @@ function mod_ratings_make_dewis_organisations($params) {
 	
 	$client = mf_ratings_dewis_connect();
 	$data = (array) $client->organizations($params[0]);
+	if (!array_key_exists('id', $data))
+		wrap_quit(404, wrap_text('There is no organisation with the code %s.', ['values' => [$params[0]]]));
+
 	$clubs = mf_ratings_dewis_organisations($data);
 	if (in_array($params[0], ['000', 'C00']))
 		mf_ratings_dewis_organisations_c00();
