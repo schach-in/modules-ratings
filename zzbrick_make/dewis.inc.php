@@ -363,6 +363,57 @@ function mod_ratings_make_dewis_update() {
 }
 
 /**
+ * insert missing players from dewis_members into dwz_spieler
+ *
+ */
+function mod_ratings_make_dewis_insert() {
+	$sql = 'SELECT dewis_members.*, dewis_clubs.vkz
+			, CONCAT(YEAR(finishedOn), MONTH(finishedOn)) AS letzte_auswertung
+			, IF (NOT ISNULL(duplicates.pid), 1, NULL) AS duplicate
+		FROM dewis_members
+		LEFT JOIN dewis_clubs
+			ON dewis_members.club_id = dewis_clubs.id
+		LEFT JOIN dwz_spieler
+			ON dwz_spieler.pid = dewis_members.pid
+		LEFT JOIN dwz_spieler duplicates
+			ON duplicates.ZPS = dewis_clubs.vkz
+			AND TRIM(LEADING "0" FROM duplicates.Mgl_Nr) = dewis_members.membership
+		WHERE ISNULL(dwz_spieler.pid)';
+	$data = wrap_db_fetch($sql, '_dummy_', 'numeric');
+
+	$template = 'INSERT INTO dwz_spieler (
+			PID, ZPS, Mgl_Nr, Status, Spielername, Geschlecht,
+			Spielberechtigung, Geburtsjahr, Letzte_Auswertung, DWZ, DWZ_Index, FIDE_Elo,
+			FIDE_Titel, FIDE_ID, FIDE_Land
+		) VALUES (
+			%s, "%s", %s, "%s", "%s", "%s", NULL, %s, %s, %s, %s, %s, %s, %s, NULL
+		);';
+	foreach ($data as $line) {
+		if ($line['duplicate']) {
+			wrap_error('Duplicate membership. '.json_encode($line));
+			continue;
+		}
+		$sql = sprintf($template
+			, $line['pid']
+			, $line['vkz']
+			, $line['membership']
+			, $line['state'] ? $line['state'] : 'A'
+			, $line['surname'].','.$line['firstname'].($line['title'] ? ','.$line['title'] : '')
+			, $line['gender']
+			, mf_ratings_nullstring($line['yearOfBirth'])
+			, mf_ratings_nullstring($line['letzte_auswertung'])
+			, mf_ratings_nullstring($line['rating'])
+			, mf_ratings_nullstring($line['ratingIndex'])
+			, mf_ratings_nullstring($line['elo'])
+			, mf_ratings_nullstring($line['fideTitle'])
+			, mf_ratings_nullstring($line['idfide'])
+		);
+		$result = wrap_db_query($sql);
+	}
+	return false;
+}
+
+/**
  * connect to DeWIS
  *
  * @return object
