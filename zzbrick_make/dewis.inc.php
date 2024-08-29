@@ -132,6 +132,7 @@ function mod_ratings_make_dewis_clubimport() {
 			wrap_redirect_change();
 		}
 	}
+	$data = array_values($data); // numeric keys
 	
 	$page['text'] = wrap_template('dewis-clubimport', $data);
 	return $page;
