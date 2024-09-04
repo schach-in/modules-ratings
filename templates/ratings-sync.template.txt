@@ -1,0 +1,35 @@
+# ratings module
+# HTML output: sync rating data
+#
+# Part of »Zugzwang Project«
+# https://www.zugzwang.org/modules/ratings
+#
+# @author Gustaf Mossakowski <gustaf@koenige.org>
+# @copyright Copyright © 2024 Gustaf Mossakowski
+# @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
+#
+<table class="toplist">
+<thead>
+<tr>
+<th>%%% text Timestamp %%%</th>
+<th>%%% text Action %%%</th>
+<th class="number">%%% text Updated %%%</th>
+<th class="number">%%% text Inserted %%%</th>
+<th class="number">%%% text Nothing %%%</th>
+<th>%%% text Next %%%</th>
+</tr>
+</thead>
+<tbody>
+%%% loop start %%%
+<tr>
+<td>%%% item time wrap_date %%% %%% item time wrap_time %%%</td>
+<td>%%% item action %%%</td>
+<td class="number">%%% item updated %%%</td>
+<td class="number">%%% item inserted %%%</td>
+<td class="number">%%% item nothing %%%</td>
+<td>%%% item filename %%%
+%%% item next_url %%%</td>
+</tr>
+%%% loop end %%%
+</tbody>
+</table>

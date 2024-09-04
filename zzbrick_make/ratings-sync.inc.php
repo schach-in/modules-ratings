@@ -24,6 +24,11 @@ function mod_ratings_make_ratings_sync($params) {
 	$rating = strtolower($params[0]);
 	$log = sprintf('ratings/%s', $rating);
 	$data = wrap_file_log($log);
+	foreach ($data as $index => $line) {
+		if ($line['result'])
+			$data[$index] += json_decode($line['result'], true);
+		$data[$index]['time'] = date('Y-m-d H:i:s', $line['timestamp']);
+	}
 	if (!$data) $data[] = ['action' => 'finish'];
 
 	$last = end($data);
@@ -47,22 +52,24 @@ function mod_ratings_make_ratings_sync($params) {
 		wrap_quit(503);
 		break;
 	}
+	$data['rating'] = $params[0];
 	
 	switch ($action) {
 	case 'download':
-		$url = wrap_path('ratings_sync', sprintf('download/%s', $params[0]));
+		$url = wrap_path('ratings_sync', sprintf('download/%s', $data['rating']));
 		if (!$url) wrap_error(wrap_text('No download URL for sync of rating data.'), E_USER_ERROR);
-		$result = wrap_get_protected_url($url, [], 'POST', [], wrap_setting('robot_username'));
+		$result = wrap_trigger_protected_url($url, [], 'POST', [], wrap_setting('robot_username'));
 		if ($result[0] == 200)
 			wrap_file_log($log, 'write', [time(), 'download', $result[2]]);
 		break;
 
 	case 'unpack':
 		wrap_include('sync', 'ratings');
-		$return = mf_ratings_file($params[0]);
+		$return = mf_ratings_file($data['rating']);
 		if ($return) {
-			$source = sprintf('%s/%s', $return['destination_folder'], wrap_setting('ratings_sync_file[Elo]'));
-			$dest = sprintf('%s/%s/%s', wrap_setting('tmp_dir'), $rating, wrap_setting('ratings_sync_file[Elo]'));
+			$filename =  wrap_setting('ratings_sync_file['.$data['rating'].']'); 
+			$source = sprintf('%s/%s', $return['destination_folder'], $filename);
+			$dest = sprintf('%s/%s/%s', wrap_setting('tmp_dir'), $rating, $filename);
 			rename($source, $dest);
 			rmdir($return['destination_folder']);
 			wrap_file_log($log, 'write', [time(), 'unpack', json_encode($return)]);
@@ -73,7 +80,7 @@ function mod_ratings_make_ratings_sync($params) {
 
 	case 'import':
 		$url = $import['next_url'] ?? wrap_path('zzform_sync', 'fide-players');
-		$result = wrap_get_protected_url($url, [], 'POST', [], wrap_setting('robot_username'));
+		$result = wrap_trigger_protected_url($url, [], 'POST', [], wrap_setting('robot_username'));
 		if ($result[0] == 200) {
 			$import = json_decode($result[2], true);
 			$return = [
@@ -89,11 +96,23 @@ function mod_ratings_make_ratings_sync($params) {
 		break;
 
 	case 'finish':
-		echo wrap_print($data);
-		exit;
+		// get data
+		$date = '';
+		foreach ($data as $index => $line) {
+			if (!is_numeric($index)) continue;
+			if (!in_array($line['action'], ['download', 'unpack'])) continue;
+			$date = $line['date'];
+		}
+		wrap_setting_write('ratings_status['.$data['rating'].']', $date);
 		break;
 	}
+	
+	if ($action !== 'finish')
+		wrap_trigger_protected_url(wrap_setting('request_uri'), [], 'POST', [], wrap_setting('robot_username'));
 
-	// call next instance of script	
-	wrap_get_protected_url(wrap_setting('request_uri'), [], 'POST', [], wrap_setting('robot_username')); 
+	$page['title'] = wrap_text('Synchronize %s rating data', ['values' => [$data['rating']]]);
+	// @todo think of translating breadcrumb, too
+	$page['breadcrumbs'][]['title'] = wrap_text('Sync %s', ['values' => [$data['rating']]]);
+	$page['text'] = wrap_template('ratings-sync', $data);
+	return $page;
 }
