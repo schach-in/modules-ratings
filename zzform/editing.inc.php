@@ -104,7 +104,7 @@ function mf_ratings_player_search($federation, $data) {
  * @return mixed
  */
 function mf_ratings_player_search_dsb($data) {
-	$sql = 'SELECT CONCAT(ZPS, "-", Mgl_Nr) AS player_pass_dsb
+	$sql = 'SELECT CONCAT(ZPS, "-", IF(Mgl_Nr < 100, LPAD(Mgl_Nr, 3, "0"), Mgl_Nr)) AS player_pass_dsb
 			, FIDE_ID AS player_id_fide
 			, (CASE WHEN Geschlecht = "W" THEN "female"
 				WHEN Geschlecht = "M" THEN "male"

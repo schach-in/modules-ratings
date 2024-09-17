@@ -127,7 +127,7 @@ function mf_ratings_rating_dsb($contact_ids) {
 			, REPLACE(Spielername, ",", ", ") AS contact_last_first
 		FROM dwz_spieler
 		LEFT JOIN contacts_identifiers
-			ON contacts_identifiers.identifier = CONCAT(ZPS, "-", Mgl_Nr)
+			ON contacts_identifiers.identifier = CONCAT(ZPS, "-", IF(Mgl_Nr < 100, LPAD(Mgl_Nr, 3, "0"), Mgl_Nr))
 			AND contacts_identifiers.current = "yes"
 			AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
 		WHERE contact_id IN (%s)';

@@ -39,7 +39,8 @@ function mod_ratings_make_personupdate() {
 
 	$sql = 'SELECT
 		FIDE_ID AS player_id_fide, Spielername AS player, Geburtsjahr AS geburtsjahr,
-		Geschlecht AS sex, CONCAT(ZPS, "-", Mgl_Nr) AS player_pass_dsb
+		Geschlecht AS sex
+		, CONCAT(ZPS, "-", IF(Mgl_Nr < 100, LPAD(Mgl_Nr, 3, "0"), Mgl_Nr)) AS player_pass_dsb
 		FROM dwz_spieler
 		WHERE FIDE_ID IN (%s)
 		AND (ISNULL(Status) OR Status != "P")';
@@ -80,9 +81,10 @@ function mod_ratings_make_personupdate() {
 	// FIDE-IDs zu bestehenden ZPS-Codes
 	$sql = 'SELECT
 		FIDE_ID AS player_id_fide, Spielername AS player, Geburtsjahr AS geburtsjahr,
-		Geschlecht AS sex, CONCAT(ZPS, "-", Mgl_Nr) AS player_pass_dsb
+		Geschlecht AS sex
+		, CONCAT(ZPS, "-", IF(Mgl_Nr < 100, LPAD(Mgl_Nr, 3, "0"), Mgl_Nr)) AS player_pass_dsb
 		FROM dwz_spieler
-		WHERE CONCAT(ZPS, "-", Mgl_Nr) IN ("%s")
+		WHERE CONCAT(ZPS, "-", IF(Mgl_Nr < 100, LPAD(Mgl_Nr, 3, "0"), Mgl_Nr)) IN ("%s")
 		AND (ISNULL(Status) OR Status != "P")';
 	$sql = sprintf($sql, implode('","', array_keys($player_passes_dsb)));
 	$dwz_player_passes_dsb = wrap_db_fetch($sql, 'player_pass_dsb');
