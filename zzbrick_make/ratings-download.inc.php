@@ -71,6 +71,7 @@ function mod_ratings_make_ratings_download($params) {
 		copy($meta['filename'], $data['filename']);
 	}
 	$page['text'] = json_encode($data);
+	$page['extra']['job'] = 'download';
 	$page['content_type'] = 'json';
 	return $page;
 }
