@@ -40,11 +40,11 @@ function mod_ratings_make_ratings_sync($params) {
 		$action = 'unpack';
 		break;
 	case 'unpack':
-		$action = 'import';
+		$action = 'sync';
 		break;
-	case 'import':
+	case 'sync':
 		$import = json_decode($last['result'], true);
-		if ($import['next_url']) $action = 'import';
+		if ($import['next_url']) $action = 'sync';
 		else $action = 'finish';
 		break;
 	case 'fail':
@@ -58,9 +58,7 @@ function mod_ratings_make_ratings_sync($params) {
 	case 'download':
 		$url = wrap_path('ratings_sync', sprintf('download/%s', $data['rating']));
 		if (!$url) wrap_error(wrap_text('No download URL for sync of rating data.'), E_USER_ERROR);
-		$result = wrap_trigger_protected_url($url, [], 'POST', [], wrap_setting('robot_username'));
-		if ($result[0] == 200)
-			wrap_file_log($log, 'write', [time(), 'download', $result[2]]);
+		mod_ratings_make_ratings_sync_next($url, $log);
 		break;
 
 	case 'unpack':
@@ -78,21 +76,9 @@ function mod_ratings_make_ratings_sync($params) {
 		}
 		break;
 
-	case 'import':
+	case 'sync':
 		$url = $import['next_url'] ?? wrap_path('zzform_sync', 'fide-players');
-		$result = wrap_trigger_protected_url($url, [], 'POST', [], wrap_setting('robot_username'));
-		if ($result[0] == 200) {
-			$import = json_decode($result[2], true);
-			$return = [
-				'updated' => $import['updated'] ?? NULL,
-				'inserted' => $import['inserted'] ?? NULL,
-				'nothing' => $import['nothing'] ?? NULL,
-				'next_url' => $import['next_url'] ?? NULL
-			];
-			wrap_file_log($log, 'write', [time(), 'import', json_encode($return)]);
-		} else {
-			wrap_file_log($log, 'write', [time(), 'fail', $result[0]]);
-		}
+		mod_ratings_make_ratings_sync_next($url, $log);
 		break;
 
 	case 'finish':
@@ -107,12 +93,27 @@ function mod_ratings_make_ratings_sync($params) {
 		break;
 	}
 	
-	if ($action !== 'finish')
-		wrap_trigger_protected_url(wrap_setting('request_uri'), [], 'POST', [], wrap_setting('robot_username'));
+	if (!in_array($action, ['download', 'sync', 'finish']))
+		wrap_job(wrap_setting('request_uri'), ['trigger' => 1]);
 
 	$page['title'] = wrap_text('Synchronize %s rating data', ['values' => [$data['rating']]]);
 	// @todo think of translating breadcrumb, too
 	$page['breadcrumbs'][]['title'] = wrap_text('Sync %s', ['values' => [$data['rating']]]);
 	$page['text'] = wrap_template('ratings-sync', $data);
 	return $page;
+}
+
+/**
+ * call background job for syncing
+ *
+ * @param string $url
+ * @param string $log
+ * @return void
+ */
+function mod_ratings_make_ratings_sync_next($url, $log) {
+	wrap_job($url, [
+		'job_logfile_result' => $log,
+		'job_url_next' => wrap_setting('request_uri'),
+		'trigger' => true
+	]);
 }
