@@ -51,7 +51,7 @@ function mod_ratings_make_ratings($params) {
 	// big files, no timeout please
 	wrap_setting('syndication_timeout_ms', false);
 
-	if (!wrap_setting('local_access')) {
+	if (!wrap_setting('local_access') AND $data['action'] !== 'sync') {
 		wrap_include('syndication', 'zzwrap');
 		$lock_realm = strtolower(implode('-', $params));
 		$wait_seconds = 300;
