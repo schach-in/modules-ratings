@@ -42,7 +42,7 @@ function mod_ratings_datacheck($params) {
 	$data['total_records'] = count($lines);
 	
 	$page['text'] = wrap_template('datacheck', $data);
-	$page['breadcrumbs'][] = $page['title'];
+	$page['breadcrumbs'][]['title'] = $page['title'];
 	return $page;
 }
 

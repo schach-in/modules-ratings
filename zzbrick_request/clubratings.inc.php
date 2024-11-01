@@ -48,6 +48,6 @@ function mod_ratings_clubratings($params) {
 	$page['text'] .= wrap_template('ratingstatus');
 	$page['title'] = 'Wertungszahlen '.$data['contact'];
 	$page['meta'][] = ['name' => 'robots', 'content' => 'noindex'];
-	$page['breadcrumbs'][] = $data['contact'];
+	$page['breadcrumbs'][]['title'] = $data['contact'];
 	return $page;
 }
