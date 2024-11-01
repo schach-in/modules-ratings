@@ -25,8 +25,13 @@ function mod_ratings_make_ratings_sync($params) {
 	$log = sprintf('ratings/%s', $rating);
 	$data = wrap_file_log($log);
 	foreach ($data as $index => $line) {
-		if ($line['result'])
-			$data[$index] += json_decode($line['result'], true);
+		if ($line['result']) {
+			$result = json_decode($line['result'], true);
+			if (is_array($result))
+				$data[$index] += $result;
+			else
+				wrap_error('Unable to read log line, key `result`: '.json_encode($line));
+		}
 		$data[$index]['time'] = date('Y-m-d H:i:s', $line['timestamp']);
 	}
 	if (!$data) $data[] = ['action' => 'finish'];
