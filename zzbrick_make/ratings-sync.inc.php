@@ -79,6 +79,7 @@ function mod_ratings_make_ratings_sync($params) {
 		} else {
 			wrap_file_log($log, 'write', [time(), 'finish', json_encode(['msg' => 'Nothing to update'])]);
 		}
+		wrap_job(wrap_setting('request_uri'), ['trigger' => 1]);
 		break;
 
 	case 'sync':
@@ -98,9 +99,6 @@ function mod_ratings_make_ratings_sync($params) {
 		break;
 	}
 	
-	if (!in_array($action, ['download', 'sync', 'finish']))
-		wrap_job(wrap_setting('request_uri'), ['trigger' => 1]);
-
 	$page['title'] = wrap_text('Synchronize %s rating data', ['values' => [$data['rating']]]);
 	// @todo think of translating breadcrumb, too
 	$page['breadcrumbs'][]['title'] = wrap_text('Sync %s', ['values' => [$data['rating']]]);
@@ -119,6 +117,6 @@ function mod_ratings_make_ratings_sync_next($url, $log) {
 	wrap_job($url, [
 		'job_logfile_result' => $log,
 		'job_url_next' => wrap_setting('request_uri'),
-		'trigger' => true
+		'sequential' => true
 	]);
 }
