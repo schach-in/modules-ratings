@@ -129,8 +129,8 @@ function mf_ratings_player_search_dsb($data) {
 	$sql = sprintf($sql
 		, wrap_category_id('identifiers/pass_dsb')
 		, wrap_category_id('identifiers/pass_dsb')
-		, $data['last_name']
-		, $data['first_name']
+		, wrap_db_escape($data['last_name'])
+		, wrap_db_escape($data['first_name'])
 		, substr($data['date_of_birth'], 0, 4)
 	);
 	$player = wrap_db_fetch($sql, 'player_pass_dsb');
