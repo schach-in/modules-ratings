@@ -166,8 +166,8 @@ function mf_ratings_player_search_fide($data) {
 		WHERE player = "%s, %s"
 		AND birth = %d';
 	$sql = sprintf($sql
-		, $data['last_name']
-		, $data['first_name']
+		, wrap_db_escape($data['last_name'])
+		, wrap_db_escape($data['first_name'])
 		, substr($data['date_of_birth'], 0, 4)
 	);
 	$player = wrap_db_fetch($sql);
