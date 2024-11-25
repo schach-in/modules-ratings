@@ -101,13 +101,13 @@ CREATE TABLE `dwz_vereine` (
 -- fide_players --
 CREATE TABLE `fide_players` (
   `player_id` int unsigned NOT NULL,
-  `player` varchar(60) DEFAULT NULL,
-  `federation` varchar(3) NOT NULL,
+  `player` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `federation` varchar(3) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   `sex` enum('M','F') CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
-  `title` varchar(4) DEFAULT NULL,
-  `title_women` varchar(4) DEFAULT NULL,
-  `title_other` varchar(14) DEFAULT NULL,
-  `foa_rating` varchar(3) DEFAULT NULL,
+  `title` varchar(4) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
+  `title_women` varchar(4) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
+  `title_other` varchar(24) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
+  `foa_rating` varchar(3) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
   `standard_rating` smallint unsigned DEFAULT NULL,
   `standard_games` smallint unsigned DEFAULT NULL,
   `standard_k_factor` tinyint unsigned DEFAULT NULL,
@@ -118,12 +118,12 @@ CREATE TABLE `fide_players` (
   `blitz_games` smallint DEFAULT NULL,
   `blitz_k_factor` tinyint DEFAULT NULL,
   `birth` smallint unsigned DEFAULT NULL,
-  `flag` varchar(2) DEFAULT NULL,
+  `flag` varchar(2) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
   `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`player_id`),
   KEY `standard_rating` (`standard_rating`),
   KEY `player` (`player`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
 -- categories --
