@@ -34,7 +34,7 @@ function mod_ratings_make_ratings_download($params) {
 	// fetches the rating file from the server
 	// might take a little longer, but if possible, If-Modified-Since and 304s
 	// are taken into account
-	require_once wrap_setting('core').'/syndication.inc.php';
+	wrap_include('syndication', 'zzwrap');
 	$rating_data = wrap_syndication_get($data['url'], 'file');
 	if (!$rating_data)
 		wrap_error(sprintf(wrap_text('Unable to download rating file for %s.'), $params[0]), E_USER_ERROR);
