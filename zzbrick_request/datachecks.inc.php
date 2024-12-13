@@ -32,7 +32,7 @@ function mod_ratings_datachecks($params) {
 			$count = '?';
 		}
 		$data[] = [
-			'key' => ($count <= 1000 OR $count === '?') ? $key : '',
+			'key' => ($count <= wrap_setting('ratings_datachecks_link_max_entries') OR $count === '?') ? $key : '',
 			'query' => $query,
 			'comment' => $comment,
 			'count' => $count
