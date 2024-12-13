@@ -20,6 +20,14 @@
  * @return array $data
  */
 function mod_ratings_make_ratings_sync($params) {
+	if (!array_key_exists('sequential', $_POST)) {
+		// start as a background job
+		mod_ratings_make_ratings_sync_self();
+		wrap_job_debug('JOB STARTING', $_POST);
+		$page['text'] = 'Starting background job';
+		return $page;
+	}
+	
 	wrap_include('file', 'zzwrap');
 	$rating = strtolower($params[0]);
 	$log = sprintf('ratings/%s', $rating);
@@ -54,9 +62,10 @@ function mod_ratings_make_ratings_sync($params) {
 		break;
 	case 'fail':
 		$action = false;
-		wrap_quit(503);
+		wrap_quit(503, 'Sync job failed. Read log for details.');
 		break;
 	}
+	wrap_job_debug(sprintf('JOB LAST ACTION %s, NEXT ACTION %s', $last['action'], $action);
 	$data['rating'] = $params[0];
 	
 	switch ($action) {
@@ -79,7 +88,7 @@ function mod_ratings_make_ratings_sync($params) {
 		} else {
 			wrap_file_log($log, 'write', [time(), 'finish', json_encode(['msg' => 'Nothing to update'])]);
 		}
-		wrap_job(wrap_setting('request_uri'), ['trigger' => 1]);
+		mod_ratings_make_ratings_sync_self();
 		break;
 
 	case 'sync':
@@ -108,15 +117,24 @@ function mod_ratings_make_ratings_sync($params) {
 
 /**
  * call background job for syncing
+ */
+function mod_ratings_make_ratings_sync_self() {
+	wrap_job(wrap_setting('request_uri'), ['sequential' => 1]);
+}
+
+/**
+ * call subordinate job for syncing
  *
  * @param string $url
  * @param string $log
  * @return void
  */
 function mod_ratings_make_ratings_sync_next($url, $log) {
-	wrap_job($url, [
+	$data = [
 		'job_logfile_result' => $log,
-		'job_url_next' => wrap_setting('request_uri'),
-		'sequential' => true
-	]);
+		'job_url_next' => wrap_setting('request_uri')
+	];
+	list($status, $headers, $response) = wrap_trigger_protected_url(
+		$url, false, true, $data
+	);
 }
