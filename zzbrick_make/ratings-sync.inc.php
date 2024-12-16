@@ -65,7 +65,7 @@ function mod_ratings_make_ratings_sync($params) {
 		wrap_quit(503, 'Sync job failed. Read log for details.');
 		break;
 	}
-	wrap_job_debug(sprintf('JOB LAST ACTION %s, NEXT ACTION %s', $last['action'], $action);
+	wrap_job_debug(sprintf('JOB LAST ACTION %s, NEXT ACTION %s', $last['action'], $action));
 	$data['rating'] = $params[0];
 	
 	switch ($action) {
