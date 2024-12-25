@@ -21,6 +21,21 @@
  * @return array
  */
 function mf_ratings_ratinglist($conditions, $limit = 1000) {
+	$sql = 'SELECT PID
+	    FROM dwz_spieler
+	    LEFT JOIN fide_players
+	    	ON dwz_spieler.fide_id = fide_players.player_id
+	    WHERE %s
+	    ORDER BY IFNULL(DWZ, standard_rating) DESC, standard_rating DESC, PID
+	    LIMIT 0, %d
+	';
+	$sql = sprintf($sql
+		, $conditions ? implode(' AND ', $conditions) : ''
+		, $limit
+	);
+	$data = wrap_db_fetch($sql, 'PID');
+	if (!$data) return [];
+	
 	$sql = 'SELECT PID, Spielername AS spielername, Geschlecht AS geschlecht
 			, Letzte_Auswertung AS letzte_auswertung
 			, DWZ AS dwz, DWZ_Index AS dwz_index
@@ -52,15 +67,11 @@ function mf_ratings_ratinglist($conditions, $limit = 1000) {
 	    	AND federation_identifiers.current = "yes"
 	    LEFT JOIN contacts
 	    	ON contacts.contact_id = IFNULL(contacts_identifiers.contact_id, federation_identifiers.contact_id)
-	    WHERE %s
-	    ORDER BY IFNULL(DWZ, standard_rating) DESC, standard_rating DESC, PID, Status
-	    LIMIT 0, %d
-	';
-	$sql = sprintf($sql
-		, $conditions ? implode(' AND ', $conditions) : ''
-		, $limit
-	);
-	$data = wrap_db_fetch($sql, '_dummy_', 'numeric');
+	    WHERE PID IN (%s)
+	    ORDER BY FIELD(PID, %s), Status DESC';
+	$sql = sprintf($sql, implode(',', array_keys($data)), implode(',', array_keys($data)));
+	$data = wrap_db_fetch($sql, 'PID');
+	
 	$players = [];
 	foreach ($data as $index => $line) {
 		// only show players with at least one rating
