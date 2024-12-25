@@ -35,9 +35,9 @@ es sich um Fehler handeln kann.</li>
 <tbody>
 %%% loop start %%%
 <tr class="%%% loopposition uneven "un" %%%even">
-<td>%%% condition if checkbox %%%<input type="checkbox" name="%%% item checkbox %%%">%%% condition endif %%%</td>
+<td>%%% if checkbox %%%<input type="checkbox" name="%%% item checkbox %%%">%%% endif %%%</td>
 <td>%%% item person_id %%%</td>
-<td><a href="%%% path contacts_profile[person] identifier %%%">%%% condition if player %%%%%% item player %%%%%% condition else %%%%%% item contact %%%%%% condition endif %%%</a></td>
+<td><a href="%%% path contacts_profile[person] identifier %%%">%%% if player %%%%%% item player %%%%%% else %%%%%% item contact %%%%%% endif %%%</a></td>
 <td%%% item error " class='error' style="background: red;"" %%%>%%% item note %%%</td></tr>
 %%% loop end %%%
 </tbody>

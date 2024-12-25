@@ -18,7 +18,7 @@
 </thead>
 %%% loop start %%%
 <tr>
-<td>%%% condition if key %%%<a href="%%% item key %%%/">%%% condition endif %%%%%% item comment %%%%%% condition if key %%%</a>%%% condition endif %%%</td>
+<td>%%% if key %%%<a href="%%% item key %%%/">%%% endif %%%%%% item comment %%%%%% if key %%%</a>%%% endif %%%</td>
 <td class="number">%%% item count %%%</td>
 </tr>
 %%% loop end %%%

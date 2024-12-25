@@ -5,14 +5,14 @@
 # https://www.zugzwang.org/modules/ratings
 #
 # @author Gustaf Mossakowski <gustaf@koenige.org>
-# @copyright Copyright © 2022 Gustaf Mossakowski
+# @copyright Copyright © 2022, 2024 Gustaf Mossakowski
 # @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
 #
-%%% condition if no_ratings_found %%%
+%%% if no_ratings_found %%%
 <h2>Suche nach »%%% item searchword wrap_html_escape %%%«</h2>
 <p>Leider keine Treffer für die Suche.</p>
 
-%%% condition elseif clubs %%%
+%%% elseif clubs %%%
 <h2>Suche nach »%%% item searchword wrap_html_escape %%%«</h2>
 <p>Treffer bei Vereinen:</p>
 <ul>
@@ -22,7 +22,7 @@
 </ul>
 
 
-%%% condition endif %%%
+%%% endif %%%
 <div class="searchform">
 <form method="GET" action="/zahlen/suche/">
 <p><label for id="playersearch">Suche nach Verein bzw. Spielerin oder Spieler:<br>

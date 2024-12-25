@@ -8,15 +8,15 @@
 # @copyright Copyright © 2022-2024 Gustaf Mossakowski
 # @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
 #
-%%% condition if club_identifier %%%
+%%% if club_identifier %%%
 <p><a href="/%%% item club_identifier %%%/">%%% item contact %%% bei schach.in</a></p>
-%%% condition endif %%%
-%%% condition if searchword %%%
+%%% endif %%%
+%%% if searchword %%%
 <h2>Suche nach »%%% item searchword wrap_html_escape %%%«
-%%% condition if exact_match %%% %%% text (exact match) %%%%%% condition endif %%%
-%%% condition if partial_match %%% %%% text (partial match) %%%%%% condition endif %%%
+%%% if exact_match %%% %%% text (exact match) %%%%%% endif %%%
+%%% if partial_match %%% %%% text (partial match) %%%%%% endif %%%
 </h2>
-%%% condition endif %%%
+%%% endif %%%
 <table class="toplist">
 <thead>
 <tr>
@@ -24,10 +24,10 @@
 <th>Name</th>
 <th>Land</th>
 <th><abbr title="Status">St.</abbr></th>
-%%% condition unless club_identifier %%%
+%%% unless club_identifier %%%
 <th>Verein</th>
 <th>ZPS</th>
-%%% condition endif %%%
+%%% endif %%%
 <th class="number" colspan="2"><abbr title="Deutsche Wertungszahl">DWZ</abbr></th>
 <th class="number"><abbr title="Elo-Zahl des Weltschachbunds FIDE">Elo</abbr></th>
 <th class="number">Elo Rapid</th>
@@ -35,39 +35,39 @@
 </thead>
 <tbody>
 %%% loop start %%%
-%%% condition if dwz | standard_rating | rapid_rating | blitz_rating %%%
+%%% if dwz | standard_rating | rapid_rating | blitz_rating %%%
 <tr class="row %%% loopposition uneven "un" %%%even">
 <td class="index">%%% loopposition counter %%%</td>
-<td class="player">%%% condition if fide_title %%%<abbr title="%%% item fide_title_long %%%">%%% item fide_title %%%</abbr> %%% condition endif %%%
-%%% condition if wikipedia_url %%%<a href="%%% item wikipedia_url %%%" title="Wikipedia">%%% condition endif %%%
+<td class="player">%%% if fide_title %%%<abbr title="%%% item fide_title_long %%%">%%% item fide_title %%%</abbr> %%% endif %%%
+%%% if wikipedia_url %%%<a href="%%% item wikipedia_url %%%" title="Wikipedia">%%% endif %%%
 %%% item contact %%%
-%%% condition if wikipedia_url %%%</a>%%% condition endif %%%
-%%% condition if other_titles %%% (%%% loop other_titles %%%<abbr title="%%% item title_long %%%">%%% item title %%%</abbr>%%% loopposition first|middle ", " %%%%%% loop end %%%)%%% condition endif %%%
+%%% if wikipedia_url %%%</a>%%% endif %%%
+%%% if other_titles %%% (%%% loop other_titles %%%<abbr title="%%% item title_long %%%">%%% item title %%%</abbr>%%% loopposition first|middle ", " %%%%%% loop end %%%)%%% endif %%%
 </td>
 <td class="federation">%%% item federation %%%</td>
-<td class="status%%% condition unless club_identifier %%% noclub%%% condition endif %%%">%%% condition if passive %%%<abbr title="passives Mitglied">P</abbr>%%% condition endif %%%</td>
-%%% condition if club_identifier %%%
+<td class="status%%% unless club_identifier %%% noclub%%% endif %%%">%%% if passive %%%<abbr title="passives Mitglied">P</abbr>%%% endif %%%</td>
+%%% if club_identifier %%%
 <td class="club"><a href="/%%% item club_identifier %%%/">%%% item club %%%</a></td>
 <td class="clubcode"><a href="/zahlen/%%% item zps_code %%%/">%%% item zps_code %%%</a></td>
-%%% condition endif %%%
+%%% endif %%%
 <td data-label="DWZ&nbsp;" class="number rating1">%%% item dwz %%%</td>
 <td class="ratingindex rating2">–&nbsp;%%% item dwz_index %%%</td>
-<td %%% condition if standard_rating %%%data-label="Elo&nbsp;" %%% condition endif %%%class="number rating3">%%% condition if player_id_fide %%%<a href="%%% path ratings_fide_profile player_id_fide %%%">%%% condition endif %%%%%% item standard_rating %%%%%% item player_id_fide </a> %%%</td>
-<td %%% condition if rapid_rating %%%data-label="Rapid&nbsp;" %%% condition endif %%%class="number rating4">%%% condition if player_id_fide %%%<a href="%%% path ratings_fide_profile player_id_fide %%%">%%% condition endif %%%%%% item rapid_rating %%%%%% item player_id_fide </a> %%%</td>
-<td %%% condition if blitz_rating %%%data-label="Blitz&nbsp;" %%% condition endif %%%class="number rating5">%%% condition if player_id_fide %%%<a href="%%% path ratings_fide_profile player_id_fide %%%">%%% condition endif %%%%%% item blitz_rating %%%%%% item player_id_fide </a> %%%</td>
+<td %%% if standard_rating %%%data-label="Elo&nbsp;" %%% endif %%%class="number rating3">%%% if player_id_fide %%%<a href="%%% path ratings_fide_profile player_id_fide %%%">%%% endif %%%%%% item standard_rating %%%%%% item player_id_fide </a> %%%</td>
+<td %%% if rapid_rating %%%data-label="Rapid&nbsp;" %%% endif %%%class="number rating4">%%% if player_id_fide %%%<a href="%%% path ratings_fide_profile player_id_fide %%%">%%% endif %%%%%% item rapid_rating %%%%%% item player_id_fide </a> %%%</td>
+<td %%% if blitz_rating %%%data-label="Blitz&nbsp;" %%% endif %%%class="number rating5">%%% if player_id_fide %%%<a href="%%% path ratings_fide_profile player_id_fide %%%">%%% endif %%%%%% item blitz_rating %%%%%% item player_id_fide </a> %%%</td>
 </tr>
 %%% loop memberships %%%
 <tr class="memberships">
 <td colspan="3" class="emptycols"></td>
-<td class="status">%%% condition if passive %%%<abbr title="passives Mitglied">P</abbr>%%% condition endif %%%</td>
-%%% condition if club_identifier %%%
+<td class="status">%%% if passive %%%<abbr title="passives Mitglied">P</abbr>%%% endif %%%</td>
+%%% if club_identifier %%%
 <td class="club"><a href="/%%% item club_identifier %%%/">%%% item club %%%</a></td>
 <td class="clubcode"><a href="/zahlen/%%% item zps_code %%%/">%%% item zps_code %%%</a></td>
-%%% condition endif %%%
+%%% endif %%%
 <td colspan="5" class="emptycols"></td>
 </tr>
 %%% loop end %%%
-%%% condition endif %%%
+%%% endif %%%
 %%% loop end %%%
 </tbody>
 </table>
