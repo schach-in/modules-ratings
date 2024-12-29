@@ -48,11 +48,11 @@ function mod_ratings_make_ratings_prepare_dwz($params) {
 	foreach ($files AS $file) {
 		$filename = $params[0].'/'.$file['filename'];
 		if (!file_exists($filename)) {
-			$data['errors'][]['msg'] = sprintf(wrap_text('File %s not found for rating import.'), $file['filename']);
+			$data['errors'][]['msg'] = wrap_text('File %s not found for rating import.', ['values' => $file['filename']]);
 			continue;
 		}
 		if (!filesize($filename)) {
-			$data['errors'][]['msg'] = sprintf(wrap_text('File for rating import %s is empty.'), $file['filename']);
+			$data['errors'][]['msg'] = wrap_text('File for rating import %s is empty.', ['values' => $file['filename']]);
 			continue;
 		}
 		if ($handle = fopen($filename, 'r')) {
