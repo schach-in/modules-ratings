@@ -22,14 +22,11 @@ function mod_ratings_clubratings($params) {
 		FROM contacts
 		LEFT JOIN contacts_identifiers
 			ON contacts.contact_id = contacts_identifiers.contact_id
-			AND contacts_identifiers.identifier_category_id = %d
+			AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
 			AND current = "yes"
 		WHERE contacts_identifiers.identifier = "%s"
 	';
-	$sql = sprintf($sql
-		, wrap_category_id('identifiers/pass_dsb')
-		, wrap_db_escape($params[0])
-	);
+	$sql = sprintf($sql, wrap_db_escape($params[0]));
 	$data = wrap_db_fetch($sql);
 	if (!$data) return false;
 	if ($data['parameters']) parse_str($data['parameters'], $data['parameters']);

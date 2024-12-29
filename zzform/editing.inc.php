@@ -116,19 +116,17 @@ function mf_ratings_player_search_dsb($data) {
 		FROM dwz_spieler
 		LEFT JOIN contacts_identifiers vk
 			ON dwz_spieler.ZPS = vk.identifier
-			AND vk.identifier_category_id = %d
+			AND vk.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
 			AND vk.current = "yes"
 		LEFT JOIN contacts clubs USING (contact_id)
 		LEFT JOIN contacts_identifiers lvk
 			ON CONCAT(SUBSTRING(dwz_spieler.ZPS, 1, 1), "00") = lvk.identifier
-			AND lvk.identifier_category_id = %d
+			AND lvk.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
 			AND lvk.current = "yes"
 		WHERE Spielername LIKE "%s,%s%%"
 		AND Geburtsjahr = %d	
 		AND Status = "A"';
 	$sql = sprintf($sql
-		, wrap_category_id('identifiers/pass_dsb')
-		, wrap_category_id('identifiers/pass_dsb')
 		, wrap_db_escape($data['last_name'])
 		, wrap_db_escape($data['first_name'])
 		, substr($data['date_of_birth'], 0, 4)
