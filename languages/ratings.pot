@@ -5,7 +5,7 @@
 # https://www.zugzwang.org/modules/ratings
 #
 # @author Gustaf Mossakowski <gustaf@koenige.org>
-# @copyright Copyright © 2022, 2024 Gustaf Mossakowski
+# @copyright Copyright © 2022, 2024-2025 Gustaf Mossakowski
 # @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
 #
 msgid ""
@@ -102,4 +102,8 @@ msgstr ""
 
 #: zzbrick_make/ratings-sync.inc.php
 msgid "No rating sync required for %s."
+msgstr ""
+
+#: zzbrick_tables/fide-players.php
+msgid "Federation"
 msgstr ""

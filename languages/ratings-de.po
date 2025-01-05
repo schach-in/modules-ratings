@@ -5,7 +5,7 @@
 # https://www.zugzwang.org/modules/ratings
 #
 # @author Gustaf Mossakowski <gustaf@koenige.org>
-# @copyright Copyright © 2020-2022, 2024 Gustaf Mossakowski
+# @copyright Copyright © 2020-2022, 2024-2025 Gustaf Mossakowski
 # @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
 #
 msgid ""
@@ -20,7 +20,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4.4\n"
+"X-Generator: Poedit 3.5\n"
 
 #: configuration/settings.cfg
 msgid "URL under which the current FIDE Elo data is available in TXT format"
@@ -109,3 +109,7 @@ msgstr "Datei %s für den Rating-Import nicht gefunden."
 #: zzbrick_make/ratings-sync.inc.php
 msgid "No rating sync required for %s."
 msgstr "Keine Synchronisation für die %s-Wertungsdaten erforderlich."
+
+#: zzbrick_tables/fide-players.php
+msgid "Federation"
+msgstr "Verband"

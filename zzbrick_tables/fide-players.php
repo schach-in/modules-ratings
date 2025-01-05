@@ -8,7 +8,7 @@
  * https://www.zugzwang.org/modules/clubs
  *
  * @author Gustaf Mossakowski <gustaf@koenige.org>
- * @copyright Copyright © 2024 Gustaf Mossakowski
+ * @copyright Copyright © 2024-2025 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
@@ -120,7 +120,6 @@ $zz['fields'][19]['enum_abbr'] = ['none', 'inactive', 'woman', 'woman inactive']
 
 $zz['fields'][99]['field_name'] = 'last_update';
 $zz['fields'][99]['type'] = 'timestamp';
-$zz['fields'][99]['hide_in_list'] = true;
 
 
 $zz['sql'] = 'SELECT fide_players.*
@@ -130,4 +129,10 @@ $zz['sqlorder'] = ' ORDER BY player, birth, player_id';
 $zz['access'] = 'none';
 $zz['if']['batch']['access'] = '';
 
-$zz['explanation'] = sprintf('<p>FIDE Elo rating databse, Stand: %s</p>', wrap_date(wrap_setting('ratings_status[Elo]')));
+$zz['explanation'] = sprintf('<p>FIDE Elo rating database, Stand: %s</p>', wrap_date(wrap_setting('ratings_status[Elo]')));
+
+$zz['filter'][1]['title'] = wrap_text('Federation');
+$zz['filter'][1]['type'] = 'list';
+$zz['filter'][1]['where'] = 'federation';
+$zz['filter'][1]['field_name'] = 'federation';
+$zz['filter'][1]['sql'] = 'SELECT DISTINCT federation, federation FROM fide_players ORDER BY federation';
