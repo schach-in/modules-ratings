@@ -8,7 +8,7 @@
  * https://www.zugzwang.org/modules/ratings
  *
  * @author Gustaf Mossakowski <gustaf@koenige.org>
- * @copyright Copyright © 2012-2024 Gustaf Mossakowski
+ * @copyright Copyright © 2012-2025 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
@@ -199,11 +199,8 @@ function mf_ratings_person_add($player) {
 		$sql = 'SELECT contact_id
 			FROM contacts_identifiers
 			WHERE identifier = "%s"
-			AND identifier_category_id = %d';
-		$sql = sprintf($sql
-			, $identifier
-			, wrap_category_id('identifiers/'.$category)
-		);
+			AND identifier_category_id = /*_ID categories identifiers/%s _*/';
+		$sql = sprintf($sql, $identifier, $category);
 		$id = wrap_db_fetch($sql, '', 'single value');
 		if ($id) $contact_ids[] = $id;
 		$id_text[] = sprintf('%s: %s', $identifier, $category);
