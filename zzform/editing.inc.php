@@ -123,7 +123,7 @@ function mf_ratings_player_search_dsb($data) {
 			ON CONCAT(SUBSTRING(dwz_spieler.ZPS, 1, 1), "00") = lvk.identifier
 			AND lvk.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
 			AND lvk.current = "yes"
-		WHERE Spielername LIKE latin1"%s,%s%%"
+		WHERE Spielername LIKE _latin1"%s,%s%%"
 		AND Geburtsjahr = %d	
 		AND Status = "A"';
 	$sql = sprintf($sql
