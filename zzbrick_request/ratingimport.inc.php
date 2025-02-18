@@ -36,7 +36,7 @@ function mod_ratings_ratingimport() {
 			$data[$index]['formular'] = true;
 			if (!empty($_POST['submit_'.$data[$index]['path']])) {
 				list($status, $headers, $content)
-					= wrap_get_protected_url('/_jobs/ratings/import/'.$rating, [], 'POST', [], wrap_setting('robot_username'));
+					= wrap_get_protected_url('/_jobs/ratings/import/'.$rating, [], 'POST', [], wrap_setting('default_robot_username'));
 				if ($status === 200) {
 					$return = json_decode($content, true);
 					if (!empty($return['import_successful'])) {
@@ -65,7 +65,7 @@ function mod_ratings_ratingimport() {
  */
 function mod_ratings_ratingimport_download($rating) {
 	list($status, $headers, $content)
-		= wrap_get_protected_url('/_jobs/ratings/download/'.$rating, [], 'POST', [], wrap_setting('robot_username'));
+		= wrap_get_protected_url('/_jobs/ratings/download/'.$rating, [], 'POST', [], wrap_setting('default_robot_username'));
 	if ($status === 200) return json_decode($content, true);
 
 	$line = [
