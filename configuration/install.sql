@@ -6,7 +6,7 @@
  * https://www.zugzwang.org/modules/ratings
  *
  * @author Gustaf Mossakowski <gustaf@koenige.org>
- * @copyright Copyright © 2024 Gustaf Mossakowski
+ * @copyright Copyright © 2024-2025 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
@@ -63,7 +63,7 @@ CREATE TABLE `dwz_spieler` (
   `Geburtsjahr` year DEFAULT NULL,
   `Letzte_Auswertung` mediumint unsigned DEFAULT NULL,
   `DWZ` smallint unsigned DEFAULT NULL,
-  `DWZ_Index` smallint unsigned DEFAULT NULL,
+  `DWZ_Index` mediumint unsigned DEFAULT NULL,
   `FIDE_Elo` smallint unsigned DEFAULT NULL,
   `FIDE_Titel` char(3) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
   `FIDE_ID` int unsigned DEFAULT NULL,

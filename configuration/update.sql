@@ -6,7 +6,7 @@
  * https://www.zugzwang.org/modules/ratings
  *
  * @author Gustaf Mossakowski <gustaf@koenige.org>
- * @copyright Copyright © 2024 Gustaf Mossakowski
+ * @copyright Copyright © 2024-2025 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
@@ -42,3 +42,4 @@
 /* 2024-08-08-3 */	INSERT INTO _relations (`master_db`, `master_table`, `master_field`, `detail_db`, `detail_table`, `detail_id_field`, `detail_field`, `delete`) VALUES ((SELECT DATABASE()), 'wikidata_players', 'wikidata_id', (SELECT DATABASE()), 'wikidata_uris', 'uri_id', 'wikidata_id', 'delete');
 /* 2024-11-25-1 */	ALTER TABLE `fide_players` CHANGE `player` `player` varchar(60) COLLATE 'utf8mb4_unicode_ci' NULL AFTER `player_id`, CHANGE `federation` `federation` varchar(3) COLLATE 'latin1_general_ci' NOT NULL AFTER `player`, CHANGE `title` `title` varchar(4) COLLATE 'latin1_general_ci' NULL AFTER `sex`, CHANGE `title_women` `title_women` varchar(4) COLLATE 'latin1_general_ci' NULL AFTER `title`, CHANGE `title_other` `title_other` varchar(24) COLLATE 'latin1_general_ci' NULL AFTER `title_women`, CHANGE `foa_rating` `foa_rating` varchar(3) COLLATE 'latin1_general_ci' NULL AFTER `title_other`, CHANGE `flag` `flag` varchar(2) COLLATE 'latin1_general_ci' NULL AFTER `birth`;
 /* 2024-11-25-2 */	ALTER TABLE `fide_players` COLLATE 'utf8mb4_unicode_ci';
+/* 2025-03-25-1 */	ALTER TABLE `dwz_spieler` CHANGE `DWZ_Index` `DWZ_Index` mediumint unsigned NULL AFTER `DWZ`;
