@@ -8,7 +8,7 @@
  * https://www.zugzwang.org/modules/ratings
  *
  * @author Gustaf Mossakowski <gustaf@koenige.org>
- * @copyright Copyright © 2024 Gustaf Mossakowski
+ * @copyright Copyright © 2024-2025 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
@@ -339,7 +339,8 @@ function mod_ratings_make_dewis_import() {
  *
  */
 function mod_ratings_make_dewis_update() {
-	$sql = 'SELECT ZPS, Mgl_Nr, DWZ, DWZ_Index, rating, ratingIndex
+	$sql = 'SELECT ZPS, IF(Mgl_Nr < 100, LPAD(Mgl_Nr, 3, "0"), Mgl_Nr) AS Mgl_Nr
+			, DWZ, DWZ_Index, rating, ratingIndex
 		FROM dewis_members
 		LEFT JOIN dewis_clubs
 			ON dewis_members.club_id = dewis_clubs.id
@@ -350,7 +351,7 @@ function mod_ratings_make_dewis_update() {
 		OR DWZ_Index != ratingIndex';
 	$updates = wrap_db_fetch($sql, '_dummy_', 'numeric');
 	
-	$template = 'UPDATE dwz_spieler SET DWZ = "%s", DWZ_Index = "%s" WHERE ZPS = "%s" AND Mgl_Nr = "%s";';
+	$template = 'UPDATE dwz_spieler SET DWZ = "%s", DWZ_Index = "%s" WHERE ZPS = "%s" AND IF(Mgl_Nr < 100, LPAD(Mgl_Nr, 3, "0"), Mgl_Nr) = "%s";';
 	foreach ($updates as $line) {
 		if (!$line['rating'] OR !$line['Mgl_Nr']) {
 			wrap_error('illegal line in DWZ update: '.json_encode($line));

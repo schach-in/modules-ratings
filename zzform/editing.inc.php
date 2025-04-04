@@ -23,7 +23,8 @@ function mf_ratings_player_data_dsb($code) {
 	if (!is_array($code)) $code = explode('-', $code);
 	list($zps, $mgl_nr) = $code;
 
-	$sql = 'SELECT dwz_spieler.ZPS, dwz_spieler.Mgl_Nr
+	$sql = 'SELECT dwz_spieler.ZPS
+			, IF(dwz_spieler.Mgl_Nr < 100, LPAD(dwz_spieler.Mgl_Nr, 3, "0"), dwz_spieler.Mgl_Nr) AS Mgl_Nr
 			, dwz_spieler.Spielername, dwz_spieler.Geburtsjahr, dwz_spieler.Geschlecht
 			, dwz_spieler.DWZ, dwz_spieler.FIDE_Elo, dwz_spieler.FIDE_Titel
 			, dwz_spieler.FIDE_ID
@@ -34,7 +35,7 @@ function mf_ratings_player_data_dsb($code) {
 			ON dwz_spieler.ZPS = contacts_identifiers.identifier
 			AND contacts_identifiers.current = "yes"
 		LEFT JOIN contacts USING (contact_id)
-		WHERE ZPS = "%s" AND Mgl_Nr = "%s"
+		WHERE ZPS = "%s" AND IF(dwz_spieler.Mgl_Nr < 100, LPAD(dwz_spieler.Mgl_Nr, 3, "0"), dwz_spieler.Mgl_Nr) = "%s"
 	';
 	$sql = sprintf($sql, wrap_db_escape($zps), wrap_db_escape($mgl_nr));
 	$player = wrap_db_fetch($sql);
@@ -59,7 +60,7 @@ function mf_ratings_player_rating_dsb($code, $prefix = 't_') {
 	$sql = 'SELECT DWZ AS %sdwz, FIDE_Elo AS %selo, FIDE_Titel AS %sfidetitel
 		FROM dwz_spieler
 		WHERE ZPS = "%s"
-		AND Mgl_Nr = "%s"';
+		AND IF(dwz_spieler.Mgl_Nr < 100, LPAD(dwz_spieler.Mgl_Nr, 3, "0"), dwz_spieler.Mgl_Nr) = "%s"';
 	$sql = sprintf($sql
 		, $prefix, $prefix, $prefix
 		, $code[0], $code[1]

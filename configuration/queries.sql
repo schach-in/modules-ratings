@@ -6,14 +6,14 @@
  * https://www.zugzwang.org/modules/ratings
  *
  * @author Gustaf Mossakowski <gustaf@koenige.org>
- * @copyright Copyright © 2023-2024 Gustaf Mossakowski
+ * @copyright Copyright © 2023-2025 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
 
 -- ratings_debug_fide_dsb_sex --
 /* Sex of player differs between FIDE and DSB data */
-SELECT PID, ZPS, Mgl_Nr, Spielername, FIDE_ID, FIDE_Land, sex, Geschlecht
+SELECT PID, ZPS, IF(Mgl_Nr < 100, LPAD(Mgl_Nr, 3, "0"), Mgl_Nr) AS Mgl_Nr, Spielername, FIDE_ID, FIDE_Land, sex, Geschlecht
 FROM dwz_spieler
 LEFT JOIN fide_players
 	ON fide_players.player_id = dwz_spieler.FIDE_ID
@@ -22,7 +22,7 @@ AND NOT ISNULL(sex);
 
 -- ratings_debug_fide_dsb_title --
 /* Title of player differs between FIDE and DSB data */
-SELECT PID, ZPS, Mgl_Nr, Spielername, FIDE_Titel, FIDE_ID, FIDE_Land, title
+SELECT PID, ZPS, IF(Mgl_Nr < 100, LPAD(Mgl_Nr, 3, "0"), Mgl_Nr) AS Mgl_Nr, Spielername, FIDE_Titel, FIDE_ID, FIDE_Land, title
 FROM dwz_spieler
 LEFT JOIN fide_players
 	ON fide_players.player_id = dwz_spieler.FIDE_ID
@@ -32,7 +32,7 @@ OR (NOT ISNULL(dwz_spieler.FIDE_Titel) AND ISNULL(fide_players.title));
 
 -- ratings_debug_fide_dsb_nation --
 /* Nation of player differs between FIDE and DSB data */
-SELECT PID, ZPS, Mgl_Nr, Spielername, FIDE_Titel, FIDE_ID
+SELECT PID, ZPS, IF(Mgl_Nr < 100, LPAD(Mgl_Nr, 3, "0"), Mgl_Nr) AS Mgl_Nr, Spielername, FIDE_Titel, FIDE_ID
 	, FIDE_Land AS DSB_fed, federation AS FIDE_fed
 FROM dwz_spieler
 LEFT JOIN fide_players
@@ -86,7 +86,7 @@ HAVING adjusted_rating != dwz_spieler.FIDE_Elo;
 
 -- ratings_debug_dsb_player_twice_in_same_club --
 /* Player has more than one membership entry in the same club */
-SELECT dwz_spieler.PID, dwz_spieler.ZPS, dwz_spieler.Mgl_Nr, dwz_spieler.Status
+SELECT dwz_spieler.PID, dwz_spieler.ZPS, IF(dwz_spieler.Mgl_Nr < 100, LPAD(dwz_spieler.Mgl_Nr, 3, "0"), dwz_spieler.Mgl_Nr) AS Mgl_Nr, dwz_spieler.Status
 	, dwz_spieler.Spielername
 FROM dwz_spieler
 JOIN dwz_spieler duplicates
@@ -96,7 +96,7 @@ JOIN dwz_spieler duplicates
 
 -- ratings_debug_dsb_player_active_in_different_clubs --
 /* Player has active status in more than one club */
-SELECT dwz_spieler.PID, dwz_spieler.ZPS, dwz_spieler.Mgl_Nr, dwz_spieler.Status
+SELECT dwz_spieler.PID, dwz_spieler.ZPS, IF(dwz_spieler.Mgl_Nr < 100, LPAD(dwz_spieler.Mgl_Nr, 3, "0"), dwz_spieler.Mgl_Nr) AS Mgl_Nr, dwz_spieler.Status
 	, dwz_spieler.Spielername
 FROM dwz_spieler
 JOIN dwz_spieler duplicates
