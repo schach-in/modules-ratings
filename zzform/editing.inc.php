@@ -128,8 +128,8 @@ function mf_ratings_player_search_dsb($data) {
 		AND Geburtsjahr = %d	
 		AND Status = "A"';
 	$sql = sprintf($sql
-		, wrap_db_escape($data['last_name'])
-		, wrap_db_escape($data['first_name'])
+		, wrap_db_escape(wrap_convert_string($data['last_name'], 'ISO-8859-1'))
+		, wrap_db_escape(wrap_convert_string($data['first_name'], 'ISO-8859-1'))
 		, substr($data['date_of_birth'], 0, 4)
 	);
 	$player = wrap_db_fetch($sql, 'player_pass_dsb');
