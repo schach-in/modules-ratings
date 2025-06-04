@@ -8,7 +8,7 @@
  * https://www.zugzwang.org/modules/ratings
  *
  * @author Gustaf Mossakowski <gustaf@koenige.org>
- * @copyright Copyright © 2022, 2024 Gustaf Mossakowski
+ * @copyright Copyright © 2022, 2024-2025 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
@@ -123,47 +123,6 @@ function mf_ratings_titles($data) {
 	foreach ($data as $index => $line)
 		$data[$index] += mf_ratings_fidetitle($titles[$line['contact_id']] ?? []);
 	return $data;
-}
-
-/**
- * get ratings for German Chess Federation (DSB) 
- *
- * @param array $contact_ids
- * @return array
- */
-function mf_ratings_rating_dsb($contact_ids) {
-	$sql = 'SELECT contact_id
-			, DWZ AS dwz
-			, FIDE_Elo AS elo
-			, REPLACE(Spielername, ",", ", ") AS contact_last_first
-		FROM dwz_spieler
-		LEFT JOIN contacts_identifiers
-			ON contacts_identifiers.identifier = CONCAT(ZPS, "-", IF(Mgl_Nr < 100, LPAD(Mgl_Nr, 3, "0"), Mgl_Nr))
-			AND contacts_identifiers.current = "yes"
-			AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
-		WHERE contact_id IN (%s)';
-	$sql = sprintf($sql, implode(',', $contact_ids));
-	return wrap_db_fetch($sql, 'contact_id');
-}
-
-/**
- * get ratings for FIDE
- *
- * @param array $contact_ids
- * @return array
- */
-function mf_ratings_rating_fide($contact_ids) {
-	$sql = 'SELECT contact_id
-			, standard_rating AS elo
-			, player AS contact_last_first
-		FROM fide_players
-		LEFT JOIN contacts_identifiers
-			ON contacts_identifiers.identifier = player_id
-			AND contacts_identifiers.current = "yes"
-			AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/id_fide _*/
-		WHERE contact_id IN (%s)';
-	$sql = sprintf($sql, implode(',', $contact_ids));
-	return wrap_db_fetch($sql, 'contact_id');
 }
 
 /**
