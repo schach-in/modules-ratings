@@ -94,10 +94,11 @@ function mf_ratings_fideother($line) {
  * fide_elo_rapid
  * fide_elo_blitz
  *
- * @param int $contact_id
+ * @param mixed $contact_ids (int or array of integers)
  * @return array
  */
-function mf_ratings_contact($contact_id) {
+function mf_ratings_contact($contact_ids) {
+	$contact_id = !is_array($contact_ids) ? $contact_ids : NULL;
     $queries = [];
 	if (wrap_setting('ratings_list_dsb'))
 		$queries[] = wrap_sql_query('ratings_contact_dsb');
@@ -109,8 +110,13 @@ function mf_ratings_contact($contact_id) {
 	$ratings = [];	
 	foreach ($queries as $sql) {
 		if (!$sql) continue;
-		$sql = sprintf($sql, $contact_id);
-		$ratings += wrap_db_fetch($sql);
+		$sql = sprintf($sql, $contact_id ?? implode(', ', $contact_ids));
+		$federation_ratings = wrap_db_fetch($sql, 'contact_id');
+		foreach ($federation_ratings as $id => $line) {
+			if (array_key_exists($id, $ratings)) $ratings[$id] += $line;
+			else $ratings[$id] = $line;
+		}
 	}
+	if ($contact_id) return $ratings[$contact_id];
 	return $ratings;
 }
