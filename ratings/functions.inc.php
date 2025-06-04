@@ -188,7 +188,7 @@ function mf_ratings_toplist($club) {
 			ON dwz_spieler.fide_id = fide_players.player_id
 		WHERE ZPS = "%s"
 		AND (Status = "A" OR ISNULL(Status))
-		ORDER BY DWZ DESC, standard_rating DESC
+		ORDER BY DWZ DESC, standard_rating DESC, Spielername ASC
 		LIMIT 10';
 	$sql = sprintf($sql, $club['code']);
 	$data = wrap_db_fetch($sql, '_dummy_', 'numeric');
