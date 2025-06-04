@@ -11,6 +11,24 @@
  */
 
 
+-- ratings_contact_dsb --
+SELECT DWZ AS dsb_dwz, FIDE_Elo AS fide_elo, FIDE_Titel AS fide_title
+FROM dwz_spieler
+LEFT JOIN contacts_identifiers pk
+	ON CONCAT(dwz_spieler.ZPS, "-", IF(dwz_spieler.Mgl_Nr < 100, LPAD(dwz_spieler.Mgl_Nr, 3, "0"), dwz_spieler.Mgl_Nr)) = pk.identifier
+	AND identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
+	AND pk.current = "yes"
+WHERE contact_id = %d;
+
+-- ratings_contact_fide --
+SELECT standard_rating AS fide_elo, rapid_rating AS fide_elo_rapid, blitz_rating AS fide_elo_blitz
+	, title AS fide_title, title_women AS fide_title_women, title_other AS fide_title_other
+FROM fide_players
+LEFT JOIN contacts_identifiers
+	ON contacts_identifiers.identifier = fide_players.player_id
+	AND identifier_category_id = /*_ID categories identifiers/id_fide _*/
+WHERE contact_id = %d;
+
 -- ratings_debug_fide_dsb_sex --
 /* Sex of player differs between FIDE and DSB data */
 SELECT PID, ZPS, IF(Mgl_Nr < 100, LPAD(Mgl_Nr, 3, "0"), Mgl_Nr) AS Mgl_Nr, Spielername, FIDE_ID, FIDE_Land, sex, Geschlecht

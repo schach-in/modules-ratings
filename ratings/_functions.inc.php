@@ -8,7 +8,7 @@
  * https://www.zugzwang.org/modules/ratings
  *
  * @author Gustaf Mossakowski <gustaf@koenige.org>
- * @copyright Copyright © 2024 Gustaf Mossakowski
+ * @copyright Copyright © 2024-2025 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
@@ -81,4 +81,36 @@ function mf_ratings_fideother($line) {
 		}
 	}
 	return $line;
+}
+
+/**
+ * get rating data for a given contact ID
+ *
+ * dsb_dwz
+ * fide_title
+ * fide_title_women
+ * fide_title_other
+ * fide_elo
+ * fide_elo_rapid
+ * fide_elo_blitz
+ *
+ * @param int $contact_id
+ * @return array
+ */
+function mf_ratings_contact($contact_id) {
+    $queries = [];
+	if (wrap_setting('ratings_list_dsb'))
+		$queries[] = wrap_sql_query('ratings_contact_dsb');
+	// fide must be last, confederations may list FIDE Elo, too
+	if (wrap_setting('ratings_list_fide'))
+		$queries[] = wrap_sql_query('ratings_contact_fide');
+	if (!$queries) return [];
+
+	$ratings = [];	
+	foreach ($queries as $sql) {
+		if (!$sql) continue;
+		$sql = sprintf($sql, $contact_id);
+		$ratings += wrap_db_fetch($sql);
+	}
+	return $ratings;
 }
