@@ -113,7 +113,8 @@ function mf_ratings_contact($contact_ids) {
 		$sql = sprintf($sql, $contact_id ?? implode(', ', $contact_ids));
 		$federation_ratings = wrap_db_fetch($sql, 'contact_id');
 		foreach ($federation_ratings as $id => $line) {
-			if (array_key_exists($id, $ratings)) $ratings[$id] += $line;
+			if (array_key_exists($id, $ratings))
+				$ratings[$id] = array_merge($ratings[$id], $line);
 			else $ratings[$id] = $line;
 		}
 	}
