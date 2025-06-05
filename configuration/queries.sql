@@ -156,3 +156,61 @@ SELECT DISTINCT dwz_spieler.PID, dwz_2.PID AS PID2, dwz_spieler.Spielername, dwz
 LEFT JOIN dwz_spieler dwz_2
 ON dwz_2.FIDE_ID = dwz_spieler.FIDE_ID
 WHERE dwz_2.PID != dwz_spieler.PID;
+
+-- ratings_federation_dsb_id --
+SELECT PID AS player_id_dsb
+	, CONCAT(dwz_spieler.ZPS, "-", IF(dwz_spieler.Mgl_Nr < 100, LPAD(dwz_spieler.Mgl_Nr, 3, "0"), dwz_spieler.Mgl_Nr)) AS player_pass_dsb
+	, IF(Status = "A", 1, NULL) AS player_pass_dsb_current
+	, FIDE_ID AS player_id_fide
+	, contacts_identifiers.contact_id AS contact_id
+FROM dwz_spieler
+JOIN contacts_identifiers
+	ON contacts_identifiers.identifier = dwz_spieler.PID
+	AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/id_dsb _*/;
+
+-- ratings_federation_dsb_pass --
+SELECT PID AS player_id_dsb
+	, CONCAT(dwz_spieler.ZPS, "-", IF(dwz_spieler.Mgl_Nr < 100, LPAD(dwz_spieler.Mgl_Nr, 3, "0"), dwz_spieler.Mgl_Nr)) AS player_pass_dsb
+	, IF(Status = "A", 1, NULL) AS player_pass_dsb_current
+	, FIDE_ID AS player_id_fide
+	, REPLACE(Spielername, ",", ", ") AS dsb_player_last_first
+	, Geburtsjahr AS birth_year
+	, contacts_identifiers.contact_id AS contact_id
+FROM dwz_spieler
+JOIN contacts_identifiers
+	ON contacts_identifiers.identifier = CONCAT(dwz_spieler.ZPS, "-", IF(dwz_spieler.Mgl_Nr < 100, LPAD(dwz_spieler.Mgl_Nr, 3, "0"), dwz_spieler.Mgl_Nr))
+	AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/;
+
+-- ratings_federation_dsb_id_fide --
+SELECT PID AS player_id_dsb
+	, CONCAT(dwz_spieler.ZPS, "-", IF(dwz_spieler.Mgl_Nr < 100, LPAD(dwz_spieler.Mgl_Nr, 3, "0"), dwz_spieler.Mgl_Nr)) AS player_pass_dsb
+	, IF(Status = "A", 1, NULL) AS player_pass_dsb_current
+	, FIDE_ID AS player_id_fide
+	, REPLACE(Spielername, ",", ", ") AS dsb_player_last_first
+	, Geburtsjahr AS birth_year
+	, contacts_identifiers.contact_id AS contact_id
+FROM dwz_spieler
+JOIN contacts_identifiers
+	ON contacts_identifiers.identifier = FIDE_ID
+	AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/id_fide _*/;
+
+-- ratings_federation_dsb_name_birth --
+SELECT PID AS player_id_dsb
+	, CONCAT(dwz_spieler.ZPS, "-", IF(dwz_spieler.Mgl_Nr < 100, LPAD(dwz_spieler.Mgl_Nr, 3, "0"), dwz_spieler.Mgl_Nr)) AS player_pass_dsb
+	, FIDE_ID AS player_id_fide
+	, IF(Status = "A", 1, NULL) AS player_pass_dsb_current
+	, REPLACE(Spielername, ",", ", ") AS dsb_player_last_first
+	, Geburtsjahr AS birth_year
+	, contacts.contact_id AS contact_id
+FROM dwz_spieler
+JOIN contacts
+	ON contact = CONCAT(SUBSTRING_INDEX(Spielername, ",", -1), " ", SUBSTRING_INDEX(SUBSTRING_INDEX(Spielername, ",", -2), ",", 1))
+JOIN persons
+	ON contacts.contact_id = persons.contact_id
+	AND Geburtsjahr = YEAR(date_of_birth);
+
+-- ratings_federation_contact_identifiers --
+SELECT contact_identifier_id, contact_id, identifier, identifier_category_id
+	, IF(current = "yes", 1, NULL) AS current
+FROM contacts_identifiers
+WHERE contact_id IN (%s);
