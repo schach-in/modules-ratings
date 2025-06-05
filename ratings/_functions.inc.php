@@ -118,6 +118,6 @@ function mf_ratings_contact($contact_ids) {
 			else $ratings[$id] = $line;
 		}
 	}
-	if ($contact_id) return $ratings[$contact_id];
+	if ($contact_id) return $ratings[$contact_id] ?? [];
 	return $ratings;
 }
