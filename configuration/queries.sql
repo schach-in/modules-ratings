@@ -12,7 +12,9 @@
 
 
 -- ratings_contact_dsb --
-SELECT contact_id, ZPS AS player_id_dsb, FIDE_ID AS player_id_fide
+SELECT contact_id
+	, PID AS player_id_dsb
+	, FIDE_ID AS player_id_fide
 	, CONCAT(dwz_spieler.ZPS, "-", IF(dwz_spieler.Mgl_Nr < 100, LPAD(dwz_spieler.Mgl_Nr, 3, "0"), dwz_spieler.Mgl_Nr)) AS player_pass_dsb
 	, DWZ AS dsb_dwz
 	, FIDE_Elo AS fide_elo, FIDE_Titel AS fide_title
