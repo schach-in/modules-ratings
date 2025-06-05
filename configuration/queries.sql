@@ -160,7 +160,11 @@ WHERE dwz_2.PID != dwz_spieler.PID;
 -- ratings_federation_dsb_id --
 SELECT PID AS player_id_dsb
 	, CONCAT(dwz_spieler.ZPS, "-", IF(dwz_spieler.Mgl_Nr < 100, LPAD(dwz_spieler.Mgl_Nr, 3, "0"), dwz_spieler.Mgl_Nr)) AS player_pass_dsb
-	, IF(Status = "A", 1, NULL) AS player_pass_dsb_current
+	, IF(
+		(SELECT COUNT(*) FROM dwz_spieler dwz_spieler2
+		WHERE dwz_spieler2.PID = dwz_spieler.PID AND dwz_spieler2.Status = "A") > 1
+		, NULL, IF(Status = "A", 1, NULL)
+	) AS player_pass_dsb_current
 	, FIDE_ID AS player_id_fide
 	, contacts_identifiers.contact_id AS contact_id
 FROM dwz_spieler
