@@ -36,6 +36,10 @@ msgstr ""
 msgid "Last imported status of the German DWZ database"
 msgstr ""
 
+#: templates/federationids.template.txt
+msgid "No updates necessary."
+msgstr ""
+
 #: templates/ratinglist.template.txt
 msgid "(exact match)"
 msgstr ""

@@ -19,15 +19,18 @@ function mod_ratings_make_federationids() {
 	foreach ($data as $index => $line)
 		$contact_ids[$index] = $line['contact_id'];
 	
-	
-	$sql = 'SELECT contact_id, contact, identifier
-		FROM contacts
-		WHERE contact_id IN (%s)';
-	$sql = sprintf($sql, implode(',', $contact_ids));
-	$contacts = wrap_db_fetch($sql, 'contact_id');
-	foreach ($data as $index => $line) {
-		$data[$index]['contact'] = $contacts[$contact_ids[$index]]['contact'];
-		$data[$index]['identifier'] = $contacts[$contact_ids[$index]]['identifier'];
+	if ($contact_ids) {
+		$sql = 'SELECT contact_id, contact, identifier
+			FROM contacts
+			WHERE contact_id IN (%s)';
+		$sql = sprintf($sql, implode(',', $contact_ids));
+		$contacts = wrap_db_fetch($sql, 'contact_id');
+		foreach ($data as $index => $line) {
+			$data[$index]['contact'] = $contacts[$contact_ids[$index]]['contact'];
+			$data[$index]['identifier'] = $contacts[$contact_ids[$index]]['identifier'];
+		}
+	} else {
+		$data['no_data'] = 1;
 	}
 
 	$page['text'] = wrap_template('federationids', $data);
@@ -119,7 +122,7 @@ function mod_ratings_make_federationids_update($remote, $records) {
 			'current' => array_key_exists($current, $new) ? ($new[$current] ? 'yes' : NULL) : 'yes',
 			'msg' => [
 			   'category' => $path,
-			   'identifier' => $record['identifier'],
+			   'identifier' => $new[$key],
 			   'action' => 'add'
 			]
 		];

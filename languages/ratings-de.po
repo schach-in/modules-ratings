@@ -20,7 +20,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.5\n"
+"X-Generator: Poedit 3.6\n"
 
 #: configuration/settings.cfg
 msgid "URL under which the current FIDE Elo data is available in TXT format"
@@ -39,6 +39,10 @@ msgstr "Letzter importierter Stand der FIDE-Elo-Datenbank"
 #: configuration/settings.cfg
 msgid "Last imported status of the German DWZ database"
 msgstr "Letzter importierter Stand der DSB-DWZ-Datenbank"
+
+#: templates/federationids.template.txt
+msgid "No updates necessary."
+msgstr "Keine Aktualisierungen erforderlich."
 
 #: templates/ratinglist.template.txt
 msgid "(exact match)"
