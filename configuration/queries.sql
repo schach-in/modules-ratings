@@ -235,9 +235,9 @@ SELECT PID AS player_id_dsb
 FROM dwz_spieler
 LEFT JOIN fide_players
 	ON dwz_spieler.FIDE_ID = fide_players.player_id
-LEFT JOIN contacts_identifiers ok
-	ON dwz_spieler.ZPS = ok.identifier 
-	AND ok.current = "yes"
+LEFT JOIN contacts_identifiers
+	ON dwz_spieler.ZPS = contacts_identifiers.identifier
+	AND contacts_identifiers.current = "yes"
 LEFT JOIN contacts USING (contact_id)
 WHERE (ISNULL(Status) OR Status != "P")
 %s
