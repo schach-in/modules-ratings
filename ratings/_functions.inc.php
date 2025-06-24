@@ -134,19 +134,27 @@ function mf_ratings_players_dsb($filters = []) {
 	if (!empty($filters['player_id_dsb'])) {
 		$where[] = sprintf('PID = %d', $filters['player_id_dsb']);
 		$single = true;
+	} elseif (!empty($filters['player_pass_dsb'])) {
+		list($zps, $mgl_nr) = explode('-', $code);
+		$where[] = sprintf(
+			'ZPS = "%s" AND IF(dwz_spieler.Mgl_Nr < 100, LPAD(dwz_spieler.Mgl_Nr, 3, "0"), dwz_spieler.Mgl_Nr) = "%s"'
+			, $zps, $mgl_nr
+		);
+		$single = true;
+	} else {
+		if (!empty($filters['club_code_dsb']))
+			$where[] = sprintf('ZPS = "%s"', wrap_db_escape($filters['club_code_dsb']));
+		if (!empty($filters['player_id_dsb_excluded']))
+			$where[] = sprintf('PID NOT IN (%s)', wrap_db_escape(implode(',', $filters['player_id_dsb_excluded'])));
+		if (!empty($filters['min_age']))
+			$where[] = sprintf('Geburtsjahr <= %d', date('Y') - $filters['min_age']);
+		if (!empty($filters['max_age']))
+			$where[] = sprintf('Geburtsjahr >= %d', date('Y') - $filters['max_age']);
+		if (!empty($filters['sex']) AND $filters['sex'] === 'male')
+			$where[] = 'Geschlecht = "M"';
+		if (!empty($filters['sex']) AND $filters['sex'] === 'female')
+			$where[] = 'Geschlecht = "W"';
 	}
-	if (!empty($filters['club_code_dsb']))
-		$where[] = sprintf('ZPS = "%s"', wrap_db_escape($filters['club_code_dsb']));
-	if (!empty($filters['player_id_dsb_excluded']))
-		$where[] = sprintf('PID NOT IN (%s)', wrap_db_escape(implode(',', $filters['player_id_dsb_excluded'])));
-	if (!empty($filters['min_age']))
-		$where[] = sprintf('Geburtsjahr <= %d', date('Y') - $filters['min_age']);
-	if (!empty($filters['max_age']))
-		$where[] = sprintf('Geburtsjahr >= %d', date('Y') - $filters['max_age']);
-	if (!empty($filters['sex']) AND $filters['sex'] === 'male')
-		$where[] = 'Geschlecht = "M"';
-	if (!empty($filters['sex']) AND $filters['sex'] === 'female')
-		$where[] = 'Geschlecht = "W"';
 
 	$sql = wrap_sql_query('ratings_players_dsb');
 	$sql = sprintf($sql, $where ? sprintf(' AND %s ', implode(' AND ', $where)) : '');

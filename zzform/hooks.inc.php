@@ -31,7 +31,9 @@ function mf_ratings_person_hook($ops) {
 
 	mf_ratings_person_hook_restrict_to_club($ops['record_new'][0]);
 	wrap_include('zzform/editing', 'ratings');
-	$player = mf_ratings_player_data_dsb_pass($ops['record_new'][0]['contact_id']);
+	$player = mf_ratings_players_dsb(
+		['player_pass_dsb' => $ops['record_new'][0]['contact_id']]
+	);
 	$contact_id = mf_ratings_person_add($player);
 	
 	$replace['record_replace'][0]['contact_id'] = $contact_id;
