@@ -50,39 +50,6 @@ function mf_ratings_player_data_dsb_pass($code) {
 }
 
 /**
- * read player data from ratings database of German Chess Federation DSB
- * by player ID
- * 
- * @param int $player_id_dsb
- * @return array
- */
-function mf_ratings_player_data_dsb_id($player_id_dsb) {
-	$sql = 'SELECT PID AS player_id_dsb
-			, CONCAT(dwz_spieler.ZPS, "-", IF(dwz_spieler.Mgl_Nr < 100, LPAD(dwz_spieler.Mgl_Nr, 3, "0"), dwz_spieler.Mgl_Nr)) AS player_pass_dsb
-			, dwz_spieler.FIDE_ID AS player_id_fide
-			, SUBSTRING_INDEX(Spielername, ",", 1) AS last_name
-			, SUBSTRING_INDEX(SUBSTRING_INDEX(Spielername, ",", 2), ",", -1) AS first_name
-			, dwz_spieler.Geburtsjahr AS birth_year
-			, (CASE dwz_spieler.Geschlecht WHEN "M" THEN "male" WHEN "W" THEN "female" ELSE "" END) AS sex
-			, dwz_spieler.DWZ AS dwz_dsb
-			, fide_players.standard_rating AS elo_fide
-			, IFNULL(fide_players.title, fide_players.title_women) AS fide_title
-			, contacts.contact_id AS club_contact_id
-			, contacts.contact AS club_contact
-		FROM dwz_spieler
-		LEFT JOIN fide_players
-			ON dwz_spieler.FIDE_ID = fide_players.player_id
-		LEFT JOIN contacts_identifiers
-			ON dwz_spieler.ZPS = contacts_identifiers.identifier
-			AND contacts_identifiers.current = "yes"
-		LEFT JOIN contacts USING (contact_id)
-		WHERE dwz_spieler.PID = %d
-	';
-	$sql = sprintf($sql, $player_id_dsb);
-	return wrap_db_fetch($sql);
-}
-
-/**
  * get player rating and title from German Chess Federation DSB
  *
  * @param string $code

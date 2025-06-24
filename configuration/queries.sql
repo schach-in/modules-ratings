@@ -222,14 +222,19 @@ WHERE contact_id IN (%s);
 -- ratings_players_dsb --
 SELECT PID AS player_id_dsb
 	, CONCAT(ZPS, "-", IF(Mgl_Nr < 100, LPAD(Mgl_Nr, 3, "0"), Mgl_Nr)) AS player_pass_dsb
+	, FIDE_ID AS player_id_fide
 	, SUBSTRING_INDEX(Spielername, ",", 1) AS last_name
 	, SUBSTRING_INDEX(SUBSTRING_INDEX(Spielername, ",", 2), ",", -1) AS first_name
-	, (CASE dwz_spieler.Geschlecht WHEN "M" THEN "male" WHEN "W" THEN "female" ELSE "" END) AS sex
 	, Geburtsjahr AS birth_year
+	, (CASE dwz_spieler.Geschlecht WHEN "M" THEN "male" WHEN "W" THEN "female" ELSE "" END) AS sex
 	, DWZ AS dwz_dsb
+	, fide_players.standard_rating AS elo_fide
+	, IFNULL(fide_players.title, fide_players.title_women) AS fide_title
 	, contacts.contact_id AS club_contact_id
 	, contact AS club_contact
 FROM dwz_spieler
+LEFT JOIN fide_players
+	ON dwz_spieler.FIDE_ID = fide_players.player_id
 LEFT JOIN contacts_identifiers ok
 	ON dwz_spieler.ZPS = ok.identifier 
 	AND ok.current = "yes"

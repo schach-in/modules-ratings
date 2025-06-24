@@ -130,6 +130,11 @@ function mf_ratings_contact($contact_ids) {
  */
 function mf_ratings_players_dsb($filters = []) {
 	$where = [];
+	$single = false;
+	if (!empty($filters['player_id_dsb'])) {
+		$where[] = sprintf('PID = %d', $filters['player_id_dsb']);
+		$single = true;
+	}
 	if (!empty($filters['club_code_dsb']))
 		$where[] = sprintf('ZPS = "%s"', wrap_db_escape($filters['club_code_dsb']));
 	if (!empty($filters['player_id_dsb_excluded']))
@@ -145,5 +150,7 @@ function mf_ratings_players_dsb($filters = []) {
 
 	$sql = wrap_sql_query('ratings_players_dsb');
 	$sql = sprintf($sql, $where ? sprintf(' AND %s ', implode(' AND ', $where)) : '');
-	return wrap_db_fetch($sql, 'player_id_dsb');
+	$data = wrap_db_fetch($sql, 'player_id_dsb');
+	if ($single) return reset($data);
+	return $data;
 }
