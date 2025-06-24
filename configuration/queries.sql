@@ -227,7 +227,7 @@ SELECT PID AS player_id_dsb
 	, SUBSTRING_INDEX(SUBSTRING_INDEX(Spielername, ",", 2), ",", -1) AS first_name
 	, Geburtsjahr AS birth_year
 	, (CASE dwz_spieler.Geschlecht WHEN "M" THEN "male" WHEN "W" THEN "female" ELSE "" END) AS sex
-	, DWZ AS dwz_dsb
+	, DWZ AS dsb_dwz
 	, fide_players.standard_rating AS elo_fide
 	, IFNULL(fide_players.title, fide_players.title_women) AS fide_title
 	, contacts.contact_id AS club_contact_id
