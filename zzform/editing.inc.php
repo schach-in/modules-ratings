@@ -15,6 +15,7 @@
 
 /**
  * read player data from ratings database of German Chess Federation DSB
+ * by player pass
  * 
  * @param mixed $code
  * @return array
@@ -24,16 +25,20 @@ function mf_ratings_player_data_dsb_pass($code) {
 	list($zps, $mgl_nr) = $code;
 
 	$sql = 'SELECT PID AS player_id_dsb
+			, CONCAT(dwz_spieler.ZPS, "-", IF(dwz_spieler.Mgl_Nr < 100, LPAD(dwz_spieler.Mgl_Nr, 3, "0"), dwz_spieler.Mgl_Nr)) AS player_pass_dsb
+			, dwz_spieler.FIDE_ID AS player_id_fide
 			, SUBSTRING_INDEX(Spielername, ",", 1) AS last_name
 			, SUBSTRING_INDEX(SUBSTRING_INDEX(Spielername, ",", 2), ",", -1) AS first_name
-			, dwz_spieler.ZPS
-			, IF(dwz_spieler.Mgl_Nr < 100, LPAD(dwz_spieler.Mgl_Nr, 3, "0"), dwz_spieler.Mgl_Nr) AS Mgl_Nr
-			, dwz_spieler.Spielername, dwz_spieler.Geburtsjahr, dwz_spieler.Geschlecht
-			, dwz_spieler.DWZ, dwz_spieler.FIDE_Elo, dwz_spieler.FIDE_Titel
-			, dwz_spieler.FIDE_ID
+			, dwz_spieler.Geburtsjahr AS birth_year
+			, (CASE dwz_spieler.Geschlecht WHEN "M" THEN "male" WHEN "W" THEN "female" ELSE "" END) AS sex
+			, dwz_spieler.DWZ AS dwz_dsb
+			, fide_players.standard_rating AS elo_fide
+			, IFNULL(fide_players.title, fide_players.title_women) AS fide_title
 			, contacts.contact_id AS club_contact_id
 			, contacts.contact AS club_contact
 		FROM dwz_spieler
+		LEFT JOIN fide_players
+			ON dwz_spieler.FIDE_ID = fide_players.player_id
 		LEFT JOIN contacts_identifiers
 			ON dwz_spieler.ZPS = contacts_identifiers.identifier
 			AND contacts_identifiers.current = "yes"
@@ -41,6 +46,39 @@ function mf_ratings_player_data_dsb_pass($code) {
 		WHERE ZPS = "%s" AND IF(dwz_spieler.Mgl_Nr < 100, LPAD(dwz_spieler.Mgl_Nr, 3, "0"), dwz_spieler.Mgl_Nr) = "%s"
 	';
 	$sql = sprintf($sql, wrap_db_escape($zps), wrap_db_escape($mgl_nr));
+	return wrap_db_fetch($sql);
+}
+
+/**
+ * read player data from ratings database of German Chess Federation DSB
+ * by player ID
+ * 
+ * @param int $player_id_dsb
+ * @return array
+ */
+function mf_ratings_player_data_dsb_id($player_id_dsb) {
+	$sql = 'SELECT PID AS player_id_dsb
+			, CONCAT(dwz_spieler.ZPS, "-", IF(dwz_spieler.Mgl_Nr < 100, LPAD(dwz_spieler.Mgl_Nr, 3, "0"), dwz_spieler.Mgl_Nr)) AS player_pass_dsb
+			, dwz_spieler.FIDE_ID AS player_id_fide
+			, SUBSTRING_INDEX(Spielername, ",", 1) AS last_name
+			, SUBSTRING_INDEX(SUBSTRING_INDEX(Spielername, ",", 2), ",", -1) AS first_name
+			, dwz_spieler.Geburtsjahr AS birth_year
+			, (CASE dwz_spieler.Geschlecht WHEN "M" THEN "male" WHEN "W" THEN "female" ELSE "" END) AS sex
+			, dwz_spieler.DWZ AS dwz_dsb
+			, fide_players.standard_rating AS elo_fide
+			, IFNULL(fide_players.title, fide_players.title_women) AS fide_title
+			, contacts.contact_id AS club_contact_id
+			, contacts.contact AS club_contact
+		FROM dwz_spieler
+		LEFT JOIN fide_players
+			ON dwz_spieler.FIDE_ID = fide_players.player_id
+		LEFT JOIN contacts_identifiers
+			ON dwz_spieler.ZPS = contacts_identifiers.identifier
+			AND contacts_identifiers.current = "yes"
+		LEFT JOIN contacts USING (contact_id)
+		WHERE dwz_spieler.PID = %d
+	';
+	$sql = sprintf($sql, $player_id_dsb);
 	return wrap_db_fetch($sql);
 }
 
@@ -105,7 +143,7 @@ function mf_ratings_player_search_dsb($data) {
 			, FIDE_ID AS player_id_fide
 			, (CASE WHEN Geschlecht = "W" THEN "female"
 				WHEN Geschlecht = "M" THEN "male"
-				ELSE "unknown" END
+				ELSE "" END
 			) AS sex
 			, CONCAT(clubs.contact, " | ", vk.identifier) AS verein
 			, lvk.contact_id AS federation_contact_id
@@ -155,7 +193,7 @@ function mf_ratings_player_search_fide($data) {
 			, player
 			, (CASE WHEN sex = "F" THEN "female"
 				WHEN sex = "M" THEN "male"
-				ELSE "unknown" END
+				ELSE "" END
 			) AS sex
 		FROM fide_players
 		WHERE player = "%s, %s"
@@ -183,12 +221,12 @@ function mf_ratings_player_search_fide($data) {
  */
 function mf_ratings_person_add($player) {
 	$identifiers = [];
-	if (!empty($player['Mgl_Nr']))
-		$identifiers['pass_dsb'] = $player['ZPS'].'-'.$player['Mgl_Nr'];
-	if (!empty($player['FIDE_ID']))
-		$identifiers['id_fide'] = $player['FIDE_ID'];
-	if (!empty($player['pkz']))
-		$identifiers['id_dsb'] = $player['pkz'];
+	$keys = ['player_id_fide', 'player_pass_dsb', 'player_id_dsb'];
+	foreach ($keys as $key) {
+		if (empty($player[$key])) continue;
+		$identifier_key = substr($key, 7);
+		$identifiers[$identifier_key] = $player[$key];
+	}
 
 	$id_text = [];
 	$contact_ids = [];
@@ -233,11 +271,12 @@ function mf_ratings_person_add($player) {
 
 	if (empty($contact_id)) {
 		wrap_include('zzform/batch', 'contacts');
-		$person = [];
-		$person['first_name'] = $player['first_name'];
-		$person['last_name'] = $player['last_name'];
-		$person['date_of_birth'] = $player['date_of_birth'] ?? $player['Geburtsjahr'];
-		$person['sex'] = ($player['Geschlecht'] === 'W') ? 'female' : 'male';
+		$person = [
+			'first_name' => $player['first_name'],
+			'last_name' => $player['last_name'],
+			'date_of_birth' => $player['date_of_birth'] ? $player['date_of_birth'] : $player['birth_year'],
+			'sex' => $player['sex']
+		];
 		$contact_id = mf_contacts_add_person($person);
 	}
 	
