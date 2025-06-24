@@ -19,11 +19,14 @@
  * @param mixed $code
  * @return array
  */
-function mf_ratings_player_data_dsb($code) {
+function mf_ratings_player_data_dsb_pass($code) {
 	if (!is_array($code)) $code = explode('-', $code);
 	list($zps, $mgl_nr) = $code;
 
-	$sql = 'SELECT dwz_spieler.ZPS
+	$sql = 'SELECT PID AS player_id_dsb
+			, SUBSTRING_INDEX(Spielername, ",", 1) AS last_name
+			, SUBSTRING_INDEX(SUBSTRING_INDEX(Spielername, ",", 2), ",", -1) AS first_name
+			, dwz_spieler.ZPS
 			, IF(dwz_spieler.Mgl_Nr < 100, LPAD(dwz_spieler.Mgl_Nr, 3, "0"), dwz_spieler.Mgl_Nr) AS Mgl_Nr
 			, dwz_spieler.Spielername, dwz_spieler.Geburtsjahr, dwz_spieler.Geschlecht
 			, dwz_spieler.DWZ, dwz_spieler.FIDE_Elo, dwz_spieler.FIDE_Titel
@@ -38,14 +41,7 @@ function mf_ratings_player_data_dsb($code) {
 		WHERE ZPS = "%s" AND IF(dwz_spieler.Mgl_Nr < 100, LPAD(dwz_spieler.Mgl_Nr, 3, "0"), dwz_spieler.Mgl_Nr) = "%s"
 	';
 	$sql = sprintf($sql, wrap_db_escape($zps), wrap_db_escape($mgl_nr));
-	$player = wrap_db_fetch($sql);
-	if (!$player) return [];
-
-	// player name
-	$player_name = explode(',', $player['Spielername']);
-	$player['last_name'] = $player_name[0];
-	$player['first_name'] = $player_name[1];
-	return $player;
+	return wrap_db_fetch($sql);
 }
 
 /**
