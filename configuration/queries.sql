@@ -219,7 +219,7 @@ SELECT contact_identifier_id, contact_id, identifier, identifier_category_id
 FROM contacts_identifiers
 WHERE contact_id IN (%s);
 
--- ratings_player_list_dsb --
+-- ratings_players_dsb --
 SELECT PID AS player_id_dsb
 	, CONCAT(ZPS, "-", IF(Mgl_Nr < 100, LPAD(Mgl_Nr, 3, "0"), Mgl_Nr)) AS player_pass_dsb
 	, SUBSTRING_INDEX(Spielername, ",", 1) AS last_name

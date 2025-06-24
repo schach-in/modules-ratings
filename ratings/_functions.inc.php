@@ -128,7 +128,7 @@ function mf_ratings_contact($contact_ids) {
  * @param array $filters
  * @return array
  */
-function mf_ratings_players_list_dsb($filters = []) {
+function mf_ratings_players_dsb($filters = []) {
 	$where = [];
 	if (!empty($filters['club_code_dsb']))
 		$where[] = sprintf('ZPS = "%s"', wrap_db_escape($filters['club_code_dsb']));
@@ -143,7 +143,7 @@ function mf_ratings_players_list_dsb($filters = []) {
 	if (!empty($filters['sex']) AND $filters['sex'] === 'female')
 		$where[] = 'Geschlecht = "W"';
 
-	$sql = wrap_sql_query('ratings_player_list_dsb');
+	$sql = wrap_sql_query('ratings_players_dsb');
 	$sql = sprintf($sql, $where ? sprintf(' AND %s ', implode(' AND ', $where)) : '');
 	return wrap_db_fetch($sql, 'player_id_dsb');
 }
