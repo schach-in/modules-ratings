@@ -154,6 +154,19 @@ function mf_ratings_players_dsb($filters = []) {
 			$where[] = 'Geschlecht = "M"';
 		if (!empty($filters['sex']) AND $filters['sex'] === 'female')
 			$where[] = 'Geschlecht = "W"';
+		if (!empty($filters['date_of_birth']))
+			$where[] = sprintf('Geburtsjahr = %d', substr($filters['date_of_birth'], 0, 4));
+		if (!empty($filters['last_name']) OR !empty($filters['first_name'])) {
+			$playername = $filters['last_name'] ? $filters['last_name'].'%,' : '%,';
+			$playername .= $filters['first_name'] ? $filters['first_name'].'%' : '%';
+			// in case someone mixed up the fields
+			$playername_r = $filters['first_name'] ? $filters['first_name'].'%,' : '%,';
+			$playername_r .= $filters['last_name'] ? $filters['last_name'].'%' : '%';
+			$where[] = sprintf(
+				'(Spielername LIKE _latin1"%s" OR Spielername LIKE _latin1"%s")'
+				, wrap_db_escape($playername), wrap_db_escape($playername_r)
+			);
+		}
 	}
 
 	$sql = wrap_sql_query('ratings_players_dsb');
