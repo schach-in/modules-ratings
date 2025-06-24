@@ -218,3 +218,22 @@ SELECT contact_identifier_id, contact_id, identifier, identifier_category_id
 	, IF(current = "yes", 1, NULL) AS current
 FROM contacts_identifiers
 WHERE contact_id IN (%s);
+
+-- ratings_player_list_dsb --
+SELECT PID AS player_id_dsb
+	, CONCAT(ZPS, "-", IF(Mgl_Nr < 100, LPAD(Mgl_Nr, 3, "0"), Mgl_Nr)) AS player_pass_dsb
+	, SUBSTRING_INDEX(Spielername, ",", 1) AS last_name
+	, SUBSTRING_INDEX(SUBSTRING_INDEX(Spielername, ",", 2), ",", -1) AS first_name
+	, (CASE dwz_spieler.Geschlecht WHEN "M" THEN "male" WHEN "W" THEN "female" ELSE "" END) AS sex
+	, Geburtsjahr AS birth_year
+	, DWZ AS dwz_dsb
+	, contacts.contact_id AS club_contact_id
+	, contact AS club_contact
+FROM dwz_spieler
+LEFT JOIN contacts_identifiers ok
+	ON dwz_spieler.ZPS = ok.identifier 
+	AND ok.current = "yes"
+LEFT JOIN contacts USING (contact_id)
+WHERE (ISNULL(Status) OR Status != "P")
+%s
+ORDER BY Spielername;

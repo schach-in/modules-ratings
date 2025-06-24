@@ -121,3 +121,29 @@ function mf_ratings_contact($contact_ids) {
 	if ($contact_id) return $ratings[$contact_id] ?? [];
 	return $ratings;
 }
+
+/**
+ * get a list of active players from German Chess Federation (DSB) database
+ *
+ * @param array $filters
+ * @return array
+ */
+function mf_ratings_players_list_dsb($filters = []) {
+	$where = [];
+	if (!empty($filters['club_code_dsb']))
+		$where[] = sprintf('ZPS = "%s"', wrap_db_escape($filters['club_code_dsb']));
+	if (!empty($filters['player_id_dsb_excluded']))
+		$where[] = sprintf('PID NOT IN (%s)', wrap_db_escape(implode(',', $filters['player_id_dsb_excluded'])));
+	if (!empty($filters['min_age']))
+		$where[] = sprintf('Geburtsjahr <= %d', date('Y') - $filters['min_age']);
+	if (!empty($filters['max_age']))
+		$where[] = sprintf('Geburtsjahr >= %d', date('Y') - $filters['max_age']);
+	if (!empty($filters['sex']) AND $filters['sex'] === 'male')
+		$where[] = 'Geschlecht = "M"';
+	if (!empty($filters['sex']) AND $filters['sex'] === 'female')
+		$where[] = 'Geschlecht = "W"';
+
+	$sql = wrap_sql_query('ratings_player_list_dsb');
+	$sql = sprintf($sql, $where ? sprintf(' AND %s ', implode(' AND ', $where)) : '');
+	return wrap_db_fetch($sql, 'player_id_dsb');
+}
