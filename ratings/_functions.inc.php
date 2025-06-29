@@ -135,7 +135,7 @@ function mf_ratings_players_dsb($filters = []) {
 		$where[] = sprintf('PID = %d', $filters['player_id_dsb']);
 		$single = true;
 	} elseif (!empty($filters['player_pass_dsb'])) {
-		list($zps, $mgl_nr) = explode('-', $code);
+		list($zps, $mgl_nr) = explode('-', $filters['player_pass_dsb']);
 		$where[] = sprintf(
 			'ZPS = "%s" AND IF(dwz_spieler.Mgl_Nr < 100, LPAD(dwz_spieler.Mgl_Nr, 3, "0"), dwz_spieler.Mgl_Nr) = "%s"'
 			, $zps, $mgl_nr
