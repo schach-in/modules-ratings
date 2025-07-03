@@ -159,13 +159,22 @@ function mf_ratings_players_dsb($filters = []) {
 		if (!empty($filters['last_name']) OR !empty($filters['first_name'])) {
 			$playername = $filters['last_name'] ? $filters['last_name'].'%,' : '%,';
 			$playername .= $filters['first_name'] ? $filters['first_name'].'%' : '%';
+			if (wrap_setting('character_set') !== 'iso-8859-1')
+				$playername = mb_convert_encoding($playername, 'iso-8859-1');
 			// in case someone mixed up the fields
 			$playername_r = $filters['first_name'] ? $filters['first_name'].'%,' : '%,';
 			$playername_r .= $filters['last_name'] ? $filters['last_name'].'%' : '%';
+			if (wrap_setting('character_set') !== 'iso-8859-1')
+				$playername_r = mb_convert_encoding($playername_r, 'iso-8859-1');
 			$where[] = sprintf(
 				'(Spielername LIKE _latin1"%s" OR Spielername LIKE _latin1"%s")'
 				, wrap_db_escape($playername), wrap_db_escape($playername_r)
 			);
+			// database table is latin1, connection uft8
+			// we do the conversion here to avoid getting an error for querying
+			// for names that are not possible in the database table, e. g. chinese letters
+			// could be done without _latin1, without mb_convert_encoding()
+			// but checking input’s encoding instead
 		}
 	}
 
