@@ -1,18 +1,28 @@
 # ratings module
-# HTML output: search form for ratings
+# HTML template for search
 #
 # Part of »Zugzwang Project«
 # https://www.zugzwang.org/modules/ratings
 #
 # @author Gustaf Mossakowski <gustaf@koenige.org>
-# @copyright Copyright © 2022, 2024 Gustaf Mossakowski
+# @copyright Copyright © 2022, 2024-2025 Gustaf Mossakowski
 # @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
 #
-%%% if no_ratings_found %%%
-<h2>Suche nach »%%% item searchword wrap_html_escape %%%«</h2>
-<p>Leider keine Treffer für die Suche.</p>
+%%% loop ratings %%%
 
-%%% elseif clubs %%%
+%%% if players %%%
+%%% item players %%%
+%%% endif %%%
+
+%%% if players_partial %%%
+%%% item players_partial %%%
+%%% endif %%%
+
+%%% if players | players_partial %%%
+%%% include ratingstatus %%%
+%%% endif %%%
+
+%%% if clubs %%%
 <h2>Suche nach »%%% item searchword wrap_html_escape %%%«</h2>
 <p>Treffer bei Vereinen:</p>
 <ul>
@@ -21,12 +31,9 @@
 %%% loop end %%%
 </ul>
 
+%%% else %%%
+<p>%%% text Leider keine Treffer für die Suche. %%%</p>
 
 %%% endif %%%
-<div class="searchform">
-<form method="GET" action="/zahlen/suche/">
-<p><label for id="playersearch">Suche nach Verein bzw. Spielerin oder Spieler:<br>
-<input type="search" name="name" id="playersearch" value="%%% item searchword wrap_html_escape %%%"></label>
-<input type="submit" value="Suchen!"></p>
-</form>
-</div>
+
+%%% loop end %%%
