@@ -75,7 +75,6 @@ function mod_ratings_ratingsearch($params) {
 			AND NOT ISNULL(contacts_identifiers.identifier)
 			AND (categories.parameters LIKE "%%&ratings_members=1%%" OR contacts.parameters LIKE "%%&ratings_members=1%%")
 			AND ISNULL(end_date)
-			AND contacts_identifiers.identifier != 10517
 		';
 		$sql = sprintf($sql, wrap_db_escape($_GET['name']), wrap_db_escape($_GET['name']));
 		$data['clubs'] = wrap_db_fetch($sql, 'contact_id');
@@ -106,7 +105,7 @@ function mod_ratings_ratingsearch($params) {
 	}
 
 	$page['query_strings'][] = 'name';
-	$page['text'] .= wrap_template('ratingsearch', $data);
+	$page['text'] .= wrap_template('search-ratings', $data);
 	$page['text'] .= wrap_template('ratingstatus');
 	return $page;
 }
