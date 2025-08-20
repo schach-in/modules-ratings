@@ -23,15 +23,15 @@
 %%% endif %%%
 
 %%% if clubs %%%
-<h2>Suche nach »%%% item searchword wrap_html_escape %%%«</h2>
-<p>Treffer bei Vereinen:</p>
+<h2>Vereine mit »%%% item searchword wrap_html_escape %%%« im Namen:</h2>
 <ul>
 %%% loop clubs %%%
 <li><a href="../%%% item zps_code %%%/">%%% item contact %%%</a> (%%% item zps_code %%%)</li>
 %%% loop end %%%
 </ul>
+%%% endif %%%
 
-%%% else %%%
+%%% unless players | players_partial |  clubs %%%
 <p>%%% text Leider keine Treffer für die Suche. %%%</p>
 
 %%% endif %%%
