@@ -151,9 +151,15 @@ function mf_ratings_toplist($club) {
 	$club['code'] = $club['contact_parameters']['ratings_club_code'] ?? $club['zps_code'];
 
 	$sql = 'SELECT title, title_women, Spielername, DWZ, standard_rating
+			, (SELECT uri FROM wikidata_uris
+				WHERE wikidata_uris.wikidata_id = wikidata_players.wikidata_id
+				ORDER BY uri_lang ASC LIMIT 1
+			) AS wikipedia_url
 		FROM dwz_spieler
 		LEFT JOIN fide_players
 			ON dwz_spieler.fide_id = fide_players.player_id
+	    LEFT JOIN wikidata_players
+	    	ON wikidata_players.fide_id = fide_players.player_id
 		WHERE ZPS = "%s"
 		AND (Status = "A" OR ISNULL(Status))
 		ORDER BY DWZ DESC, standard_rating DESC, Spielername ASC
@@ -165,7 +171,7 @@ function mf_ratings_toplist($club) {
 		$player['no'] = $i;
 		$player_name = explode(',', $player['Spielername']);
 		$player_name = array_reverse($player_name);
-		$player['spieler'] = implode(' ', $player_name);
+		$player['contact'] = implode(' ', $player_name);
 		$player = mf_ratings_fidetitle($player);
 		$i++;
 	}
