@@ -5,7 +5,7 @@
  * import rating data
  *
  * Part of »Zugzwang Project«
- * https://www.zugzwang.org/modules/clubs
+ * https://www.zugzwang.org/modules/ratings
  *
  * @author Jacob Roggon
  * @author Gustaf Mossakowski <gustaf@koenige.org>

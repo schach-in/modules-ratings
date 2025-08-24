@@ -5,7 +5,7 @@
  * players in German DWZ database
  *
  * Part of »Zugzwang Project«
- * https://www.zugzwang.org/modules/clubs
+ * https://www.zugzwang.org/modules/ratings
  *
  * @author Gustaf Mossakowski <gustaf@koenige.org>
  * @copyright Copyright © 2013-2017, 2020, 2022-2024 Gustaf Mossakowski

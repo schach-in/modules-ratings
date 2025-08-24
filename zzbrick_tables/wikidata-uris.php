@@ -5,7 +5,7 @@
  * URLs of chess players in Wikipedia
  *
  * Part of »Zugzwang Project«
- * https://www.zugzwang.org/modules/clubs
+ * https://www.zugzwang.org/modules/ratings
  *
  * @author Gustaf Mossakowski <gustaf@koenige.org>
  * @copyright Copyright © 2024 Gustaf Mossakowski
