@@ -11,12 +11,6 @@
 %%% if club_identifier %%%
 <p><a href="/%%% item club_identifier %%%/">%%% item contact %%% bei schach.in</a></p>
 %%% endif %%%
-%%% if searchword %%%
-<h2>Suche nach »%%% item searchword wrap_html_escape %%%«
-%%% if exact_match %%% %%% text (exact match) %%%%%% endif %%%
-%%% if partial_match %%% %%% text (partial match) %%%%%% endif %%%
-</h2>
-%%% endif %%%
 <table class="toplist">
 <thead>
 <tr>

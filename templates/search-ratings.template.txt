@@ -11,10 +11,12 @@
 %%% loop ratings %%%
 
 %%% if players %%%
+<h2>Spielerinnen und Spieler %%% text (exact match) %%%</h2>
 %%% item players %%%
 %%% endif %%%
 
 %%% if players_partial %%%
+<h2>Spielerinnen und Spieler %%% text (partial match) %%%</h2>
 %%% item players_partial %%%
 %%% endif %%%
 
@@ -23,17 +25,12 @@
 %%% endif %%%
 
 %%% if clubs %%%
-<h2>Vereine mit »%%% item searchword wrap_html_escape %%%« im Namen:</h2>
+<h2>Vereine und Abteilungen</h2>
 <ul>
 %%% loop clubs %%%
 <li><a href="../%%% item zps_code %%%/">%%% item contact %%%</a> (%%% item zps_code %%%)</li>
 %%% loop end %%%
 </ul>
-%%% endif %%%
-
-%%% unless players | players_partial |  clubs %%%
-<p>%%% text Leider keine Treffer für die Suche. %%%</p>
-
 %%% endif %%%
 
 %%% loop end %%%

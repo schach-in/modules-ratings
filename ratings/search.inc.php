@@ -16,7 +16,6 @@
 function mf_ratings_search($q) {
 	$data = [];
 	$q_string = implode(' ', $q);
-	$data['ratings'][0]['searchword'] = $q_string;
 
 	$conditions = [];
 	$names[0] = $q_string;
@@ -50,12 +49,10 @@ function mf_ratings_search($q) {
 			unset($ratings[$id]);
 		}
 		if ($exact_matches) {
-			$exact_matches['searchword'] = $data['ratings'][0]['searchword'];
 			$exact_matches['exact_match'] = true;
 			$data['ratings'][0]['players'] = wrap_template('ratinglist', $exact_matches);
 		}
 		if (count($ratings)) {
-			$ratings['searchword'] = $data['ratings'][0]['searchword'];
 			if ($exact_matches)
 				$ratings['partial_match'] = true;
 			$data['ratings'][0]['players_partial'] = wrap_template('ratinglist', $ratings);
@@ -78,7 +75,7 @@ function mf_ratings_search($q) {
 		AND ISNULL(end_date)
 	';
 	$sql = sprintf($sql, $q_string, $q_string);
-	$data['ratings'][0]['clubs'] = wrap_db_fetch($sql, 'contact_id');
+	$clubs = wrap_db_fetch($sql, 'contact_id');
 
 	// zps codes?
 	if (strlen($_GET['q']) <= 5 AND preg_match('/[0-9A-Z]*/', $_GET['q'])) {
@@ -96,8 +93,10 @@ function mf_ratings_search($q) {
 			AND ISNULL(end_date)
 		';
 		$sql = sprintf($sql, $q_string);
-		$data['ratings'][0]['clubs'] = array_merge($data['ratings'][0]['clubs'], wrap_db_fetch($sql, 'contact_id'));
+		$clubs = array_merge($clubs, wrap_db_fetch($sql, 'contact_id'));
 	}
+	if ($clubs)
+		$data['ratings'][0]['clubs'] = $clubs;
 
 	return $data;
 }
