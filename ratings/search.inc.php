@@ -37,6 +37,7 @@ function mf_ratings_search($q) {
 	if ($ratings) {
 		// normalize search term
 		$parts = str_replace(',', ' ', $q_string);
+		$parts = mb_strtolower($parts);
 		$parts = explode(' ', $parts);
 		foreach ($parts as $index => $part) $parts[$index] = trim($part);
 		sort($parts);
@@ -53,7 +54,7 @@ function mf_ratings_search($q) {
 			$exact_matches['exact_match'] = true;
 			$data['ratings'][0]['players'] = wrap_template('ratinglist', $exact_matches);
 		}
-		if (count($ratings) > 1) {
+		if (count($ratings)) {
 			$ratings['searchword'] = $data['ratings'][0]['searchword'];
 			if ($exact_matches)
 				$ratings['partial_match'] = true;
