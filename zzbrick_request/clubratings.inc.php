@@ -8,7 +8,7 @@
  * https://www.zugzwang.org/modules/ratings
  *
  * @author Gustaf Mossakowski <gustaf@koenige.org>
- * @copyright Copyright © 2022, 2024 Gustaf Mossakowski
+ * @copyright Copyright © 2022, 2024-2025 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
@@ -35,7 +35,7 @@ function mod_ratings_clubratings($params) {
 	$rating_code = $data['parameters']['ratings_club_code'] ?? $params[0];
 	$conditions[] = sprintf('ZPS = "%s"', wrap_db_escape($rating_code));
 	
-	$ratings = mf_ratings_ratinglist($conditions);
+	$ratings = mf_ratings_ratinglist($conditions, ['apply_conditions_for_full_query' => true]);
 	if (!$ratings) return false;
 	foreach ($ratings as $index => $line)
 		unset($ratings[$index]['club_identifier']);

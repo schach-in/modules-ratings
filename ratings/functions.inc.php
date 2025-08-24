@@ -17,10 +17,13 @@
  * get data for top rating lists
  *
  * @param array $conditions WHERE conditions for query
- * @param int $limit (optional, defaults to 1000)
+ * @param array $settings
+ *		int limit (optional, defaults to 1000)
+ * 		bool apply_conditions_for_full_query
  * @return array
  */
-function mf_ratings_ratinglist($conditions, $limit = 1000) {
+function mf_ratings_ratinglist($conditions, $settings) {
+	if (!array_key_exists('limit', $settings)) $settings['limit'] = 1000;
 	$sql = 'SELECT PID
 	    FROM dwz_spieler
 	    LEFT JOIN fide_players
@@ -31,7 +34,7 @@ function mf_ratings_ratinglist($conditions, $limit = 1000) {
 	';
 	$sql = sprintf($sql
 		, $conditions ? implode(' AND ', $conditions) : ''
-		, $limit
+		, $settings['limit']
 	);
 	$data = wrap_db_fetch($sql, 'PID');
 	if (!$data) return [];
@@ -68,8 +71,13 @@ function mf_ratings_ratinglist($conditions, $limit = 1000) {
 	    LEFT JOIN contacts
 	    	ON contacts.contact_id = IFNULL(contacts_identifiers.contact_id, federation_identifiers.contact_id)
 	    WHERE PID IN (%s)
+	    %s
 	    ORDER BY FIELD(PID, %s), Status DESC';
-	$sql = sprintf($sql, implode(',', array_keys($data)), implode(',', array_keys($data)));
+	$sql = sprintf($sql
+		, implode(',', array_keys($data))
+		, (!empty($settings['apply_conditions_for_full_query']) ? ' AND '.implode(' AND ', $conditions) : '')
+		, implode(',', array_keys($data))
+	);
 	$data = wrap_db_fetch($sql, 'PID');
 	
 	$players = [];
