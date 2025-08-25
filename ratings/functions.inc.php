@@ -22,7 +22,7 @@
  * 		bool apply_conditions_for_full_query
  * @return array
  */
-function mf_ratings_ratinglist($conditions, $settings) {
+function mf_ratings_ratinglist($conditions, $settings = []) {
 	if (!array_key_exists('limit', $settings)) $settings['limit'] = 1000;
 	$sql = 'SELECT PID
 	    FROM dwz_spieler
