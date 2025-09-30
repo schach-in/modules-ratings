@@ -15,19 +15,32 @@
 
 function mf_ratings_search($q) {
 	$data = [];
-	$q_string = implode(' ', $q);
 
+	// handle search string
+	$q_string = implode(' ', $q);
+	$q_string = trim($q_string);
+	if (strstr($q_string, ', '))
+		$q_string = str_replace(', ', ',', $q_string);
+
+	// check for different input order
+	$names = [
+		0 => $q_string
+	];
+	if (strstr($q_string, ',')) {
+		$name_parts = explode(',', $q_string);
+		if (count($name_parts) === 2) {
+			$names[] = $name_parts[1] . ',' . $name_parts[0];
+		}
+	} elseif (strstr($q_string, ' ')) {
+		$name_parts = explode(' ', $q_string);
+		if (count($name_parts) === 2) {
+			$names[] = implode(',', $name_parts);
+			$names[] = implode(',', array_reverse($name_parts));
+		}
+	}
+	$names = array_unique($names);
+	
 	$conditions = [];
-	$names[0] = $q_string;
-	if (strstr($names[0], ', ')) {
-		$names[0] = str_replace(', ', ',', $names[0]);
-	}
-	if (strstr($names[0], ' ')) {
-		$name = explode(' ', $names[0]);
-		$names[0] = implode(',', $name);
-		$name = array_reverse($name);
-		$names[1] = implode(',', $name);
-	}
 	foreach ($names as $name)
 		$conditions[] = sprintf('CONVERT(Spielername USING utf8) LIKE "%%%s%%"', $name);
 	$conditions = [implode(' OR ', $conditions)];
