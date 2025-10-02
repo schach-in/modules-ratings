@@ -205,7 +205,7 @@ function mf_ratings_person_add($player) {
 		$person = [
 			'first_name' => $player['first_name'],
 			'last_name' => $player['last_name'],
-			'date_of_birth' => $player['date_of_birth'] ? $player['date_of_birth'] : $player['birth_year'],
+			'date_of_birth' => !empty($player['date_of_birth']) ? $player['date_of_birth'] : $player['birth_year'],
 			'sex' => $player['sex']
 		];
 		$contact_id = mf_contacts_add_person($person);
