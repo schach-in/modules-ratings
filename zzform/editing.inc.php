@@ -224,7 +224,7 @@ function mf_ratings_person_add($player) {
  * @return void
  */
 function mf_ratings_contacts_identifiers($contact_id, $identifiers) {
-	wrap_include('zzbrick_request_get/contactdata', 'contacts');
+	wrap_include('data/contacts', 'contacts');
 	$existing = mf_contacts_identifiers([$contact_id]);
 	$existing = $existing[$contact_id]['identifiers'] ?? [];
 
