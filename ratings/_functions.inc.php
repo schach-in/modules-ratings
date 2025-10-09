@@ -123,7 +123,7 @@ function mf_ratings_contact($contact_ids) {
 }
 
 /**
- * get a list of active players from German Chess Federation (DSB) database
+ * get a list of players from German Chess Federation (DSB) database
  *
  * @param array $filters
  * @return array
@@ -179,7 +179,10 @@ function mf_ratings_players_dsb($filters = []) {
 	}
 
 	$sql = wrap_sql_query('ratings_players_dsb');
-	$sql = sprintf($sql, $where ? sprintf(' AND %s ', implode(' AND ', $where)) : '');
+	$sql = sprintf($sql
+		, !empty($filters['include_passive']) ? 'XX' : 'P' // X being an illegal value, showing all records
+		, $where ? sprintf(' AND %s ', implode(' AND ', $where)) : ''
+	);
 	$data = wrap_db_fetch($sql, 'player_id_dsb');
 	if ($single) return reset($data);
 	return $data;

@@ -239,6 +239,6 @@ LEFT JOIN contacts_identifiers
 	ON dwz_spieler.ZPS = contacts_identifiers.identifier
 	AND contacts_identifiers.current = "yes"
 LEFT JOIN contacts USING (contact_id)
-WHERE (ISNULL(Status) OR Status != "P")
+WHERE (ISNULL(Status) OR Status != "%s")
 %s
 ORDER BY Spielername;
