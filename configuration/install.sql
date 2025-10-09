@@ -57,7 +57,7 @@ CREATE TABLE `dwz_spieler` (
   `ZPS` varchar(5) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   `Mgl_Nr` smallint NOT NULL,
   `Status` char(1) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
-  `Spielername` varchar(60) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
+  `Spielername` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `Geschlecht` char(1) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
   `Spielberechtigung` char(1) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
   `Geburtsjahr` year DEFAULT NULL,
