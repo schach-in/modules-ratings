@@ -102,7 +102,7 @@ function mf_ratings_dewis_organisations_c00() {
 	foreach ($clubs as $club) {
 		$url = wrap_path('ratings_dewis_organisations', $club['vkz']);
 		$url = wrap_setting('host_base').$url;
-		wrap_syndication_retrieve_via_http($url);
+		wrap_syndication_http_request($url);
 		usleep(wrap_setting('ratings_dewis_wait_ms'));
 	}
 }
@@ -315,7 +315,7 @@ function mod_ratings_make_dewis_import() {
 	foreach ($clubs as $club) {
 		$url = wrap_path('ratings_dewis_members', $club['vkz']);
 		$url = wrap_setting('host_base').$url;
-		list ($status, $headers, $data) = wrap_syndication_retrieve_via_http($url);
+		list ($status, $headers, $data) = wrap_syndication_http_request($url);
 		$import[] = [
 			'club_identifier' => $club['vkz'],
 			'status' => $status,
