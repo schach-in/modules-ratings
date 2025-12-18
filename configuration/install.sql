@@ -160,6 +160,24 @@ INSERT INTO categories (`category`, `category_short`, `description`, `main_categ
 INSERT INTO categories (`category`, `category_short`, `description`, `main_category_id`, `path`, `parameters`, `sequence`, `last_update`) VALUES ('School Instructor', 'SI', NULL, /*_ID categories fide-title/education _*/, 'fide-title/education/si', '&alias=fide-title/education/si', 3, NOW());
 
 
+-- memberstats --
+CREATE TABLE `memberstats` (
+  `memberstat_id` int unsigned NOT NULL AUTO_INCREMENT,
+  `birth_year` year DEFAULT NULL,
+  `rating` smallint unsigned DEFAULT NULL,
+  `club_code` varchar(5) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `club_contact_id` int unsigned DEFAULT NULL,
+  `sex` enum('female','male','diverse') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status` enum('active','passive') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `snapshot_date` date NOT NULL,
+  PRIMARY KEY (`memberstat_id`),
+  KEY `club_contact_id` (`club_contact_id`),
+  KEY `club_code` (`club_code`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO _relations (`master_db`, `master_table`, `master_field`, `detail_db`, `detail_table`, `detail_id_field`, `detail_field`, `delete`) VALUES ((SELECT DATABASE()), 'contacts', 'contact_id', (SELECT DATABASE()), 'memberstats', 'memberstat_id', 'club_contact_id', 'no-delete');
+
+
 -- wikidata_players --
 CREATE TABLE `wikidata_players` (
   `wikidata_id` int unsigned NOT NULL,
