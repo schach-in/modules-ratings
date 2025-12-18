@@ -10,7 +10,7 @@
  * @author Jacob Roggon
  * @author Gustaf Mossakowski <gustaf@koenige.org>
  * @copyright Copyright © ... Jacob Roggon
- * @copyright Copyright © 2013-2014, 2016-2017, 2019-2020, 2022-2024 Gustaf Mossakowski
+ * @copyright Copyright © 2013-2014, 2016-2017, 2019-2020, 2022-2025 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
@@ -35,7 +35,7 @@ function mod_ratings_make_ratings_download($params) {
 	// might take a little longer, but if possible, If-Modified-Since and 304s
 	// are taken into account
 	wrap_include('syndication', 'zzwrap');
-	$rating_data = wrap_syndication_get($data['url'], 'file');
+	$rating_data = wrap_syndication($data['url'], ['type' => 'file']);
 	if (!$rating_data)
 		wrap_error(sprintf(wrap_text('Unable to download rating file for %s.'), $params[0]), E_USER_ERROR);
 
