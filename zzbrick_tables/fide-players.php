@@ -8,7 +8,7 @@
  * https://www.zugzwang.org/modules/ratings
  *
  * @author Gustaf Mossakowski <gustaf@koenige.org>
- * @copyright Copyright © 2024-2025 Gustaf Mossakowski
+ * @copyright Copyright © 2024-2026 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
@@ -127,7 +127,7 @@ $zz['sql'] = 'SELECT fide_players.*
 $zz['sqlorder'] = ' ORDER BY player, birth, player_id';
 
 $zz['access'] = 'none';
-$zz['if']['batch']['access'] = '';
+$zz['if']['batch_mode']['access'] = '';
 
 $zz['explanation'] = sprintf('<p>FIDE Elo rating database, Stand: %s</p>', wrap_date(wrap_setting('ratings_status[Elo]')));
 

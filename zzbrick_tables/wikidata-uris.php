@@ -8,7 +8,7 @@
  * https://www.zugzwang.org/modules/ratings
  *
  * @author Gustaf Mossakowski <gustaf@koenige.org>
- * @copyright Copyright © 2024 Gustaf Mossakowski
+ * @copyright Copyright © 2024, 2026 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
@@ -41,7 +41,7 @@ $zz['sql'] = 'SELECT wikidata_uris.*
 $zz['sqlorder'] = ' ORDER BY person, fide_id, wikidata_id, uri_lang';
 
 //$zz['access'] = 'none';
-$zz['if']['batch']['access'] = '';
+$zz['if']['batch_mode']['access'] = '';
 
 $zz['subselect']['sql'] = 'SELECT wikidata_id, uri
     FROM wikidata_uris
