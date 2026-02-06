@@ -7,7 +7,7 @@
 # @author Jacob Roggon
 # @author Gustaf Mossakowski <gustaf@koenige.org>
 # @copyright Copyright © 2012 Jacob Roggon
-# @copyright Copyright © 2012-2014, 2016-2017, 2020, 2022, 2024 Gustaf Mossakowski
+# @copyright Copyright © 2012-2014, 2016-2017, 2020, 2022, 2024, 2026 Gustaf Mossakowski
 # @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
 #
 %%% loop start %%%
@@ -19,10 +19,10 @@
 %%% else %%%
 <li>Aktueller Datenstand, heruntergeladen vom 
 <a href="%%% item url %%%">Server</a>:
-<strong>%%% item date wrap_date %%%</strong></li>
+<strong>%%% item date format=date %%%</strong></li>
 %%% endif %%%
 <li>Letzter Import der %%% item rating %%%-Daten in die Datenbank auf diesem Server: 
-<strong>%%% item stand wrap_date %%%</strong></li>
+<strong>%%% item stand format=date %%%</strong></li>
 </ul>
 
 %%% if erfolgreich %%%

@@ -5,7 +5,7 @@
 # https://www.zugzwang.org/modules/ratings
 #
 # @author Gustaf Mossakowski <gustaf@koenige.org>
-# @copyright Copyright © 2024 Gustaf Mossakowski
+# @copyright Copyright © 2024,2026 Gustaf Mossakowski
 # @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
 #
 <table class="toplist">
@@ -22,7 +22,7 @@
 <tbody>
 %%% loop start %%%
 <tr>
-<td>%%% item time wrap_date %%% %%% item time wrap_time %%%</td>
+<td>%%% item time format=date %%% %%% item time format=time %%%</td>
 <td>%%% item action %%%</td>
 <td class="number">%%% item updated %%%</td>
 <td class="number">%%% item inserted %%%</td>
