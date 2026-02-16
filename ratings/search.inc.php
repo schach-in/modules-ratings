@@ -8,7 +8,7 @@
  * https://www.zugzwang.org/modules/ratings
  *
  * @author Gustaf Mossakowski <gustaf@koenige.org>
- * @copyright Copyright © 2022, 2024-2025 Gustaf Mossakowski
+ * @copyright Copyright © 2022, 2024-2026 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
@@ -62,16 +62,23 @@ function mf_ratings_search($q) {
 			unset($ratings[$id]);
 		}
 		if ($exact_matches) {
-			$data['ratings'][0]['ids'] = array_keys($exact_matches);
-			$data['ratings'][0]['count'] = count($exact_matches);
+			if (empty($data['ratings'][0]['ids']))
+				$data['ratings'][0]['ids'] = [];
+			$data['ratings'][0]['ids'] += array_combine(array_keys($exact_matches), array_keys($exact_matches));
+			if (empty($data['ratings'][0]['count'])) $data['ratings'][0]['count'] = 0;
+			$data['ratings'][0]['count'] += count($exact_matches);
 			$exact_matches['exact_match'] = true;
 			$data['ratings'][0]['players'] = wrap_template('ratinglist', $exact_matches);
 		}
 		if (count($ratings)) {
+			if (empty($data['ratings'][0]['ids']))
+				$data['ratings'][0]['ids'] = [];
+			$data['ratings'][0]['ids'] += array_combine(array_keys($ratings), array_keys($ratings));
+			if (empty($data['ratings'][0]['count']))
+				$data['ratings'][0]['count'] = 0;
+			$data['ratings'][0]['count'] += count($ratings);
 			if ($exact_matches)
 				$ratings['partial_match'] = true;
-			$data['ratings'][0]['ids'] = array_keys($ratings);
-			$data['ratings'][0]['count'] = count($ratings);
 			$data['ratings'][0]['players_partial'] = wrap_template('ratinglist', $ratings);
 		}
 	}
@@ -114,8 +121,11 @@ function mf_ratings_search($q) {
 	}
 	if ($clubs) {
 		$data['ratings'][0]['clubs'] = $clubs;
-		$data['ratings'][0]['ids'] = array_keys($clubs);
-		$data['ratings'][0]['count'] = count($clubs);
+		if (empty($data['ratings'][0]['ids']))
+			$data['ratings'][0]['ids'] = [];
+		$data['ratings'][0]['ids'] += array_combine(array_keys($clubs), array_keys($clubs));
+		if (empty($data['ratings'][0]['count'])) $data['ratings'][0]['count'] = 0;
+		$data['ratings'][0]['count'] += count($clubs);
 	}
 
 	return $data;
