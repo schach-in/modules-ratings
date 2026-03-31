@@ -97,7 +97,7 @@ function mf_ratings_fideother($line) {
  * @param mixed $contact_ids (int or array of integers)
  * @return array
  */
-function mf_ratings_contact($contact_ids) {
+function mf_ratings_by_contact($contact_ids) {
 	$contact_id = !is_array($contact_ids) ? $contact_ids : NULL;
     $queries = [];
 	if (wrap_setting('ratings_list_dsb'))
