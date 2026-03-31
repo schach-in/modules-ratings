@@ -1,0 +1,21 @@
+# ratings module
+# template for contact: ratings
+# 
+# Part of »Zugzwang Project«
+# https://www.zugzwang.org/modules/ratings
+#
+# @author Gustaf Mossakowski <gustaf@koenige.org>
+# @copyright Copyright © 2026 Gustaf Mossakowski
+# @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
+# 
+%%% if dsb_dwz | fide_elo | fide_elo_rapid | fide_elo_blitz %%%
+<tr><th>%%% text Ratings %%%</th>
+<td><ul>
+%%% if dsb_dwz %%%<li>DWZ: %%% item dsb_dwz %%%</li>%%% endif %%%
+%%% if fide_elo %%%<li>Elo: %%% item fide_elo %%%</li>%%% endif %%%
+%%% if fide_elo_rapid %%%<li>Elo (Rapid): %%% item fide_elo_rapid %%%</li>%%% endif %%%
+%%% if fide_elo_blitz %%%<li>Elo (Blitz): %%% item fide_elo_blitz %%%</li>%%% endif %%%
+</ul>
+</td>
+</tr>
+%%% endif %%%
