@@ -1,0 +1,27 @@
+# ratings module
+# template for contact: clubs
+# 
+# Part of »Zugzwang Project«
+# https://www.zugzwang.org/modules/ratings
+#
+# @author Gustaf Mossakowski <gustaf@koenige.org>
+# @copyright Copyright © 2026 Gustaf Mossakowski
+# @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
+# 
+%%% if clubs %%%
+<tr><th>%%% text Clubs %%%</th>
+<td><ul>
+%%% loop clubs %%%
+%%% if current %%%
+<li><strong>%%% if path contacts_profile[*] %%%<a href="%%% path contacts_profile[*] identifier %%%">%%% endif %%%%%% item contact %%%%%% if path contacts_profile[*] %%%</a>%%% endif %%%</strong></li>
+%%% endif %%%
+%%% loop end %%%
+%%% loop clubs %%%
+%%% unless current %%%
+<li class="outdated">%%% if path contacts_profile[*] %%%<a href="%%% path contacts_profile[*] identifier %%%">%%% endif %%%%%% item contact %%%%%% if path contacts_profile[*] %%%</a>%%% endif %%%</li>
+%%% endif %%%
+%%% loop end %%%
+</ul>
+</td>
+</tr>
+%%% endif %%%

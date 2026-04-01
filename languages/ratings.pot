@@ -40,6 +40,10 @@ msgstr ""
 msgid "Ratings"
 msgstr ""
 
+#: templates/contact-ratings-clubs.template.txt
+msgid "Clubs"
+msgstr ""
+
 #: templates/federationids.template.txt
 msgid "No updates necessary."
 msgstr ""

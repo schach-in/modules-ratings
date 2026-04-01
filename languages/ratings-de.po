@@ -44,6 +44,10 @@ msgstr "Letzter importierter Stand der DSB-DWZ-Datenbank"
 msgid "Ratings"
 msgstr "Wertungen"
 
+#: templates/contact-ratings-clubs.template.txt
+msgid "Clubs"
+msgstr "Vereine"
+
 #: templates/federationids.template.txt
 msgid "No updates necessary."
 msgstr "Keine Aktualisierungen erforderlich."
