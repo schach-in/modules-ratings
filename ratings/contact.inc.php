@@ -26,6 +26,16 @@ function mf_ratings_contact($data, $ids) {
 	$data[$contact_id] += mf_ratings_by_contact($contact_id);
 	// clubs
 	$data[$contact_id]['clubs'] = mf_ratings_clubs_from_code($data[$contact_id]['identifiers'] ?? []);
+
+	$titles = [];	
+	if (!empty($data[$contact_id]['fide_title']))
+		$titles[] = $data[$contact_id]['fide_title'];
+	if (!empty($data[$contact_id]['fide_title_women']))
+		$titles[] = $data[$contact_id]['fide_title_women'];
+	if (!empty($data[$contact_id]['fide_title_other']))
+		$titles[] = $data[$contact_id]['fide_title_other'];
+	if ($titles)
+		$data[$contact_id]['title_prefix'] = implode(', ', $titles).' '.$data[$contact_id]['title_prefix'];
 	
 	$data['templates']['contact_5'][] = 'contact-ratings-clubs';
 	$data['templates']['contact_6'][] = 'contact-ratings';
