@@ -125,3 +125,133 @@ msgstr "Keine Synchronisation für die %s-Wertungsdaten erforderlich."
 #: zzbrick_tables/fide-players.php
 msgid "Federation"
 msgstr "Verband"
+
+# FIDE titles: GM
+#: zzbrick_tables/fide-players.php
+msgid "Grand Master"
+msgstr "Großmeister"
+
+# FIDE titles: IM
+#: zzbrick_tables/fide-players.php
+msgid "International Master"
+msgstr "Internationaler Meister"
+
+# FIDE titles: FM
+#: zzbrick_tables/fide-players.php
+msgid "FIDE Master"
+msgstr "FIDE-Meister"
+
+# FIDE titles: CM
+#: zzbrick_tables/fide-players.php
+msgid "Candidate Master"
+msgstr "Meisterkandidat"
+
+# Women FIDE titles: WGM
+#: zzbrick_tables/fide-players.php
+msgid "Woman Grand Master"
+msgstr "Frauen-Großmeisterin"
+
+# Women FIDE titles: WIM
+#: zzbrick_tables/fide-players.php
+msgid "Woman International Master"
+msgstr "Internationale Frauen-Meisterin"
+
+# Women FIDE titles: WFM
+#: zzbrick_tables/fide-players.php
+msgid "Woman FIDE Master"
+msgstr "Frauen-FIDE-Meisterin"
+
+# Women FIDE titles: WCM
+#: zzbrick_tables/fide-players.php
+msgid "Woman Candidate Master"
+msgstr "Frauen-Meisterkandidatin"
+
+# Other FIDE titles: IA
+#: zzbrick_tables/fide-players.php
+msgid "International Arbiter"
+msgstr "Internationaler Schiedsrichter"
+
+# Other FIDE titles: FA
+#: zzbrick_tables/fide-players.php
+msgid "FIDE Arbiter"
+msgstr "FIDE-Schiedsrichter"
+
+# Other FIDE titles: NA
+#: zzbrick_tables/fide-players.php
+msgid "National Arbiter"
+msgstr "Nationaler Schiedsrichter"
+
+# Other FIDE titles: IO
+#: zzbrick_tables/fide-players.php
+msgid "International Organizer"
+msgstr "Internationaler Organisator"
+
+# Other FIDE titles: AO
+#: zzbrick_tables/fide-players.php
+msgid "FIDE Associate Organizer"
+msgstr "Assoziierter FIDE-Organisator"
+
+# Other FIDE titles: PO
+#: zzbrick_tables/fide-players.php
+msgid "FIDE Premier Organizer"
+msgstr "FIDE-Premier-Organisator"
+
+# Other FIDE titles: FT
+#: zzbrick_tables/fide-players.php
+msgid "FIDE Trainer"
+msgstr "FIDE-Trainer"
+
+# Other FIDE titles: FST
+#: zzbrick_tables/fide-players.php
+msgid "FIDE Senior Trainer"
+msgstr "FIDE-Senior-Trainer"
+
+# Other FIDE titles: DI
+#: zzbrick_tables/fide-players.php
+msgid "Developmental Instructor"
+msgstr "Ausbilder"
+
+# Other FIDE titles: NI
+#: zzbrick_tables/fide-players.php
+msgid "National Instructor"
+msgstr "Nationaler Ausbilder"
+
+# Other FIDE titles: LSI
+#: zzbrick_tables/fide-players.php
+msgid "Lead School Instructor"
+msgstr "Leitender Schulausbilder"
+
+# Other FIDE titles: SLI
+#: zzbrick_tables/fide-players.php
+msgid "Senior Lead Instructor"
+msgstr "Senior-Lead-Ausbilder"
+
+# Other FIDE titles: SI
+#: zzbrick_tables/fide-players.php
+msgid "School Instructor"
+msgstr "Schulausbilder"
+
+# Other FIDE titles: FI
+#: zzbrick_tables/fide-players.php
+msgid "FIDE Instructor"
+msgstr "FIDE-Ausbilder"
+
+# Arena FIDE titles: AGM
+#: zzbrick_tables/fide-players.php
+msgid "Arena Grand Master"
+msgstr "Arena-Großmeister"
+
+# Arena FIDE titles: AIM
+#: zzbrick_tables/fide-players.php
+msgid "Arena International Master"
+msgstr "Internationaler Arena-Meister"
+
+# Arena FIDE titles: AFM
+#: zzbrick_tables/fide-players.php
+msgid "Arena FIDE Master"
+msgstr "Arena FIDE-Meister"
+
+# Arena FIDE titles: ACM
+#: zzbrick_tables/fide-players.php
+msgid "Arena Master Candidate"
+msgstr "Arena-Meisterkandidat"

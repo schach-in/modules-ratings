@@ -37,23 +37,33 @@ $zz['fields'][4]['enum_abbr'] = ['male', 'female'];
 $zz['fields'][5]['field_name'] = 'title';
 $zz['fields'][5]['type'] = 'select';
 $zz['fields'][5]['enum'] = ['GM', 'IM', 'FM', 'CM', 'WGM', 'WIM', 'WFM', 'WCM', NULL];
-$zz['fields'][5]['enum_abbr'] = ['Grand Master', 'Interntional Master', 'FIDE Master', 'Candidate Master', 'WGM', 'WIM', 'WFM', 'WCM', NULL];
+$zz['fields'][5]['enum_abbr'] = [
+	wrap_text('Grand Master'), wrap_text('International Master'),
+	wrap_text('FIDE Master'), wrap_text('Candidate Master'), 'WGM', 'WIM', 'WFM', 'WCM', NULL
+];
 $zz['fields'][5]['hide_in_list_if_empty'] = true;
 
 $zz['fields'][6]['title_tab'] = 'Title W';
 $zz['fields'][6]['field_name'] = 'title_women';
 $zz['fields'][6]['type'] = 'select';
 $zz['fields'][6]['enum'] = ['WGM', 'WIM', 'WFM', 'WCM', NULL];
-$zz['fields'][6]['enum_abbr'] = ['Woman Grand Master', 'Woman International Master', 'Woman FIDE Master', 'Woman Candidate Master', NULL];
+$zz['fields'][6]['enum_abbr'] = [
+	wrap_text('Woman Grand Master'), wrap_text('Woman International Master'),
+	wrap_text('Woman FIDE Master'), wrap_text('Woman Candidate Master'), NULL
+];
 $zz['fields'][6]['hide_in_list_if_empty'] = true;
 
 $zz['fields'][7]['field_name'] = 'title_other';
 $zz['fields'][7]['type'] = 'select';
-$zz['fields'][7]['set'] = ['IA', 'FA', 'NA', 'IO', 'FT', 'FST', 'DI', 'NI', 'LSI', 'SI', 'FI', NULL];
+$zz['fields'][7]['set'] = ['IA', 'FA', 'NA', 'IO', 'AO', 'PO', 'FT', 'FST', 'DI', 'NI', 'LSI', 'SLI', 'SI', 'FI', NULL];
 $zz['fields'][7]['set_abbr'] = [
-	'International Arbiter', 'FIDE Arbiter', 'National Arbiter', 'International Organizer',
-	'FIDE Trainer', 'FIDE Senior Trainer', 'Developmental Instructor', 'National Instructor',
-	'Lead School Instructor', 'School Instructor', 'FIDE Instructor', NULL
+	wrap_text('International Arbiter'), wrap_text('FIDE Arbiter'),
+	wrap_text('National Arbiter'), wrap_text('International Organizer'),
+	wrap_text('FIDE Associate Organizer'), wrap_text('FIDE Premier Organizer'),
+	wrap_text('FIDE Trainer'), wrap_text('FIDE Senior Trainer'),
+	wrap_text('Developmental Instructor'), wrap_text('National Instructor'),
+	wrap_text('Lead School Instructor'), wrap_text('Senior Lead Instructor'),
+	wrap_text('School Instructor'), wrap_text('FIDE Instructor'), NULL
 ];
 $zz['fields'][7]['hide_in_list_if_empty'] = true;
 
@@ -61,7 +71,10 @@ $zz['fields'][8]['title_tab'] = 'FOA';
 $zz['fields'][8]['field_name'] = 'foa_rating';
 $zz['fields'][8]['type'] = 'select';
 $zz['fields'][8]['enum'] = ['AGM', 'AIM', 'AFM', 'ACM', NULL];
-$zz['fields'][8]['enum_abbr'] = ['Arena Grand Master', 'Arena International Master', 'Arena FIDE Master', 'Arena Master Candidate', NULL];
+$zz['fields'][8]['enum_abbr'] = [
+	wrap_text('Arena Grand Master'), wrap_text('Arena International Master'),
+	wrap_text('Arena FIDE Master'), wrap_text('Arena Master Candidate'), NULL
+];
 $zz['fields'][8]['hide_in_list_if_empty'] = true;
 
 $zz['fields'][9]['title_tab'] = 'Std';
