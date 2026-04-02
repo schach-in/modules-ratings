@@ -94,7 +94,7 @@ function mf_ratings_clubs_from_code($identifiers) {
 	$club_codes = array_unique($club_codes);
 
 	$sql = 'SELECT contact_id, contact, contacts.identifier
-			, contacts_identifiers.identifier
+			, contacts_identifiers.identifier AS c_identifier
 		FROM contacts
 		LEFT JOIN contacts_identifiers USING (contact_id)
 		WHERE contacts_identifiers.identifier IN ("%s")';
@@ -103,7 +103,7 @@ function mf_ratings_clubs_from_code($identifiers) {
 	
 	if ($current_club) {
 		foreach ($clubs as $contact_id => $contact) {
-			if ($contact['identifier'] !== $current_club) continue;
+			if ($contact['c_identifier'] !== $current_club) continue;
 			$clubs[$contact_id]['current'] = true;
 		}
 	}
