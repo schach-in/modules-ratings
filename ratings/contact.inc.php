@@ -43,7 +43,7 @@ function mf_ratings_contact($data, $ids) {
 	}
 
 	$data['templates']['contact_5'][] = 'contact-ratings-clubs';
-	$data['templates']['contact_6'][] = 'contact-ratings';
+	$data['templates']['contact_5'][] = 'contact-ratings';
 	return $data;
 }
 
