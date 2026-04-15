@@ -10,7 +10,7 @@
  * @author Jacob Roggon
  * @author Gustaf Mossakowski <gustaf@koenige.org>
  * @copyright Copyright © ... Jacob Roggon
- * @copyright Copyright © 2013-2014, 2016-2017, 2019-2020, 2022-2025 Gustaf Mossakowski
+ * @copyright Copyright © 2013-2014, 2016-2017, 2019-2020, 2022-2026 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
@@ -44,11 +44,11 @@ function mod_ratings_make_ratings_download($params) {
 	if (empty($meta['filename']))
 		wrap_error(sprintf(wrap_text('No meta data given after download rating file for %s (meta: %s).'), $params[0], json_encode($meta)), E_USER_ERROR);
 
-	// move current rating file into /files/[path] folder unless already done
+	// move current rating file into ratings_dir/[rating]/[year] unless already done
 	// 1. create folder
 	$year = date('Y', strtotime($meta['Last-Modified']));
 	$destination_folder = sprintf('%s/%d', $data['path'], $year);
-	if (!file_exists($destination_folder)) mkdir($destination_folder);
+	if (!file_exists($destination_folder)) mkdir($destination_folder, 0775, true);
 
 	// 2. get filename
 	$data['date'] = date('Y-m-d', strtotime($meta['Last-Modified']));

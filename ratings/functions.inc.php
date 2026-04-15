@@ -8,7 +8,7 @@
  * https://www.zugzwang.org/modules/ratings
  *
  * @author Gustaf Mossakowski <gustaf@koenige.org>
- * @copyright Copyright © 2022, 2024-2025 Gustaf Mossakowski
+ * @copyright Copyright © 2022, 2024-2026 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
@@ -185,7 +185,7 @@ function mf_ratings_toplist($club) {
  * @return string
  */
 function mf_ratings_folder($rating) {
-	return sprintf('%s/%s', wrap_setting('media_folder'), strtolower($rating));
+	return sprintf('%s/%s', wrap_setting('ratings_dir'), strtolower($rating));
 }
 
 /**
