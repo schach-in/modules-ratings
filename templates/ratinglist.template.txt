@@ -5,7 +5,7 @@
 # https://www.zugzwang.org/modules/ratings
 #
 # @author Gustaf Mossakowski <gustaf@koenige.org>
-# @copyright Copyright © 2022-2024 Gustaf Mossakowski
+# @copyright Copyright © 2022-2024, 2026 Gustaf Mossakowski
 # @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
 #
 %%% if club_identifier %%%
@@ -42,7 +42,9 @@
 <td class="status%%% unless club_identifier %%% noclub%%% endif %%%">%%% if passive %%%<abbr title="passives Mitglied">P</abbr>%%% endif %%%</td>
 %%% if club_identifier %%%
 <td class="club"><a href="/%%% item club_identifier %%%/">%%% item club %%%</a></td>
-<td class="clubcode"><a href="/zahlen/%%% item zps_code %%%/">%%% item zps_code %%%</a></td>
+%%% if path ratings_club_ratings %%%
+<td class="clubcode"><a href="%%% path ratings_club_ratings zps_code %%%">%%% item zps_code %%%</a></td>
+%%% endif %%%
 %%% endif %%%
 <td data-label="DWZ&nbsp;" class="number rating1">%%% item dwz %%%</td>
 <td class="ratingindex rating2">–&nbsp;%%% item dwz_index %%%</td>
@@ -56,7 +58,9 @@
 <td class="status">%%% if passive %%%<abbr title="passives Mitglied">P</abbr>%%% endif %%%</td>
 %%% if club_identifier %%%
 <td class="club"><a href="/%%% item club_identifier %%%/">%%% item club %%%</a></td>
-<td class="clubcode"><a href="/zahlen/%%% item zps_code %%%/">%%% item zps_code %%%</a></td>
+%%% if path ratings_club_ratings %%%
+<td class="clubcode"><a href="%%% path ratings_club_ratings zps_code %%%">%%% item zps_code %%%</a></td>
+%%% endif %%%
 %%% endif %%%
 <td colspan="5" class="emptycols"></td>
 </tr>
