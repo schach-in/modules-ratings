@@ -1,0 +1,26 @@
+# ratings module
+# HTML output: status of memberstats import
+#
+# Part of »Zugzwang Project«
+# https://www.zugzwang.org/modules/ratings
+#
+# @author Gustaf Mossakowski <gustaf@koenige.org>
+# @copyright Copyright © 2026 Gustaf Mossakowski
+# @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
+#
+<p>%%% text DWZ archives on disk %%%: %%% item archives_count %%%</p>
+<p>%%% text Snapshots imported %%%: %%% item imported_count %%%%%% if imported_count %%% (%%% item imported_first %%% – %%% item imported_last %%%)%%% endif %%%</p>
+<p>%%% text Snapshots missing %%%: %%% item missing_count %%%%%% if missing_count %%% (%%% item missing_first %%% – %%% item missing_last %%%)%%% endif %%%</p>
+
+%%% if force %%%
+<form method="POST" action="">
+<p>%%% text Re-import snapshot %%% <strong>%%% item force %%%</strong>.</p>
+<input type="submit" value="%%% text Re-import snapshot %%%">
+</form>
+%%% elseif request %%%
+<form method="POST" action="">
+<input type="submit" value="%%% text Import next missing snapshot %%%">
+</form>
+%%% elseif done %%%
+<p>%%% text All snapshots imported. %%%</p>
+%%% endif %%%

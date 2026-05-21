@@ -10,7 +10,7 @@
  * @author Jacob Roggon
  * @author Gustaf Mossakowski <gustaf@koenige.org>
  * @copyright Copyright © ... Jacob Roggon
- * @copyright Copyright © 2013-2014, 2016-2017, 2019-2021, 2023-2024 Gustaf Mossakowski
+ * @copyright Copyright © 2013-2014, 2016-2017, 2019-2021, 2023-2024, 2026 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
@@ -38,6 +38,11 @@ function mod_ratings_make_ratings_import($params) {
 		if (!$data['errors']) {
 			wrap_setting_write('ratings_status['.$params[0].']', $dl['date']);
 			$data['import_successful'] = true;
+			// fan out: re-build the long-form member statistics for any
+			// DWZ snapshots that aren't in `memberstats` yet
+			if ($params[0] === 'DWZ') {
+				if (wrap_path('ratings_memberstats')) wrap_job(wrap_path('ratings_memberstats'));
+			}
 		}
 	}
 	$page['text'] = json_encode($data);
