@@ -163,7 +163,7 @@ INSERT INTO categories (`category`, `category_short`, `description`, `main_categ
 -- memberstats --
 CREATE TABLE `memberstats` (
   `memberstat_id` int unsigned NOT NULL AUTO_INCREMENT,
-  `birth_year` year DEFAULT NULL,
+  `birth_year` smallint unsigned DEFAULT NULL,
   `rating` smallint unsigned DEFAULT NULL,
   `club_code` varchar(5) COLLATE utf8mb4_unicode_ci NOT NULL,
   `club_contact_id` int unsigned DEFAULT NULL,
@@ -172,7 +172,8 @@ CREATE TABLE `memberstats` (
   `snapshot_date` date NOT NULL,
   PRIMARY KEY (`memberstat_id`),
   KEY `club_contact_id` (`club_contact_id`),
-  KEY `club_code` (`club_code`)
+  KEY `club_code` (`club_code`),
+  KEY `snapshot_date` (`snapshot_date`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO _relations (`master_db`, `master_table`, `master_field`, `detail_db`, `detail_table`, `detail_id_field`, `detail_field`, `delete`) VALUES ((SELECT DATABASE()), 'contacts', 'contact_id', (SELECT DATABASE()), 'memberstats', 'memberstat_id', 'club_contact_id', 'no-delete');

@@ -52,3 +52,5 @@
 /* 2026-03-18-4 */	DELETE FROM _settings WHERE setting_key = 'ratings_dsb_pid_profile_path';
 /* 2026-03-18-5 */	DELETE FROM _settings WHERE setting_key = 'ratings_fide_profile_path';
 /* 2026-03-18-6 */	DELETE FROM _settings WHERE setting_key = 'ratings_sync_path';
+/* 2026-05-21-1 */	ALTER TABLE `memberstats` ADD INDEX `snapshot_date` (`snapshot_date`);
+/* 2026-05-21-2 */	ALTER TABLE `memberstats` MODIFY `birth_year` smallint unsigned DEFAULT NULL;

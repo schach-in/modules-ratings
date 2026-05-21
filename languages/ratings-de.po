@@ -255,3 +255,62 @@ msgstr "Arena FIDE-Meister"
 #: zzbrick_tables/fide-players.php
 msgid "Arena Master Candidate"
 msgstr "Arena-Meisterkandidat"
+
+#: zzbrick_tables/memberstats.php
+msgid "Member Statistics"
+msgstr "Mitgliederstatistik"
+
+#: zzbrick_tables/memberstats.php
+msgid "Snapshot Date"
+msgstr "Stichtag"
+
+#: zzbrick_tables/memberstats.php
+msgid "Club Code"
+msgstr "ZPS-Nummer"
+
+#: zzbrick_tables/memberstats.php
+msgid "ZPS code of the club"
+msgstr "ZPS-Nummer des Vereins"
+
+#: zzbrick_tables/memberstats.php
+msgid "Club"
+msgstr "Verein"
+
+# tab heading for birth_year column
+#: zzbrick_tables/memberstats.php
+msgid "Birth"
+msgstr "Geb."
+
+#: zzbrick_tables/memberstats.php
+msgid "Birth Year"
+msgstr "Geburtsjahr"
+
+#: zzbrick_tables/memberstats.php
+msgid "Rating"
+msgstr "Wertung"
+
+# tab heading for sex column
+#: zzbrick_tables/memberstats.php
+msgid "S."
+msgstr "G."
+
+#: zzbrick_tables/memberstats.php
+msgid "female"
+msgstr "weiblich"
+
+#: zzbrick_tables/memberstats.php
+msgid "male"
+msgstr "männlich"
+
+#: zzbrick_tables/memberstats.php
+msgid "diverse"
+msgstr "divers"
+
+# tab heading for status column
+#: zzbrick_tables/memberstats.php
+msgid "St."
+msgstr "St."
+
+#: zzbrick_tables/memberstats.php
+msgid "Status"
+msgstr "Status"

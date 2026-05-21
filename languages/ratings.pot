@@ -249,3 +249,62 @@ msgstr ""
 #: zzbrick_tables/fide-players.php
 msgid "Arena Master Candidate"
 msgstr ""
+
+#: zzbrick_tables/memberstats.php
+msgid "Member Statistics"
+msgstr ""
+
+#: zzbrick_tables/memberstats.php
+msgid "Snapshot Date"
+msgstr ""
+
+#: zzbrick_tables/memberstats.php
+msgid "Club Code"
+msgstr ""
+
+#: zzbrick_tables/memberstats.php
+msgid "ZPS code of the club"
+msgstr ""
+
+#: zzbrick_tables/memberstats.php
+msgid "Club"
+msgstr ""
+
+# tab heading for birth_year column
+#: zzbrick_tables/memberstats.php
+msgid "Birth"
+msgstr ""
+
+#: zzbrick_tables/memberstats.php
+msgid "Birth Year"
+msgstr ""
+
+#: zzbrick_tables/memberstats.php
+msgid "Rating"
+msgstr ""
+
+# tab heading for sex column
+#: zzbrick_tables/memberstats.php
+msgid "S."
+msgstr ""
+
+#: zzbrick_tables/memberstats.php
+msgid "female"
+msgstr ""
+
+#: zzbrick_tables/memberstats.php
+msgid "male"
+msgstr ""
+
+#: zzbrick_tables/memberstats.php
+msgid "diverse"
+msgstr ""
+
+# tab heading for status column
+#: zzbrick_tables/memberstats.php
+msgid "St."
+msgstr ""
+
+#: zzbrick_tables/memberstats.php
+msgid "Status"
+msgstr ""
