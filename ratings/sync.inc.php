@@ -8,7 +8,7 @@
  * https://www.zugzwang.org/modules/ratings
  *
  * @author Gustaf Mossakowski <gustaf@koenige.org>
- * @copyright Copyright © 2024 Gustaf Mossakowski
+ * @copyright Copyright © 2024, 2026 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
@@ -92,6 +92,45 @@ function mf_ratings_latest($rating) {
 		}
 	}
 	return [];
+}
+
+/**
+ * get all non-corrupt archive files for a rating, newest first
+ *
+ * unlike mf_ratings_latest() which returns just the most recent archive,
+ * this iterates over every year subfolder and returns each archive whose
+ * filename begins with a valid YYYY-MM-DD date and which is not listed
+ * in ratings_corrupt[<rating>]
+ *
+ * @param string $rating
+ * @return array list of ['date' => 'YYYY-MM-DD', 'filename' => string]
+ */
+function mf_ratings_archives($rating) {
+	$corrupt_dates = wrap_setting('ratings_corrupt['.$rating.']') ?? [];
+	$ratings_path = mf_ratings_folder($rating);
+	if (!is_dir($ratings_path)) return [];
+
+	$archives = [];
+	$folders = scandir($ratings_path, SCANDIR_SORT_DESCENDING);
+	foreach ($folders as $folder) {
+		if (str_starts_with($folder, '.')) continue;
+		$folder_path = $ratings_path.'/'.$folder;
+		if (!is_dir($folder_path)) continue;
+		$files = scandir($folder_path, SCANDIR_SORT_DESCENDING);
+		foreach ($files as $file) {
+			if (str_starts_with($file, '.')) continue;
+			$file_path = $folder_path.'/'.$file;
+			if (is_dir($file_path)) continue;
+			$date = substr($file, 0, 10);
+			if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) continue;
+			if (in_array($date, $corrupt_dates)) continue;
+			$archives[] = [
+				'filename' => $file_path,
+				'date' => $date
+			];
+		}
+	}
+	return $archives;
 }
 
 /**
