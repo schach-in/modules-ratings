@@ -22,9 +22,8 @@
 /**
  * import member statistics from all DWZ snapshots on disk
  *
- * URL paths:
- *  /                         status / launch
- *  /force/YYYY-MM-DD         re-import one snapshot
+ *
+ * use ?force=YYYY-MM-DD to force import a snapshot, overwriting the existing import
  *
  * @param array $params
  * @return array $page
@@ -32,13 +31,63 @@
 function mod_ratings_make_memberstats($params) {
 	wrap_setting('cache', false);
 	wrap_include('memberstats', 'ratings');
+	wrap_include('sync', 'ratings');
+	
+	$data = [];
+	
+	// check if an import is forced
+	$page['query_strings'][] = 'force';
+	$data['force'] = wrap_http_value('force');
+	$data['overwrite'] = false;
 
-	$force = mf_ratings_memberstats_force($params);
-	if ($force === false) return false;
+	// get all archive files
+	$data['archives'] = array_reverse(mf_ratings_archives('DWZ'));
+	$data['archives_count'] = count($data['archives']);
+	if (!$data['archives']) {
+		$page['text'] = wrap_template('memberstats', $data);
+		return $page;
+	}
 
-	if ($_SERVER['REQUEST_METHOD'] !== 'POST')
-		return mf_ratings_memberstats_page($force);
+	// check if archive files are already imported, what to import next
+	$sql = 'SELECT DISTINCT snapshot_date FROM memberstats';
+	$snapshots = wrap_db_fetch($sql, 'snapshot_date', 'single value');
+	$data['import_count'] = count($snapshots);
+	$data['missing_count'] = 0;
+	foreach ($data['archives'] as $index => $archive) {
+		if (in_array($archive['date'], $snapshots)) {
+			$data['archives'][$index]['imported'] = true;
+			$data['import_last'] = $archive['date'];
+			if (empty($data['import_first']))
+				$data['import_first'] = $archive['date'];
+		} elseif (empty($data['import_next'])) {
+			$data['import_next'] = $archive['date'];
+			$data['missing_first'] = $archive['date'];
+			$data['missing_count']++;
+		} else {
+			if (empty($data['missing_first']))
+				$data['missing_first'] = $archive['date'];
+			$data['missing_last'] = $archive['date'];
+			$data['missing_count']++;
+		}
+		if ($data['force'] AND $archive['date'] === $data['force']) {
+			$data['import_next'] = $archive['date'];
+			$data['overwrite'] = true;
+			$data['force'] = NULL;
+		}
+	}
+	// no force value found?
+	if ($data['force']) {
+		$data['import_force_not_found'] = true;
+		$page['status'] = 404;
+		$page['text'] = wrap_template('memberstats', $data);
+		return $page;
+	}
 
+	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+		$page['text'] = wrap_template('memberstats', $data);
+		return $page;
+	}
+	
 	if (!array_key_exists('sequential', $_POST)) {
 		wrap_job(wrap_setting('request_uri'), ['sequential' => 1]);
 		wrap_job_debug('JOB STARTING memberstats', $_POST);
@@ -58,61 +107,26 @@ function mod_ratings_make_memberstats($params) {
 		return $page;
 	}
 
-	wrap_include('sync', 'ratings');
-	$archives = mf_ratings_archives('DWZ');
-	if (!$archives) {
-		wrap_unlock('memberstats');
-		$page['text'] = wrap_text('No DWZ archives found.');
-		return $page;
-	}
-
-	$next = mf_ratings_memberstats_next($archives, $force);
-	if (!$next) {
+	if (!$data['import_next']) {
 		wrap_unlock('memberstats');
 		$page['text'] = wrap_text('All snapshots imported.');
 		return $page;
 	}
 
-	mf_ratings_memberstats_import($next, !!$force);
-
-	// in catch-up mode (no force), chain the next snapshot as a child job;
-	// it inherits the lock hash so it doesn't 403 against the one we hold
-	if (!$force AND mf_ratings_memberstats_next($archives, null)) {
-		wrap_job(wrap_setting('request_uri'), ['sequential' => 1]);
-	} else {
-		wrap_unlock('memberstats');
+	foreach ($data['archives'] as $index => $archive) {
+		if ($archive['date'] !== $data['import_next']) continue;
+		$next = $archive;
+		break;
 	}
+	mf_ratings_memberstats_import($next, $data['overwrite']);
 
-	$page['text'] = sprintf(wrap_text('Imported %s'), $next['date']);
+	wrap_job(wrap_setting('request_uri'), ['sequential' => 1]);
+
+	$page['text'] = sprintf(wrap_text('Imported %s'), $data['import_next']);
 	return $page;
 }
 
-/**
- * pick the next snapshot to import
- *
- * with $force set, returns the archive for exactly that date or null;
- * without $force, returns the oldest archive that is not in `memberstats`
- * yet (so history fills naturally), or null when everything is imported
- *
- * @param array $archives result of mf_ratings_archives()
- * @param string|null $force snapshot date to re-import
- * @return array|null
- */
-function mf_ratings_memberstats_next($archives, $force) {
-	if ($force) {
-		foreach ($archives as $archive)
-			if ($archive['date'] === $force) return $archive;
-		return null;
-	}
 
-	$sql = 'SELECT DISTINCT snapshot_date FROM memberstats';
-	$existing = wrap_db_fetch($sql, '_dummy_', 'single value');
-	foreach (array_reverse($archives) as $archive) {
-		if (in_array($archive['date'], $existing)) continue;
-		return $archive;
-	}
-	return null;
-}
 
 /**
  * import one snapshot from a DWZ archive into memberstats
@@ -121,7 +135,7 @@ function mf_ratings_memberstats_next($archives, $force) {
  * into temporary tables (from either .sql or .txt source files, see below),
  * auto-creates `contacts` for any ZPS codes whose club is not currently
  * linked, and inserts one row per player into memberstats with the given
- * snapshot_date. With $force, existing rows for that date are removed
+ * snapshot_date. With $overwrite, existing rows for that date are removed
  * first so a re-import is idempotent.
  *
  * Two on-disk formats are supported because the DSB switched export
@@ -133,10 +147,10 @@ function mf_ratings_memberstats_next($archives, $force) {
  *    SQL format, see mf_ratings_memberstats_load_txt()
  *
  * @param array $archive ['date' => 'YYYY-MM-DD', 'filename' => string]
- * @param bool $force when true, delete existing rows for this date first
+ * @param bool $overwrite when true, delete existing rows for this date first
  * @return void
  */
-function mf_ratings_memberstats_import($archive, $force) {
+function mf_ratings_memberstats_import($archive, $overwrite) {
 	wrap_include('sync', 'ratings');
 
 	$folder = mf_ratings_unzip('DWZ', $archive['filename']);
@@ -175,7 +189,7 @@ function mf_ratings_memberstats_import($archive, $force) {
 
 	mf_ratings_memberstats_clubs();
 
-	if ($force) {
+	if ($overwrite) {
 		$sql = sprintf(
 			'DELETE FROM memberstats WHERE snapshot_date = "%s"',
 			wrap_db_escape($archive['date'])
@@ -577,60 +591,4 @@ function mf_ratings_memberstats_insert($snapshot_date) {
 		WHERE s.Spielername <> ""';
 	$sql = sprintf($sql, wrap_db_escape($snapshot_date));
 	wrap_db_query($sql);
-}
-
-/**
- * read `force` parameter from the URL path
- *
- * @param array $params
- * @return string|null|false
- *	string: snapshot date for forced re-import,
- *	null: no force,
- *	false: malformed parameters → 404
- */
-function mf_ratings_memberstats_force($params) {
-	if (empty($params)) return null;
-	if (count($params) !== 2) return false;
-	if ($params[0] !== 'force') return false;
-	if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $params[1])) return false;
-	return $params[1];
-}
-
-/**
- * status page rendered for GET requests
- *
- * @param string|null $force
- * @return array
- */
-function mf_ratings_memberstats_page($force) {
-	wrap_include('sync', 'ratings');
-	$archives = mf_ratings_archives('DWZ');
-
-	$sql = 'SELECT DISTINCT snapshot_date FROM memberstats';
-	$imported = wrap_db_fetch($sql, '_dummy_', 'single value');
-
-	$available = array_column($archives, 'date');
-	$missing = array_values(array_diff($available, $imported));
-	sort($missing);
-
-	$imported_dates = array_values($imported);
-	sort($imported_dates);
-
-	$data = [
-		'force' => $force,
-		'archives_count' => count($archives),
-		'imported_count' => count($imported_dates),
-		'missing_count' => count($missing),
-		'imported_first' => $imported_dates ? reset($imported_dates) : null,
-		'imported_last' => $imported_dates ? end($imported_dates) : null,
-		'missing_first' => $missing ? reset($missing) : null,
-		'missing_last' => $missing ? end($missing) : null,
-		'request' => $force || $missing,
-		'done' => !$force && !$missing
-	];
-
-	$page['title'] = wrap_text('Import member statistics');
-	$page['breadcrumbs'][]['title'] = wrap_text('Member statistics');
-	$page['text'] = wrap_template('memberstats', $data);
-	return $page;
 }

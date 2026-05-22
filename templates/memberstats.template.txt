@@ -8,19 +8,33 @@
 # @copyright Copyright © 2026 Gustaf Mossakowski
 # @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
 #
-<p>%%% text DWZ archives on disk %%%: %%% item archives_count %%%</p>
-<p>%%% text Snapshots imported %%%: %%% item imported_count %%%%%% if imported_count %%% (%%% item imported_first %%% – %%% item imported_last %%%)%%% endif %%%</p>
-<p>%%% text Snapshots missing %%%: %%% item missing_count %%%%%% if missing_count %%% (%%% item missing_first %%% – %%% item missing_last %%%)%%% endif %%%</p>
+%%% unless archives %%%
+%%% text No DWZ archives found. %%%
 
-%%% if force %%%
+%%% else %%%
+<ul>
+<li>%%% text DWZ archives on disk %%%: %%% item archives_count %%%</li>
+<li>%%% text Snapshots imported %%%: %%% item import_count %%%%%% if import_count %%% (%%% item import_first wrap_date %%% – %%% item import_last wrap_date %%%)%%% endif %%%</li>
+<li>%%% text Snapshots missing %%%: %%% item missing_count %%%%%% if missing_count %%% (%%% item missing_first wrap_date %%% – %%% item missing_last wrap_date %%%)%%% endif %%%</li>
+</ul>
+
+%%% if import_force_not_found %%%
+<p class="error">%%% text "Sorry, there is no archive for %s." force %%%</p>
+%%% endif %%%
+
+%%% if busy %%%
+<p>%%% text Memberstats import is currently running. %%%</p>
+<p><a href="reset">%%% text Reset stuck import %%%</a></p>
+%%% elseif overwrite %%%
 <form method="POST" action="">
-<p>%%% text Re-import snapshot %%% <strong>%%% item force %%%</strong>.</p>
+<p>%%% text Re-import snapshot %%% <strong>%%% item import_next %%%</strong>.</p>
 <input type="submit" value="%%% text Re-import snapshot %%%">
 </form>
-%%% elseif request %%%
+%%% elseif missing_count %%%
 <form method="POST" action="">
 <input type="submit" value="%%% text Import next missing snapshot %%%">
 </form>
-%%% elseif done %%%
+%%% else %%%
 <p>%%% text All snapshots imported. %%%</p>
+%%% endif %%%
 %%% endif %%%
