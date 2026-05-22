@@ -22,19 +22,24 @@
 <p class="error">%%% text "Sorry, there is no archive for %s." force %%%</p>
 %%% endif %%%
 
-%%% if busy %%%
-<p>%%% text Memberstats import is currently running. %%%</p>
-<p><a href="reset">%%% text Reset stuck import %%%</a></p>
-%%% elseif overwrite %%%
-<form method="POST" action="">
-<p>%%% text Re-import snapshot %%% <strong>%%% item import_next %%%</strong>.</p>
-<input type="submit" value="%%% text Re-import snapshot %%%">
-</form>
-%%% elseif missing_count %%%
-<form method="POST" action="">
-<input type="submit" value="%%% text Import next missing snapshot %%%">
-</form>
-%%% else %%%
-<p>%%% text All snapshots imported. %%%</p>
-%%% endif %%%
+<div class="memberstats"
+	data-progress-url="%%% path ratings_memberstats_progress %%%"
+	data-poll-ms="%%% item poll_ms %%%"
+	data-overwrite="%%% if overwrite %%%1%%% endif %%%"
+	data-import-next="%%% item import_next %%%"
+	data-missing-count="%%% item missing_count %%%"
+	data-label-import-next="%%% text Import next missing snapshot %%%"
+	data-label-reimport="%%% text Re-import snapshot %%%"
+	data-label-queued="%%% text Queued… %%%"
+	data-label-running="%%% text Memberstats import is running. %%%"
+	data-label-stuck="%%% text Previous memberstats import did not finish. %%%"
+	data-label-done="%%% text All snapshots imported. %%%"
+	data-label-rows="%%% text rows %%%"
+	data-label-failed-start="%%% text Could not start background job. %%%">
+	<button class="memberstats-start" type="button" hidden></button>
+	<progress class="memberstats-bar" max="100" value="0" hidden></progress>
+	<p class="memberstats-status" hidden></p>
+	<pre class="memberstats-log" hidden></pre>
+</div>
+<script src="/_behaviour/ratings/memberstats.js" defer></script>
 %%% endif %%%

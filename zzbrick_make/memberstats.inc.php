@@ -4,11 +4,13 @@
  * ratings module
  * import member statistics from DWZ snapshots
  *
- * iterates over every archived DWZ ZIP in ratings_dir/dwz/<year>/, opens
- * spieler.sql and vereine.sql, loads them into temporary tables, and writes
- * one memberstats row per player with the snapshot date taken from the
- * archive filename. Snapshots already present in `memberstats` are skipped;
- * a single date can be re-imported with /force/YYYY-MM-DD.
+ * Looks at the archived DWZ ZIPs in ratings_dir/dwz/<year>/, opens
+ * spieler.sql and vereine.sql for the next missing snapshot, loads them
+ * into temporary tables and writes one memberstats row per player with
+ * the snapshot date taken from the archive filename. One click in the
+ * UI imports exactly one snapshot; subsequent snapshots are not chained
+ * automatically. Snapshots already present in `memberstats` are skipped;
+ * a single date can be re-imported with ?force=YYYY-MM-DD.
  *
  * Part of »Zugzwang Project«
  * https://www.zugzwang.org/modules/ratings
@@ -20,8 +22,22 @@
 
 
 /**
- * import member statistics from all DWZ snapshots on disk
+ * import member statistics from DWZ snapshots
  *
+ * One click = one snapshot. The brick has three branches:
+ *  - GET: render the status shell; the JS poller hydrates from
+ *    `ratings_memberstats_progress` and offers a Start button when idle.
+ *  - POST without `sequential`: trigger branch. Logs `queued` and
+ *    enqueues a sequential background job, then returns immediately.
+ *  - POST with `sequential` (the worker job itself): acquires
+ *    wrap_lock('memberstats', 'sequential', 1800), imports exactly one
+ *    snapshot (logging each phase), releases the lock and stops. No
+ *    chained next-snapshot dispatch — the operator clicks again for the
+ *    next one, watching progress live via /_behaviour/ratings/memberstats.js.
+ *
+ * The 30-minute lock timeout is auto-recovery insurance only; a single
+ * snapshot import completes well under that window. Foreign callers
+ * that hit the worker URL while a lock is held get 403.
  *
  * use ?force=YYYY-MM-DD to force import a snapshot, overwriting the existing import
  *
@@ -84,23 +100,37 @@ function mod_ratings_make_memberstats($params) {
 	}
 
 	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+		$data['progress_url'] = wrap_path('ratings_memberstats_progress');
+		$data['poll_ms'] = (int) wrap_setting('ratings_memberstats_poll_interval') * 1000;
 		$page['text'] = wrap_template('memberstats', $data);
 		return $page;
 	}
 	
 	if (!array_key_exists('sequential', $_POST)) {
+		// trigger branch: enqueue worker, return immediately. We write a
+		// `queued` log entry first so the JS poller sees the import as
+		// busy on its very next tick, even if the jobmanager hasn't
+		// dispatched the worker yet.
+		if (!$data['import_next']) {
+			$page['status'] = 409;
+			$page['text'] = wrap_text('Nothing to import.');
+			return $page;
+		}
+		mf_ratings_memberstats_log('queued', [
+			'snapshot' => $data['import_next'],
+			'overwrite' => $data['overwrite']
+		]);
 		wrap_job(wrap_setting('request_uri'), ['sequential' => 1]);
 		wrap_job_debug('JOB STARTING memberstats', $_POST);
-		$page['text'] = 'Starting background job';
+		$page['text'] = wrap_text('Background job queued.');
 		return $page;
 	}
 
+	// worker branch
 	wrap_include('syndication', 'zzwrap');
-	// sequential mode lets chained child jobs inherit the parent's lock hash
-	// (passed automatically via X-Lock-Hash by wrap_job()); takeover_seconds
-	// is the "previous job is dead, claim it" threshold, not a rate-limit
-	$takeover_seconds = 1800;
-	$lock = wrap_lock('memberstats', 'sequential', $takeover_seconds);
+	// 1800s = 30 min, longer than any single snapshot's import time;
+	// covers worker crashes by auto-recovering after this window.
+	$lock = wrap_lock('memberstats', 'sequential', 1800);
 	if ($lock) {
 		$page['status'] = 403;
 		$page['text'] = wrap_text('Memberstats import is already running.');
@@ -118,11 +148,19 @@ function mod_ratings_make_memberstats($params) {
 		$next = $archive;
 		break;
 	}
+
+	mf_ratings_memberstats_log('start', [
+		'snapshot' => $next['date'],
+		'overwrite' => $data['overwrite']
+	]);
 	mf_ratings_memberstats_import($next, $data['overwrite']);
+	mf_ratings_memberstats_log('done', [
+		'snapshot' => $next['date']
+	]);
 
-	wrap_job(wrap_setting('request_uri'), ['sequential' => 1]);
+	wrap_unlock('memberstats');
 
-	$page['text'] = sprintf(wrap_text('Imported %s'), $data['import_next']);
+	$page['text'] = sprintf(wrap_text('Imported %s'), $next['date']);
 	return $page;
 }
 
@@ -153,6 +191,7 @@ function mod_ratings_make_memberstats($params) {
 function mf_ratings_memberstats_import($archive, $overwrite) {
 	wrap_include('sync', 'ratings');
 
+	mf_ratings_memberstats_log('unzip', ['snapshot' => $archive['date']]);
 	$folder = mf_ratings_unzip('DWZ', $archive['filename']);
 	$files = mf_ratings_memberstats_files($folder, $archive['filename']);
 
@@ -184,9 +223,10 @@ function mf_ratings_memberstats_import($archive, $overwrite) {
 
 	foreach (['spieler', 'vereine'] as $kind) {
 		$loader = 'mf_ratings_memberstats_load_'.$files[$kind]['format'];
-		$loader($files[$kind]['path'], 'temp_memberstats_'.$kind);
+		$loader($files[$kind]['path'], 'temp_memberstats_'.$kind, $archive['date']);
 	}
 
+	mf_ratings_memberstats_log('clubs', ['snapshot' => $archive['date']]);
 	mf_ratings_memberstats_clubs();
 
 	if ($overwrite) {
@@ -197,6 +237,7 @@ function mf_ratings_memberstats_import($archive, $overwrite) {
 		wrap_db_query($sql);
 	}
 
+	mf_ratings_memberstats_log('insert', ['snapshot' => $archive['date']]);
 	mf_ratings_memberstats_insert($archive['date']);
 
 	mf_ratings_memberstats_drop('temp_memberstats_spieler');
@@ -266,36 +307,144 @@ function mf_ratings_memberstats_files($folder, $archive) {
  * players with no Mgl_Nr and unnamed players) are skipped, identical to
  * the filter in zzbrick_make/ratings-prepare-dwz.inc.php
  *
+ * Two dump variants are supported for spieler.sql:
+ *  - modern (post 2024-05-22): 16 columns, PID first, bare integers and
+ *    double-quoted strings, `null` lowercase
+ *  - legacy (pre 2024-05-22): 15 columns, ZPS first, an extra
+ *    `Spielername_G` between `Spielername` and `Geschlecht`, single-quoted
+ *    values and uppercase `NULL`
+ *
+ * The legacy schema is materialised on the temp table on demand so the
+ * positional VALUES (…) line up.
+ *
  * The source table name is derived from $target_table by stripping the
  * `temp_memberstats_` prefix.
  *
  * @param string $filename source .sql file
  * @param string $target_table temporary table that should receive the rows
+ * @param string $snapshot_date YYYY-MM-DD, for progress log entries
  * @return void
  */
-function mf_ratings_memberstats_load_sql($filename, $target_table) {
-	$source_table = 'dwz_'.substr($target_table, strlen('temp_memberstats_'));
+function mf_ratings_memberstats_load_sql($filename, $target_table, $snapshot_date) {
+	$kind = substr($target_table, strlen('temp_memberstats_'));
+	$action = 'load_'.$kind;
+	$source_table = 'dwz_'.$kind;
 	$needle = '`'.$source_table.'`';
 	$replace = '`'.$target_table.'`';
 
+	$bytes_total = filesize($filename);
 	$handle = fopen($filename, 'r');
 	if (!$handle)
 		wrap_error(sprintf('memberstats: unable to open %s', $filename), E_USER_ERROR);
 
+	mf_ratings_memberstats_log($action, [
+		'snapshot' => $snapshot_date,
+		'bytes_done' => 0,
+		'bytes_total' => $bytes_total,
+		'rows_done' => 0
+	]);
+
+	$format = mf_ratings_memberstats_sql_format($handle);
+	if ($target_table === 'temp_memberstats_spieler' AND $format === 'legacy') {
+		// reshape to the pre-2024 spieler dump: no PID, Spielername_G
+		// between Spielername and Geschlecht
+		$sql = 'ALTER TABLE `temp_memberstats_spieler`
+			DROP COLUMN `PID`,
+			ADD COLUMN `Spielername_G` varchar(60) NULL AFTER `Spielername`';
+		wrap_db_query($sql);
+	}
+
+	$dummies = mf_ratings_memberstats_sql_dummies($source_table, $format);
+	$rows_done = 0;
+	$bytes_logged = 0;
+	$tick = wrap_setting('ratings_memberstats_log_tick_bytes');
+
 	while (($line = fgets($handle)) !== false) {
 		if (!trim($line)) continue;
 		$line = iconv('ISO-8859-1', 'UTF-8', $line);
-		// 1. passive players without membership no. are dummy entries for
-		// people in the board of a club who are not members
-		if (preg_match('/^REPLACE INTO `dwz_spieler` VALUES \(\d+,"[0-9A-Z]+",null,"P",.+$/', $line)) continue;
-		// 2. there are some people without names (sic!)
-		if (preg_match('/^REPLACE INTO `dwz_spieler` VALUES \(\d+,"[0-9A-Z]+",\d+,"A","",.+$/', $line)) continue;
-		if (preg_match('/^REPLACE INTO `dwz_spieler` VALUES \(\d+,"[0-9A-Z]+",\d+,"P","",.+$/', $line)) continue;
-
+		if (mf_ratings_memberstats_sql_dummy($line, $dummies)) continue;
 		$line = str_replace($needle, $replace, $line);
 		wrap_db_query($line, E_USER_WARNING);
+		$rows_done++;
+		$bytes_done = ftell($handle);
+		if ($bytes_done - $bytes_logged >= $tick) {
+			mf_ratings_memberstats_log($action, [
+				'snapshot' => $snapshot_date,
+				'bytes_done' => $bytes_done,
+				'bytes_total' => $bytes_total,
+				'rows_done' => $rows_done
+			]);
+			$bytes_logged = $bytes_done;
+		}
 	}
 	fclose($handle);
+
+	mf_ratings_memberstats_log($action, [
+		'snapshot' => $snapshot_date,
+		'bytes_done' => $bytes_total,
+		'bytes_total' => $bytes_total,
+		'rows_done' => $rows_done
+	]);
+}
+
+/**
+ * peek the first REPLACE INTO line of an open .sql dump to tell modern
+ * (post 2024-05-22) from legacy dumps apart, then rewind for the caller
+ *
+ * modern: `REPLACE INTO …` VALUES (1234,"AB01",… — bare integer first
+ * legacy: `REPLACE INTO …` VALUES ('1234', '255', … — single-quoted first
+ *
+ * @param resource $handle open file handle, rewound on return
+ * @return string 'modern' (default) or 'legacy'
+ */
+function mf_ratings_memberstats_sql_format($handle) {
+	rewind($handle);
+	$format = 'modern';
+	while (($line = fgets($handle)) !== false) {
+		if (!str_contains($line, 'REPLACE INTO')) continue;
+		if (preg_match('/REPLACE INTO `\w+` VALUES \(\s*\'/', $line))
+			$format = 'legacy';
+		break;
+	}
+	rewind($handle);
+	return $format;
+}
+
+/**
+ * dummy-row filter patterns for the SQL dump variants
+ *
+ * matches the same three cases as zzbrick_make/ratings-prepare-dwz.inc.php
+ * (passive without Mgl_Nr, active/passive without name)
+ *
+ * @param string $source_table
+ * @param string $format 'modern' or 'legacy'
+ * @return array list of regex patterns
+ */
+function mf_ratings_memberstats_sql_dummies($source_table, $format) {
+	$prefix = '/^REPLACE INTO `'.preg_quote($source_table, '/').'` VALUES ';
+	if ($format === 'legacy') {
+		return [
+			$prefix.'\(\s*\'\d+\'\s*,\s*NULL\s*,\s*\'P\',/',
+			$prefix.'\(\s*\'\d+\'\s*,\s*\'\d+\'\s*,\s*\'A\'\s*,\s*\'\',/',
+			$prefix.'\(\s*\'\d+\'\s*,\s*\'\d+\'\s*,\s*\'P\'\s*,\s*\'\',/'
+		];
+	}
+	return [
+		$prefix.'\(\d+,"[0-9A-Z]+",null,"P",/',
+		$prefix.'\(\d+,"[0-9A-Z]+",\d+,"A","",/',
+		$prefix.'\(\d+,"[0-9A-Z]+",\d+,"P","",/'
+	];
+}
+
+/**
+ * @param string $line
+ * @param array $patterns
+ * @return bool
+ */
+function mf_ratings_memberstats_sql_dummy($line, $patterns) {
+	foreach ($patterns as $pattern)
+		if (preg_match($pattern, $line)) return true;
+	return false;
 }
 
 /**
@@ -329,14 +478,29 @@ function mf_ratings_memberstats_load_sql($filename, $target_table) {
  *
  * @param string $filename source .txt file
  * @param string $target_table temporary table that should receive the rows
+ * @param string $snapshot_date YYYY-MM-DD, for progress log entries
  * @return void
  */
-function mf_ratings_memberstats_load_txt($filename, $target_table) {
+function mf_ratings_memberstats_load_txt($filename, $target_table, $snapshot_date) {
+	$kind = substr($target_table, strlen('temp_memberstats_'));
+	$action = 'load_'.$kind;
+
+	$bytes_total = filesize($filename);
 	$handle = fopen($filename, 'r');
 	if (!$handle)
 		wrap_error(sprintf('memberstats: unable to open %s', $filename), E_USER_ERROR);
 
-	$kind = substr($target_table, strlen('temp_memberstats_'));
+	mf_ratings_memberstats_log($action, [
+		'snapshot' => $snapshot_date,
+		'bytes_done' => 0,
+		'bytes_total' => $bytes_total,
+		'rows_done' => 0
+	]);
+
+	$rows_done = 0;
+	$bytes_logged = 0;
+	$tick = wrap_setting('ratings_memberstats_log_tick_bytes');
+
 	while (($line = fgets($handle)) !== false) {
 		$line = rtrim($line, "\r\n");
 		if ($line === '') continue;
@@ -349,14 +513,37 @@ function mf_ratings_memberstats_load_txt($filename, $target_table) {
 			$sql = mf_ratings_memberstats_txt_vereine($fields, $target_table);
 		if (!$sql) continue;
 		wrap_db_query($sql, E_USER_WARNING);
+		$rows_done++;
+		$bytes_done = ftell($handle);
+		if ($bytes_done - $bytes_logged >= $tick) {
+			mf_ratings_memberstats_log($action, [
+				'snapshot' => $snapshot_date,
+				'bytes_done' => $bytes_done,
+				'bytes_total' => $bytes_total,
+				'rows_done' => $rows_done
+			]);
+			$bytes_logged = $bytes_done;
+		}
 	}
 	fclose($handle);
+
+	mf_ratings_memberstats_log($action, [
+		'snapshot' => $snapshot_date,
+		'bytes_done' => $bytes_total,
+		'bytes_total' => $bytes_total,
+		'rows_done' => $rows_done
+	]);
 }
 
 /**
  * turn one parsed spieler.txt row into an INSERT statement against the
  * temporary table; same dummy-row filters as the SQL loader (passive
  * players with no Mgl_Nr, players without a name)
+ *
+ * INSERT IGNORE because old .txt snapshots occasionally list the same
+ * (ZPS, Mgl_Nr) twice — once as the established member and once with
+ * Status='N' (Neu) for a pending re-registration; we keep whichever row
+ * the file ordered first
  *
  * @param array $fields fields from explode('|', $line)
  * @param string $target_table
@@ -388,7 +575,7 @@ function mf_ratings_memberstats_txt_spieler($fields, $target_table) {
 	if ($status === 'P' AND ($mgl_nr === '' OR $mgl_nr === '0')) return '';
 	if ($zps === '' OR $mgl_nr === '') return '';
 
-	$sql = sprintf('INSERT INTO `%s` (`ZPS`, `Mgl_Nr`, `Status`, `Spielername`'
+	$sql = sprintf('INSERT IGNORE INTO `%s` (`ZPS`, `Mgl_Nr`, `Status`, `Spielername`'
 		.', `Geschlecht`, `Spielberechtigung`, `Geburtsjahr`, `Letzte_Auswertung`'
 		.', `DWZ`, `DWZ_Index`, `FIDE_Elo`, `FIDE_Titel`, `FIDE_ID`, `FIDE_Land`)'
 		.' VALUES ("%s", "%s", %s, "%s", %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
