@@ -31,6 +31,7 @@
  */
 function mod_ratings_make_memberstats($params) {
 	wrap_setting('cache', false);
+	wrap_include('memberstats', 'ratings');
 
 	$force = mf_ratings_memberstats_force($params);
 	if ($force === false) return false;
@@ -141,7 +142,12 @@ function mf_ratings_memberstats_import($archive, $force) {
 	$folder = mf_ratings_unzip('DWZ', $archive['filename']);
 	$files = mf_ratings_memberstats_files($folder, $archive['filename']);
 
-	$sql = 'CREATE TEMPORARY TABLE temp_memberstats_spieler LIKE dwz_spieler';
+	// regular (non-TEMPORARY) staging tables: visible across connections
+	// for progress monitoring and debugging, and immune to any per-request
+	// MySQL reconnect that would silently drop session-local TEMP tables.
+	// Drop any leftovers from a previous failed run before recreating.
+	mf_ratings_memberstats_drop('temp_memberstats_spieler');
+	$sql = 'CREATE TABLE `temp_memberstats_spieler` LIKE dwz_spieler';
 	wrap_db_query($sql);
 	// PID was only introduced with the *_v2 export; older .txt snapshots
 	// have no PID. Make it nullable on the temp table so those rows insert.
@@ -157,7 +163,9 @@ function mf_ratings_memberstats_import($archive, $force) {
 	// INSERT into memberstats clamps to a valid YEAR range
 	$sql = 'ALTER TABLE temp_memberstats_spieler MODIFY `Geburtsjahr` smallint unsigned NULL DEFAULT NULL';
 	wrap_db_query($sql);
-	$sql = 'CREATE TEMPORARY TABLE temp_memberstats_vereine LIKE dwz_vereine';
+
+	mf_ratings_memberstats_drop('temp_memberstats_vereine');
+	$sql = 'CREATE TABLE `temp_memberstats_vereine` LIKE dwz_vereine';
 	wrap_db_query($sql);
 
 	foreach (['spieler', 'vereine'] as $kind) {
@@ -177,10 +185,8 @@ function mf_ratings_memberstats_import($archive, $force) {
 
 	mf_ratings_memberstats_insert($archive['date']);
 
-	$sql = 'DROP TEMPORARY TABLE temp_memberstats_spieler';
-	wrap_db_query($sql);
-	$sql = 'DROP TEMPORARY TABLE temp_memberstats_vereine';
-	wrap_db_query($sql);
+	mf_ratings_memberstats_drop('temp_memberstats_spieler');
+	mf_ratings_memberstats_drop('temp_memberstats_vereine');
 
 	// the unzip folder is ours; clear out any leftovers (verband.sql,
 	// VERBAND.TXT, readme variants, …) the snapshot may have shipped
