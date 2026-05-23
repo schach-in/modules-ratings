@@ -80,7 +80,7 @@ msgstr "Verband"
 # log action label in memberstats progress UI
 #: behaviour/memberstats.js
 msgid "contact_end"
-msgstr "Kontakt geschlossen"
+msgstr "Organisation aufgelöst"
 
 #: configuration/settings.cfg
 msgid "URL under which the current FIDE Elo data is available in TXT format"
