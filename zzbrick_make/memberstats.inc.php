@@ -581,6 +581,9 @@ function mf_ratings_memberstats_rmtree($path) {
  * locate spieler + vereine sources in the unzipped archive folder, prefer
  * the .sql variant where both exist
  *
+ * Basenames and extensions are matched case-insensitively (SPIELER.TXT
+ * on Linux, etc.) via mf_ratings_memberstats_file_optional().
+ *
  * @param string $folder
  * @param string $archive original ZIP path, only used for error reporting
  * @return array indexed by 'spieler' and 'vereine':
@@ -589,16 +592,14 @@ function mf_ratings_memberstats_rmtree($path) {
 function mf_ratings_memberstats_files($folder, $archive) {
 	$files = [];
 	foreach (['spieler', 'vereine'] as $kind) {
-		foreach (['sql', 'txt'] as $format) {
-			$path = sprintf('%s/%s.%s', $folder, $kind, $format);
-			if (!file_exists($path)) continue;
-			$files[$kind] = ['format' => $format, 'path' => $path];
-			continue 2;
+		$file = mf_ratings_memberstats_file_optional($folder, $kind);
+		if (!$file) {
+			wrap_error(sprintf(
+				'memberstats: no %s.sql or %s.txt found in archive %s',
+				$kind, $kind, $archive
+			), E_USER_ERROR);
 		}
-		wrap_error(sprintf(
-			'memberstats: no %s.sql or %s.txt found in archive %s',
-			$kind, $kind, $archive
-		), E_USER_ERROR);
+		$files[$kind] = $file;
 	}
 	return $files;
 }
