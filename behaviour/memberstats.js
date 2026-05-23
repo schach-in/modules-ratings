@@ -28,14 +28,20 @@
 	const importNext = root.dataset.importNext || '';
 	const missingCount = parseInt(root.dataset.missingCount, 10) || 0;
 	const labels = {
-		importNext: root.dataset.labelImportNext || 'Import next missing snapshot',
-		reimport: root.dataset.labelReimport || 'Re-import snapshot',
-		queued: root.dataset.labelQueued || 'Queued…',
-		running: root.dataset.labelRunning || 'Import is running.',
-		stuck: root.dataset.labelStuck || 'Previous import did not finish.',
-		done: root.dataset.labelDone || 'All snapshots imported.',
-		rows: root.dataset.labelRows || 'rows',
-		failedStart: root.dataset.labelFailedStart || 'Could not start background job.'
+		importNext: '%%% text Import next missing snapshot %%%',
+		reimport: '%%% text Re-import snapshot %%%',
+		queued: '%%% text Queued… %%%',
+		running: '%%% text Memberstats import is running. %%%',
+		stuck: '%%% text Previous memberstats import did not finish. %%%',
+		done: '%%% text All snapshots imported. %%%',
+		rows: '%%% text rows %%%',
+		contacts: '%%% text contacts %%%',
+		closed: '%%% text closed %%%',
+		overwrite: '%%% text overwrite %%%',
+		logContact: '%%% text contact %%%',
+		logVerband: '%%% text verband %%%',
+		logContactEnd: '%%% text contact_end %%%',
+		failedStart: '%%% text Could not start background job. %%%'
 	};
 
 	const button = root.querySelector('.memberstats-start');
@@ -93,7 +99,7 @@
 		if (state.club_code) parts.push(state.club_code);
 		if (state.contact) parts.push(state.contact);
 		if (state.contacts_created !== null && state.contacts_created !== undefined)
-			parts.push(state.contacts_created.toLocaleString() + ' contacts');
+			parts.push(state.contacts_created.toLocaleString() + ' ' + labels.contacts);
 		status.textContent = parts.join(' · ');
 		show(status);
 
@@ -109,7 +115,7 @@
 		if (state.club_code) parts.push(state.club_code);
 		if (state.contact) parts.push(state.contact);
 		if (state.contacts_created !== null && state.contacts_created !== undefined)
-			parts.push(state.contacts_created.toLocaleString() + ' contacts');
+			parts.push(state.contacts_created.toLocaleString() + ' ' + labels.contacts);
 		status.textContent = parts.join(' · ');
 		show(status);
 		log.textContent = (state.tail || []).map(formatEntry).join('\n');
@@ -151,14 +157,14 @@
 			if (result.contact) extras.push(result.contact);
 			if (result.contact_id) extras.push('#' + result.contact_id);
 			if (result.snapshot) extras.push(result.snapshot);
-			return time + '  contact' + (extras.length ? '  ' + extras.join(', ') : '');
+			return time + '  ' + labels.logContact + (extras.length ? '  ' + extras.join(', ') : '');
 		}
 		if (entry.action === 'verband') {
 			if (result.verband_code) extras.push(result.verband_code);
 			if (result.contact) extras.push(result.contact);
 			if (result.contact_id) extras.push('#' + result.contact_id);
 			if (result.snapshot) extras.push(result.snapshot);
-			return time + '  verband' + (extras.length ? '  ' + extras.join(', ') : '');
+			return time + '  ' + labels.logVerband + (extras.length ? '  ' + extras.join(', ') : '');
 		}
 		if (entry.action === 'contact_end') {
 			if (result.club_code) extras.push(result.club_code);
@@ -167,7 +173,7 @@
 			if (result.contact_id) extras.push('#' + result.contact_id);
 			if (result.end_date) extras.push(result.end_date);
 			if (result.snapshot) extras.push(result.snapshot);
-			return time + '  contact_end' + (extras.length ? '  ' + extras.join(', ') : '');
+			return time + '  ' + labels.logContactEnd + (extras.length ? '  ' + extras.join(', ') : '');
 		}
 		if (result.snapshot) extras.push(result.snapshot);
 		if (result.bytes_total) {
@@ -177,10 +183,10 @@
 		if (result.rows_done !== undefined && result.rows_done !== null)
 			extras.push(result.rows_done.toLocaleString() + ' ' + labels.rows);
 		if (result.contacts_created !== undefined && result.contacts_created !== null)
-			extras.push(result.contacts_created.toLocaleString() + ' contacts');
+			extras.push(result.contacts_created.toLocaleString() + ' ' + labels.contacts);
 		if (result.contacts_closed !== undefined && result.contacts_closed !== null)
-			extras.push(result.contacts_closed.toLocaleString() + ' closed');
-		if (result.overwrite) extras.push('overwrite');
+			extras.push(result.contacts_closed.toLocaleString() + ' ' + labels.closed);
+		if (result.overwrite) extras.push(labels.overwrite);
 		if (result.club_code) extras.push(result.club_code);
 		if (result.contact) extras.push(result.contact);
 		if (result.contact_id) extras.push('#' + result.contact_id);

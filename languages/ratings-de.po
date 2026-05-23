@@ -22,6 +22,66 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 3.9\n"
 
+#: behaviour/memberstats.js
+msgid "Import next missing snapshot"
+msgstr "Nächsten fehlenden Stichtag importieren"
+
+#: behaviour/memberstats.js
+msgid "Re-import snapshot"
+msgstr "Stichtag erneut importieren"
+
+#: behaviour/memberstats.js
+msgid "Queued…"
+msgstr "In Warteschlange…"
+
+#: behaviour/memberstats.js
+msgid "Memberstats import is running."
+msgstr "Mitgliederstatistik-Import läuft."
+
+#: behaviour/memberstats.js
+msgid "Previous memberstats import did not finish."
+msgstr "Der vorherige Mitgliederstatistik-Import wurde nicht abgeschlossen."
+
+#: behaviour/memberstats.js
+#: zzbrick_make/memberstats.inc.php
+msgid "All snapshots imported."
+msgstr "Alle Stichtage importiert."
+
+#: behaviour/memberstats.js
+msgid "rows"
+msgstr "Zeilen"
+
+#: behaviour/memberstats.js
+msgid "Could not start background job."
+msgstr "Hintergrundjob konnte nicht gestartet werden."
+
+#: behaviour/memberstats.js
+msgid "contacts"
+msgstr "Kontakte"
+
+#: behaviour/memberstats.js
+msgid "closed"
+msgstr "geschlossen"
+
+#: behaviour/memberstats.js
+msgid "overwrite"
+msgstr "überschreiben"
+
+# log action label in memberstats progress UI
+#: behaviour/memberstats.js
+msgid "contact"
+msgstr "Kontakt"
+
+# log action label in memberstats progress UI
+#: behaviour/memberstats.js
+msgid "verband"
+msgstr "Verband"
+
+# log action label in memberstats progress UI
+#: behaviour/memberstats.js
+msgid "contact_end"
+msgstr "Kontakt geschlossen"
+
 #: configuration/settings.cfg
 msgid "URL under which the current FIDE Elo data is available in TXT format"
 msgstr "URL, unter der die aktuellen FIDE-Elo-Daten im TXT-Format vorliegen"
@@ -80,6 +140,26 @@ msgstr "Synchronisierung starten"
 msgid "Start import"
 msgstr "Import starten"
 
+#: templates/memberstats.template.txt
+msgid "No DWZ archives found."
+msgstr "Keine DWZ-Archive gefunden."
+
+#: templates/memberstats.template.txt
+msgid "DWZ archives on disk"
+msgstr "DWZ-Archive auf der Festplatte"
+
+#: templates/memberstats.template.txt
+msgid "Snapshots imported"
+msgstr "Importierte Stichtage"
+
+#: templates/memberstats.template.txt
+msgid "Snapshots missing"
+msgstr "Fehlende Stichtage"
+
+#: templates/memberstats.template.txt
+msgid "Sorry, there is no archive for %s."
+msgstr "Entschuldigung, es gibt kein Archiv für %s."
+
 #: zzbrick_make/dewis.inc.php
 msgid "There is no organisation with the code %s."
 msgstr "Es gibt keine Organisation mit dem Code %s."
@@ -121,6 +201,22 @@ msgstr "Datei %s für den Rating-Import nicht gefunden."
 #: zzbrick_make/ratings-sync.inc.php
 msgid "No rating sync required for %s."
 msgstr "Keine Synchronisation für die %s-Wertungsdaten erforderlich."
+
+#: zzbrick_make/memberstats.inc.php
+msgid "Nothing to import."
+msgstr "Nichts zu importieren."
+
+#: zzbrick_make/memberstats.inc.php
+msgid "Background job queued."
+msgstr "Hintergrundjob in Warteschlange gestellt."
+
+#: zzbrick_make/memberstats.inc.php
+msgid "Memberstats import is already running."
+msgstr "Mitgliederstatistik-Import läuft bereits."
+
+#: zzbrick_make/memberstats.inc.php
+msgid "Imported %s"
+msgstr "%s importiert"
 
 #: zzbrick_tables/fide-players.php
 msgid "Federation"
