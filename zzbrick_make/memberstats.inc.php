@@ -639,8 +639,8 @@ function mf_ratings_memberstats_file_optional($folder, $basenames) {
  *
  * the SQL files are emitted in ISO-8859-1 with one REPLACE INTO statement
  * per line; we convert each line to UTF-8, swap the original table name
- * for the temporary one and run the statement. Dummy rows (unnamed
- * players) are skipped.
+ * for the temporary one and run batched REPLACE statements inside a
+ * transaction. Dummy rows (unnamed players) are skipped.
  *
  * spieler.sql exists in two column layouts, each with its own staging
  * table in configuration/memberstats.sql:
@@ -687,6 +687,11 @@ function mf_ratings_memberstats_load_sql($filename, $target_table, $snapshot_dat
 	$rows_done = 0;
 	$bytes_logged = 0;
 	$tick = wrap_setting('ratings_memberstats_log_tick_bytes');
+	$batch = [];
+	$batch_size = mf_ratings_memberstats_load_batch_size();
+	$failed = false;
+
+	mf_ratings_memberstats_load_begin();
 
 	while (($line = fgets($handle)) !== false) {
 		if (!trim($line)) continue;
@@ -699,7 +704,25 @@ function mf_ratings_memberstats_load_sql($filename, $target_table, $snapshot_dat
 		} else {
 			$line = str_replace($needle, $replace, $line);
 		}
-		wrap_db_query($line, E_USER_WARNING);
+		$values = mf_ratings_memberstats_sql_values($line);
+		if ($values === null) {
+			if (!mf_ratings_memberstats_load_sql_flush($replace, $batch)) {
+				$failed = true;
+				break;
+			}
+			if (!wrap_db_query($line, E_USER_WARNING)) {
+				$failed = true;
+				break;
+			}
+		} else {
+			$batch[] = $values;
+			if (count($batch) >= $batch_size) {
+				if (!mf_ratings_memberstats_load_sql_flush($replace, $batch)) {
+					$failed = true;
+					break;
+				}
+			}
+		}
 		$rows_done++;
 		$bytes_done = ftell($handle);
 		if ($bytes_done - $bytes_logged >= $tick) {
@@ -714,12 +737,44 @@ function mf_ratings_memberstats_load_sql($filename, $target_table, $snapshot_dat
 	}
 	fclose($handle);
 
+	if (!$failed AND !mf_ratings_memberstats_load_sql_flush($replace, $batch))
+		$failed = true;
+	mf_ratings_memberstats_load_end($failed);
+	if ($failed)
+		wrap_error(sprintf('memberstats: %s load failed for %s', $action, $filename), E_USER_ERROR);
+
 	mf_ratings_memberstats_log($action, [
 		'snapshot' => $snapshot_date,
 		'bytes_done' => $bytes_total,
 		'bytes_total' => $bytes_total,
 		'rows_done' => $rows_done
 	]);
+}
+
+/**
+ * VALUES tuple from one REPLACE INTO line (after table-name rewrites)
+ *
+ * @param string $line
+ * @return string|null e.g. (1,"AB01",…) without trailing semicolon
+ */
+function mf_ratings_memberstats_sql_values($line) {
+	if (!preg_match('/^REPLACE INTO `\w+` VALUES\s+(\(.+\))\s*;?\s*$/', trim($line), $match))
+		return null;
+	return $match[1];
+}
+
+/**
+ * flush a batch of VALUES tuples as one REPLACE INTO statement
+ *
+ * @param string $target_table including backticks
+ * @param array $batch list of VALUES tuples, cleared on success
+ * @return bool
+ */
+function mf_ratings_memberstats_load_sql_flush($target_table, &$batch) {
+	if (!$batch) return true;
+	$sql = sprintf('REPLACE INTO %s VALUES %s', $target_table, implode(',', $batch));
+	$batch = [];
+	return (bool) wrap_db_query($sql, E_USER_WARNING);
 }
 
 /**
@@ -820,6 +875,12 @@ function mf_ratings_memberstats_load_txt($filename, $target_table, $snapshot_dat
 	$rows_done = 0;
 	$bytes_logged = 0;
 	$tick = wrap_setting('ratings_memberstats_log_tick_bytes');
+	$batch = [];
+	$batch_size = mf_ratings_memberstats_load_batch_size();
+	$insert_prefix = null;
+	$failed = false;
+
+	mf_ratings_memberstats_load_begin();
 
 	while (($line = fgets($handle)) !== false) {
 		$line = rtrim($line, "\r\n");
@@ -836,7 +897,26 @@ function mf_ratings_memberstats_load_txt($filename, $target_table, $snapshot_dat
 		else
 			wrap_error(sprintf('memberstats: unknown staging table %s', $target_table), E_USER_ERROR);
 		if (!$sql) continue;
-		wrap_db_query($sql, E_USER_WARNING);
+		$row = mf_ratings_memberstats_txt_row($sql);
+		if (!$row) {
+			if (!mf_ratings_memberstats_load_txt_flush($insert_prefix, $batch)) {
+				$failed = true;
+				break;
+			}
+			if (!wrap_db_query($sql, E_USER_WARNING)) {
+				$failed = true;
+				break;
+			}
+		} else {
+			if (!$insert_prefix) $insert_prefix = $row['prefix'];
+			$batch[] = $row['values'];
+			if (count($batch) >= $batch_size) {
+				if (!mf_ratings_memberstats_load_txt_flush($insert_prefix, $batch)) {
+					$failed = true;
+					break;
+				}
+			}
+		}
 		$rows_done++;
 		$bytes_done = ftell($handle);
 		if ($bytes_done - $bytes_logged >= $tick) {
@@ -851,12 +931,79 @@ function mf_ratings_memberstats_load_txt($filename, $target_table, $snapshot_dat
 	}
 	fclose($handle);
 
+	if (!$failed AND !mf_ratings_memberstats_load_txt_flush($insert_prefix, $batch))
+		$failed = true;
+	mf_ratings_memberstats_load_end($failed);
+	if ($failed)
+		wrap_error(sprintf('memberstats: %s load failed for %s', $action, $filename), E_USER_ERROR);
+
 	mf_ratings_memberstats_log($action, [
 		'snapshot' => $snapshot_date,
 		'bytes_done' => $bytes_total,
 		'bytes_total' => $bytes_total,
 		'rows_done' => $rows_done
 	]);
+}
+
+/**
+ * split a single-row INSERT from mf_ratings_memberstats_txt_* for batching
+ *
+ * @param string $sql
+ * @return array|null prefix + values tuple, or null when unparsable
+ */
+function mf_ratings_memberstats_txt_row($sql) {
+	if (!preg_match('/^(INSERT INTO `\w+` \(.+?\)) VALUES (\(.+\))$/', $sql, $match))
+		return null;
+	return ['prefix' => $match[1], 'values' => $match[2]];
+}
+
+/**
+ * flush a batch of INSERT VALUES tuples as one statement
+ *
+ * @param string|null $insert_prefix INSERT INTO … (columns)
+ * @param array $batch list of (…) tuples, cleared on success
+ * @return bool
+ */
+function mf_ratings_memberstats_load_txt_flush($insert_prefix, &$batch) {
+	if (!$batch OR !$insert_prefix) return true;
+	$sql = $insert_prefix.' VALUES '.implode(',', $batch);
+	$batch = [];
+	return (bool) wrap_db_query($sql, E_USER_WARNING);
+}
+
+/**
+ * rows per batched REPLACE/INSERT during snapshot staging loads
+ *
+ * @return int
+ */
+function mf_ratings_memberstats_load_batch_size() {
+	$size = (int) wrap_setting('ratings_memberstats_load_batch_size');
+	if ($size < 1) $size = 500;
+	return $size;
+}
+
+/**
+ * begin a transaction for a staging-table loader
+ *
+ * @return void
+ */
+function mf_ratings_memberstats_load_begin() {
+	$sql = 'START TRANSACTION';
+	wrap_db_query($sql, E_USER_WARNING);
+}
+
+/**
+ * commit or roll back a staging-table loader transaction
+ *
+ * @param bool $failed
+ * @return void
+ */
+function mf_ratings_memberstats_load_end($failed) {
+	if ($failed)
+		$sql = 'ROLLBACK';
+	else
+		$sql = 'COMMIT';
+	wrap_db_query($sql, E_USER_WARNING);
 }
 
 /**
