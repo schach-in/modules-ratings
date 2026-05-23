@@ -763,6 +763,10 @@ function mf_ratings_memberstats_load_sql($filename, $target_table, $snapshot_dat
 			$line = str_replace($needle, $replace, $line);
 		}
 		$values = mf_ratings_memberstats_sql_values($line);
+		if ($values !== null && str_starts_with($kind, 'spieler')) {
+			$values = mf_ratings_memberstats_sql_normalize_spieler($values);
+			$line = preg_replace('/VALUES\s+\(.+\)\s*;?\s*$/', 'VALUES '.$values, trim($line));
+		}
 		if ($values === null) {
 			if (!mf_ratings_memberstats_load_sql_flush($replace, $batch)) {
 				$failed = true;
@@ -819,6 +823,76 @@ function mf_ratings_memberstats_sql_values($line) {
 	if (!preg_match('/^REPLACE INTO `\w+` VALUES\s+(\(.+\))\s*;?\s*$/', trim($line), $match))
 		return null;
 	return $match[1];
+}
+
+function mf_ratings_memberstats_sql_normalize_spieler($values) {
+	$fields = mf_ratings_memberstats_sql_parse_values($values);
+	if (!$fields) return $values;
+	// Mgl_Nr plus numeric rating columns; same 0-based indexes in v1 and v2
+	$numeric = [1, 7, 8, 9, 10, 11, 13];
+	foreach ($numeric as $index) {
+		if (!array_key_exists($index, $fields)) continue;
+		$fields[$index] = mf_ratings_memberstats_sql_null_empty($fields[$index]);
+	}
+	return '('.implode(',', $fields).')';
+}
+
+function mf_ratings_memberstats_sql_parse_values($values) {
+	$values = trim($values);
+	if ($values === '' || $values[0] !== '(') return null;
+	$fields = [];
+	$field = '';
+	$in_string = false;
+	$quote = '';
+	$len = strlen($values);
+	for ($i = 1; $i < $len - 1; $i++) {
+		$c = $values[$i];
+		if ($in_string) {
+			if ($c === $quote) {
+				$field .= $c;
+				$in_string = false;
+				continue;
+			}
+			if ($c === '\\') {
+				$field .= $c;
+				if ($i + 1 < $len - 1) {
+					$i++;
+					$field .= $values[$i];
+				}
+				continue;
+			}
+			$field .= $c;
+			continue;
+		}
+		if ($c === '"' || $c === "'") {
+			$in_string = true;
+			$quote = $c;
+			$field .= $c;
+			continue;
+		}
+		if ($c === ',') {
+			$fields[] = trim($field);
+			$field = '';
+			continue;
+		}
+		$field .= $c;
+	}
+	if ($field !== '' || $fields)
+		$fields[] = trim($field);
+	return $fields;
+}
+
+function mf_ratings_memberstats_sql_null_empty($value) {
+	$value = trim($value);
+	if ($value === '' || strcasecmp($value, 'NULL') === 0) return 'NULL';
+	if ($value === '""' || $value === "''") return 'NULL';
+	if (strlen($value) >= 2) {
+		$quote = $value[0];
+		if (($quote === '"' || $quote === "'") && $value[strlen($value) - 1] === $quote) {
+			if (substr($value, 1, -1) === '') return 'NULL';
+		}
+	}
+	return $value;
 }
 
 /**

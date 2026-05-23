@@ -38,7 +38,7 @@ CREATE TABLE `temp_memberstats_spieler_v1` (
   `Spielername_G` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `Geschlecht` char(1) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
   `Spielberechtigung` char(1) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
-  /* smallint, not YEAR: old .txt uses 1900 for "unknown"; memberstats INSERT clamps */
+  /* nullable: DSB may omit birth year; old .txt uses 1900 for "unknown" */
   `Geburtsjahr` smallint unsigned NULL DEFAULT NULL,
   `Letzte_Auswertung` mediumint unsigned DEFAULT NULL,
   `DWZ` smallint unsigned DEFAULT NULL,
@@ -71,6 +71,7 @@ CREATE TABLE `temp_memberstats_spieler_v2` (
   `Spielername` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `Geschlecht` char(1) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
   `Spielberechtigung` char(1) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
+  /* nullable: DSB may omit birth year; old .txt uses 1900 for "unknown" */
   `Geburtsjahr` smallint unsigned NULL DEFAULT NULL,
   `Letzte_Auswertung` mediumint unsigned DEFAULT NULL,
   `DWZ` smallint unsigned DEFAULT NULL,
