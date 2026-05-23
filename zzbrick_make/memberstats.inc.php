@@ -199,10 +199,12 @@ function mf_ratings_memberstats_import($archive, $overwrite) {
 	// so snapshot import keeps working when the live DWZ schema changes.
 	// Drop any leftovers from a previous failed run before recreating.
 	mf_ratings_memberstats_drop('temp_memberstats_spieler');
-	wrap_db_query(wrap_sql_query('ratings_memberstats_temp_spieler', 'memberstats'));
+	$sql = wrap_sql_query('ratings_memberstats_temp_spieler', 'memberstats');
+	wrap_db_query($sql);
 
 	mf_ratings_memberstats_drop('temp_memberstats_vereine');
-	wrap_db_query(wrap_sql_query('ratings_memberstats_temp_vereine', 'memberstats'));
+	$sql = wrap_sql_query('ratings_memberstats_temp_vereine', 'memberstats');
+	wrap_db_query($sql);
 
 	foreach (['spieler', 'vereine'] as $kind) {
 		$loader = 'mf_ratings_memberstats_load_'.$files[$kind]['format'];
@@ -672,9 +674,10 @@ function mf_ratings_memberstats_txt_number($value) {
  * club_contact_id, but club_code is still populated.
  *
  * Each new club is also linked to its federation parent in
- * `contacts_contacts` (relation/member, published). The parent contact
- * is resolved via the first three characters of the club code against
- * `contacts_identifiers` (pass_dsb), ignoring the `current` flag.
+ * `contacts_contacts` (relation/member, published). The parent pass_dsb
+ * code is taken from `temp_memberstats_vereine.Verband` (e.g. club `E3401`
+ * → parent `E30`), then resolved in `contacts_identifiers` without the
+ * `current` filter.
  *
  * @param string $snapshot_date YYYY-MM-DD, for progress log entries
  * @return void
@@ -688,6 +691,7 @@ function mf_ratings_memberstats_clubs($snapshot_date) {
 				SUBSTRING(s.ZPS, 1, 3), s.ZPS)
 		)';
 	$sql = 'SELECT codes.code AS club_code, v.Vereinname AS club_name
+			, v.Verband AS parent_code
 		FROM (
 			SELECT DISTINCT '.$collapse.' AS code
 			FROM temp_memberstats_spieler s
@@ -732,7 +736,11 @@ function mf_ratings_memberstats_clubs($snapshot_date) {
 			'current' => 'yes'
 		];
 		zzform_insert('contacts_identifiers', $identifier, E_USER_WARNING);
-		mf_ratings_memberstats_club_parent_link($contact_id, $club_code);
+		mf_ratings_memberstats_club_parent_link(
+			$contact_id,
+			$club_code,
+			$club['parent_code'] ?? ''
+		);
 	}
 
 	mf_ratings_memberstats_log('clubs_done', [
@@ -744,20 +752,17 @@ function mf_ratings_memberstats_clubs($snapshot_date) {
 /**
  * link a new club contact to its federation parent in contacts_contacts
  *
- * Parent code is the first three characters of the club's pass_dsb
- * identifier (e.g. `E1301` → `E13`). The parent contact_id is looked up
- * in contacts_identifiers without filtering on `current`. Three-character
- * club codes and missing parents are skipped quietly except for a warning
- * when no parent identifier exists.
+ * Parent code comes from temp_memberstats_vereine.Verband in the snapshot
+ * (not from a prefix of the club code). The parent contact_id is looked
+ * up in contacts_identifiers without filtering on `current`.
  *
  * @param int $contact_id new club contact
  * @param string $club_code pass_dsb identifier stored on the club
+ * @param string $parent_code pass_dsb identifier of the federation (Verband)
  * @return void
  */
-function mf_ratings_memberstats_club_parent_link($contact_id, $club_code) {
-	if (strlen($club_code) <= 3) return;
-	$parent_code = substr($club_code, 0, 3);
-	if ($parent_code === $club_code) return;
+function mf_ratings_memberstats_club_parent_link($contact_id, $club_code, $parent_code) {
+	if ($parent_code === '' OR $parent_code === $club_code) return;
 
 	$sql = 'SELECT contact_id FROM contacts_identifiers
 		WHERE identifier = "%s"
