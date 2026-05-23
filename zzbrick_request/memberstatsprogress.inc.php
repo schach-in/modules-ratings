@@ -20,7 +20,10 @@
  * it into a small status object the /_behaviour/ratings/memberstats.js
  * poller consumes. Each log entry has shape
  * `<timestamp> <action> <json-encoded payload>`; the last entry decides
- * the current state, the tail is returned for the on-page log view.
+ * the current state; the tail (optionally truncated) is returned for the
+ * on-page log view. `ratings_memberstats_progress_tail` controls how many
+ * log entries are sent: 0 means all entries, a positive value keeps only
+ * the last N lines.
  *
  * State rules:
  *  - empty log: idle
@@ -30,24 +33,27 @@
  *  - any other action older than stale_after: stuck (worker likely died)
  *
  * The JSON payload of each entry is pre-decoded so the JS doesn't need
- * a second JSON.parse step per entry.
+ * a second JSON.parse step per entry. Top-level fields mirror the last
+ * tail entry's payload (snapshot, rows/bytes progress, and contact
+ * details when action is `contact`).
  *
  * @return array $page
  */
 function mod_ratings_memberstatsprogress() {
 	wrap_setting('cache', false);
 	wrap_include('file', 'zzwrap');
+	wrap_setting('ratings_logfile_memberstats_spaces', true);
 
 	$lines = wrap_file_log('ratings/memberstats');
-	$tail_size = (int) wrap_setting('ratings_memberstats_progress_tail');
-	if ($tail_size <= 0) $tail_size = 50;
-	$tail = array_slice($lines, -$tail_size);
-	foreach ($tail as &$entry) {
+	foreach ($lines as &$entry) {
 		$entry['timestamp'] = (int) $entry['timestamp'];
 		$decoded = json_decode($entry['result'], true);
 		$entry['result'] = is_array($decoded) ? $decoded : [];
 	}
 	unset($entry);
+
+	$tail_size = (int) wrap_setting('ratings_memberstats_progress_tail');
+	$tail = $tail_size > 0 ? array_slice($lines, -$tail_size) : $lines;
 
 	$data = [
 		'state' => 'idle',
@@ -57,12 +63,16 @@ function mod_ratings_memberstatsprogress() {
 		'bytes_done' => null,
 		'bytes_total' => null,
 		'percent' => null,
+		'club_code' => null,
+		'contact' => null,
+		'contact_id' => null,
+		'contacts_created' => null,
 		'ts' => null,
 		'tail' => $tail
 	];
 
-	if ($tail) {
-		$last = end($tail);
+	if ($lines) {
+		$last = end($lines);
 		$payload = $last['result'];
 		$data['action'] = $last['action'];
 		$data['ts'] = $last['timestamp'];
@@ -70,6 +80,10 @@ function mod_ratings_memberstatsprogress() {
 		$data['rows_done'] = $payload['rows_done'] ?? null;
 		$data['bytes_done'] = $payload['bytes_done'] ?? null;
 		$data['bytes_total'] = $payload['bytes_total'] ?? null;
+		$data['club_code'] = $payload['club_code'] ?? null;
+		$data['contact'] = $payload['contact'] ?? null;
+		$data['contact_id'] = $payload['contact_id'] ?? null;
+		$data['contacts_created'] = $payload['contacts_created'] ?? null;
 		if (!empty($data['bytes_total']))
 			$data['percent'] = (int) round(100 * $data['bytes_done'] / $data['bytes_total']);
 

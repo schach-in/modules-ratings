@@ -90,6 +90,10 @@
 		if (state.action) parts.push(state.action);
 		if (state.rows_done !== null && state.rows_done !== undefined)
 			parts.push(state.rows_done.toLocaleString() + ' ' + labels.rows);
+		if (state.club_code) parts.push(state.club_code);
+		if (state.contact) parts.push(state.contact);
+		if (state.contacts_created !== null && state.contacts_created !== undefined)
+			parts.push(state.contacts_created.toLocaleString() + ' contacts');
 		status.textContent = parts.join(' · ');
 		show(status);
 
@@ -102,6 +106,10 @@
 		const parts = [labels.stuck];
 		if (state.snapshot) parts.push(state.snapshot);
 		if (state.action) parts.push(state.action);
+		if (state.club_code) parts.push(state.club_code);
+		if (state.contact) parts.push(state.contact);
+		if (state.contacts_created !== null && state.contacts_created !== undefined)
+			parts.push(state.contacts_created.toLocaleString() + ' contacts');
 		status.textContent = parts.join(' · ');
 		show(status);
 		log.textContent = (state.tail || []).map(formatEntry).join('\n');
@@ -122,10 +130,29 @@
 		else renderIdle(state);
 	}
 
+	function parseResult(raw) {
+		if (!raw) return {};
+		if (typeof raw === 'object') return raw;
+		if (typeof raw !== 'string') return {};
+		try {
+			const parsed = JSON.parse(raw);
+			return parsed && typeof parsed === 'object' ? parsed : {};
+		} catch (e) {
+			return {};
+		}
+	}
+
 	function formatEntry(entry) {
 		const time = new Date(entry.timestamp * 1000).toLocaleTimeString();
-		const result = entry.result || {};
+		const result = parseResult(entry.result);
 		const extras = [];
+		if (entry.action === 'contact') {
+			if (result.club_code) extras.push(result.club_code);
+			if (result.contact) extras.push(result.contact);
+			if (result.contact_id) extras.push('#' + result.contact_id);
+			if (result.snapshot) extras.push(result.snapshot);
+			return time + '  contact' + (extras.length ? '  ' + extras.join(', ') : '');
+		}
 		if (result.snapshot) extras.push(result.snapshot);
 		if (result.bytes_total) {
 			const pct = Math.round(100 * (result.bytes_done || 0) / result.bytes_total);
@@ -133,7 +160,12 @@
 		}
 		if (result.rows_done !== undefined && result.rows_done !== null)
 			extras.push(result.rows_done.toLocaleString() + ' ' + labels.rows);
+		if (result.contacts_created !== undefined && result.contacts_created !== null)
+			extras.push(result.contacts_created.toLocaleString() + ' contacts');
 		if (result.overwrite) extras.push('overwrite');
+		if (result.club_code) extras.push(result.club_code);
+		if (result.contact) extras.push(result.contact);
+		if (result.contact_id) extras.push('#' + result.contact_id);
 		if (result.msg) extras.push(result.msg);
 		return time + '  ' + entry.action + (extras.length ? '  ' + extras.join(', ') : '');
 	}

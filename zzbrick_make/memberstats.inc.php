@@ -227,7 +227,7 @@ function mf_ratings_memberstats_import($archive, $overwrite) {
 	}
 
 	mf_ratings_memberstats_log('clubs', ['snapshot' => $archive['date']]);
-	mf_ratings_memberstats_clubs();
+	mf_ratings_memberstats_clubs($archive['date']);
 
 	if ($overwrite) {
 		$sql = sprintf(
@@ -691,9 +691,10 @@ function mf_ratings_memberstats_txt_number($value) {
  * left unmapped — the corresponding memberstats rows will have a NULL
  * club_contact_id, but club_code is still populated.
  *
+ * @param string $snapshot_date YYYY-MM-DD, for progress log entries
  * @return void
  */
-function mf_ratings_memberstats_clubs() {
+function mf_ratings_memberstats_clubs($snapshot_date) {
 	$collapse = 'IF(
 			FIND_IN_SET(SUBSTRING(s.ZPS, 1, 1),
 				"/*_SETTING ratings_dsb_federations_are_clubs _*/")
@@ -718,6 +719,7 @@ function mf_ratings_memberstats_clubs() {
 	$missing = wrap_db_fetch($sql, 'club_code');
 	if (!$missing) return;
 
+	$contacts_created = 0;
 	foreach ($missing as $club_code => $club) {
 		$contact = [
 			'contact_category_id' => wrap_category_id('contact/club'),
@@ -731,6 +733,13 @@ function mf_ratings_memberstats_clubs() {
 			));
 			continue;
 		}
+		mf_ratings_memberstats_log('contact', [
+			'snapshot' => $snapshot_date,
+			'club_code' => $club_code,
+			'contact_id' => $contact_id,
+			'contact' => $club['club_name']
+		]);
+		$contacts_created++;
 		$identifier = [
 			'contact_id' => $contact_id,
 			'identifier' => $club_code,
@@ -739,6 +748,11 @@ function mf_ratings_memberstats_clubs() {
 		];
 		zzform_insert('contacts_identifiers', $identifier, E_USER_WARNING);
 	}
+
+	mf_ratings_memberstats_log('clubs_done', [
+		'snapshot' => $snapshot_date,
+		'contacts_created' => $contacts_created
+	]);
 }
 
 /**

@@ -49,5 +49,5 @@ function mf_ratings_memberstats_drop($table) {
  */
 function mf_ratings_memberstats_log($action, $payload = []) {
 	wrap_include('file', 'zzwrap');
-	wrap_file_log('ratings/memberstats', 'write', [time(), $action, json_encode($payload)]);
+	wrap_file_log('ratings/memberstats', 'write', [time(), $action, json_encode($payload, JSON_UNESCAPED_UNICODE)]);
 }
