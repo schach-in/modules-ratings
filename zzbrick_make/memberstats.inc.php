@@ -170,8 +170,8 @@ function mod_ratings_make_memberstats($params) {
  * import one snapshot from a DWZ archive into memberstats
  *
  * unzips the archive into a temp folder, loads spieler and vereine data
- * into temporary tables (from either .sql or .txt source files, see below),
- * auto-creates `contacts` for any ZPS codes whose club is not currently
+ * into staging tables defined in configuration/memberstats.sql (from either
+ * .sql or .txt source files, see below), auto-creates `contacts` for any ZPS codes whose club is not currently
  * linked, and inserts one row per player into memberstats with the given
  * snapshot_date. With $overwrite, existing rows for that date are removed
  * first so a re-import is idempotent.
@@ -195,31 +195,14 @@ function mf_ratings_memberstats_import($archive, $overwrite) {
 	$folder = mf_ratings_unzip('DWZ', $archive['filename']);
 	$files = mf_ratings_memberstats_files($folder, $archive['filename']);
 
-	// regular (non-TEMPORARY) staging tables: visible across connections
-	// for progress monitoring and debugging, and immune to any per-request
-	// MySQL reconnect that would silently drop session-local TEMP tables.
+	// Staging tables from configuration/memberstats.sql — not LIKE dwz_*,
+	// so snapshot import keeps working when the live DWZ schema changes.
 	// Drop any leftovers from a previous failed run before recreating.
 	mf_ratings_memberstats_drop('temp_memberstats_spieler');
-	$sql = 'CREATE TABLE `temp_memberstats_spieler` LIKE dwz_spieler';
-	wrap_db_query($sql);
-	// PID was only introduced with the *_v2 export; older .txt snapshots
-	// have no PID. Make it nullable on the temp table so those rows insert.
-	$sql = 'ALTER TABLE temp_memberstats_spieler MODIFY `PID` int unsigned NULL DEFAULT NULL';
-	wrap_db_query($sql);
-	// Mgl_Nr can be alphanumeric in old .txt snapshots (e.g. "B49") even
-	// though current dwz_spieler stores it as smallint
-	$sql = 'ALTER TABLE temp_memberstats_spieler MODIFY `Mgl_Nr` varchar(8) NOT NULL';
-	wrap_db_query($sql);
-	// Geburtsjahr is YEAR in dwz_spieler (range 1901-2155), but old .txt
-	// snapshots use 1900 as a placeholder for "unknown" and modern strict
-	// MySQL would reject those rows. Widen to smallint here; the downstream
-	// INSERT into memberstats clamps to a valid YEAR range
-	$sql = 'ALTER TABLE temp_memberstats_spieler MODIFY `Geburtsjahr` smallint unsigned NULL DEFAULT NULL';
-	wrap_db_query($sql);
+	wrap_db_query(wrap_sql_query('ratings_memberstats_temp_spieler', 'memberstats'));
 
 	mf_ratings_memberstats_drop('temp_memberstats_vereine');
-	$sql = 'CREATE TABLE `temp_memberstats_vereine` LIKE dwz_vereine';
-	wrap_db_query($sql);
+	wrap_db_query(wrap_sql_query('ratings_memberstats_temp_vereine', 'memberstats'));
 
 	foreach (['spieler', 'vereine'] as $kind) {
 		$loader = 'mf_ratings_memberstats_load_'.$files[$kind]['format'];
@@ -346,11 +329,8 @@ function mf_ratings_memberstats_load_sql($filename, $target_table, $snapshot_dat
 
 	$format = mf_ratings_memberstats_sql_format($handle);
 	if ($target_table === 'temp_memberstats_spieler' AND $format === 'legacy') {
-		// reshape to the pre-2024 spieler dump: no PID, Spielername_G
-		// between Spielername and Geschlecht
-		$sql = 'ALTER TABLE `temp_memberstats_spieler`
-			DROP COLUMN `PID`,
-			ADD COLUMN `Spielername_G` varchar(60) NULL AFTER `Spielername`';
+		// see configuration/memberstats.sql
+		$sql = 'ALTER TABLE `temp_memberstats_spieler` DROP COLUMN `PID`';
 		wrap_db_query($sql);
 	}
 
