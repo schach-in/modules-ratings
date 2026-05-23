@@ -69,6 +69,7 @@ function mod_ratings_make_memberstats($params) {
 	$snapshots = wrap_db_fetch($sql, 'snapshot_date', 'single value');
 	$data['import_count'] = count($snapshots);
 	$data['missing_count'] = 0;
+	$data['import_next'] = null;
 	foreach ($data['archives'] as $index => $archive) {
 		if (in_array($archive['date'], $snapshots)) {
 			$data['archives'][$index]['imported'] = true;
@@ -111,9 +112,8 @@ function mod_ratings_make_memberstats($params) {
 		// `queued` log entry first so the JS poller sees the import as
 		// busy on its very next tick, even if the jobmanager hasn't
 		// dispatched the worker yet.
-		if (!$data['import_next']) {
-			$page['status'] = 409;
-			$page['text'] = wrap_text('Nothing to import.');
+		if (empty($data['import_next'])) {
+			$page['text'] = wrap_text('All snapshots imported.');
 			return $page;
 		}
 		mf_ratings_memberstats_log('queued', [
@@ -137,7 +137,7 @@ function mod_ratings_make_memberstats($params) {
 		return $page;
 	}
 
-	if (!$data['import_next']) {
+	if (empty($data['import_next'])) {
 		wrap_unlock('memberstats');
 		$page['text'] = wrap_text('All snapshots imported.');
 		return $page;
