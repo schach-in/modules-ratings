@@ -180,16 +180,19 @@ function mod_ratings_make_memberstats($params) {
  * snapshot_date. With $overwrite, existing rows for that date are removed
  * first so a re-import is idempotent.
  *
- * Two on-disk formats are supported because the DSB switched export
+ * Three on-disk formats are supported because the DSB switched export
  * formats over time:
  *  - newer ZIPs (named *-LV-0-sql*.zip) contain spieler.sql / vereine.sql
  *    with REPLACE INTO statements in ISO-8859-1
+ *  - intermediate *-csv ZIPs (from ~2014) contain spieler.csv / vereine.csv
+ *    with comma-separated values and a header row in ISO-8859-1; see
+ *    mf_ratings_memberstats_load_csv()
  *  - older ZIPs contain spieler.txt / vereine.txt with pipe-separated
  *    values in a DOS code page (CP850); column order differs from the
  *    SQL format, see mf_ratings_memberstats_load_txt()
- *  - optional verbaende.sql / verbaende.txt, or legacy verband.sql /
- *    VERBAND.TXT (any casing): when absent, federation auto-import is
- *    skipped entirely
+ *  - optional verbaende.sql / verbaende.csv / verbaende.txt, or legacy
+ *    verband.sql / VERBAND.TXT (any casing): when absent, federation
+ *    auto-import is skipped entirely
  *
  * @param array $archive ['date' => 'YYYY-MM-DD', 'filename' => string]
  * @param bool $overwrite when true, delete existing rows for this date first
@@ -357,6 +360,8 @@ function mf_ratings_memberstats_archive_codes($folder, $basenames, $normalize_zp
 	if (!$file) return [];
 	if ($file['format'] === 'sql')
 		return mf_ratings_memberstats_sql_codes($file['path']);
+	if ($file['format'] === 'csv')
+		return mf_ratings_memberstats_csv_codes($file['path'], $normalize_zps);
 	return mf_ratings_memberstats_txt_codes($file['path'], $normalize_zps);
 }
 
@@ -421,6 +426,33 @@ function mf_ratings_memberstats_txt_codes($filename, $normalize_zps = false) {
 			? mf_ratings_memberstats_zps_normalize(trim($fields[0]))
 			: trim($fields[0]);
 		if ($code === '') continue;
+		$codes[$code] = true;
+	}
+	fclose($handle);
+	return array_keys($codes);
+}
+
+/**
+ * first-column codes from a comma-separated DWZ .csv file
+ *
+ * @param string $filename
+ * @param bool $normalize_zps
+ * @return array
+ */
+function mf_ratings_memberstats_csv_codes($filename, $normalize_zps = false) {
+	$codes = [];
+	$handle = fopen($filename, 'r');
+	if (!$handle) return $codes;
+	if (fgetcsv($handle, 0, ',', '"', '\\') === false) {
+		fclose($handle);
+		return $codes;
+	}
+	while (($fields = fgetcsv($handle, 0, ',', '"', '\\')) !== false) {
+		if (!$fields) continue;
+		$code = trim((string)($fields[0] ?? ''));
+		if ($code === '') continue;
+		if ($normalize_zps)
+			$code = mf_ratings_memberstats_zps_normalize($code);
 		$codes[$code] = true;
 	}
 	fclose($handle);
@@ -512,11 +544,11 @@ function mf_ratings_memberstats_spieler_geschlecht_default($spieler_table) {
  * .txt snapshots always use v1. .sql snapshots are classified from the
  * first REPLACE INTO line — see mf_ratings_memberstats_sql_spieler_version().
  *
- * @param array $file ['format' => 'sql'|'txt', 'path' => string]
+ * @param array $file ['format' => 'sql'|'txt'|'csv', 'path' => string]
  * @return string 'v1' or 'v2'
  */
 function mf_ratings_memberstats_spieler_version($file) {
-	if ($file['format'] === 'txt') return 'v1';
+	if ($file['format'] === 'txt' OR $file['format'] === 'csv') return 'v1';
 	$handle = fopen($file['path'], 'r');
 	if (!$handle)
 		wrap_error(sprintf('memberstats: unable to open %s', $file['path']), E_USER_ERROR);
@@ -589,7 +621,7 @@ function mf_ratings_memberstats_rmtree($path) {
  * @param string $folder
  * @param string $archive original ZIP path, only used for error reporting
  * @return array indexed by 'spieler' and 'vereine':
- *	['format' => 'sql'|'txt', 'path' => string]
+ *	['format' => 'sql'|'txt'|'csv', 'path' => string]
  */
 function mf_ratings_memberstats_files($folder, $archive) {
 	$files = [];
@@ -597,8 +629,8 @@ function mf_ratings_memberstats_files($folder, $archive) {
 		$file = mf_ratings_memberstats_file_optional($folder, $kind);
 		if (!$file) {
 			wrap_error(sprintf(
-				'memberstats: no %s.sql or %s.txt found in archive %s',
-				$kind, $kind, $archive
+				'memberstats: no %s.sql, %s.csv or %s.txt found in archive %s',
+				$kind, $kind, $kind, $archive
 			), E_USER_ERROR);
 		}
 		$files[$kind] = $file;
@@ -610,15 +642,16 @@ function mf_ratings_memberstats_files($folder, $archive) {
  * locate an optional source file in the unzipped archive folder
  *
  * Unlike spieler and vereine, verbaende are not required. Returns null
- * when no matching .sql or .txt exists. Snapshots vary the basename
+ * when no matching .sql, .csv or .txt exists. Snapshots vary the basename
  * (verbaende vs verband) and casing (VERBAND.TXT); $basenames lists
  * accepted stems, matched case-insensitively via scandir(). When the
  * unzip root holds only a subfolder (common for *-txt archives), that
- * subfolder is searched too.
+ * subfolder is searched too. Prefer .sql over .csv over .txt when
+ * several extensions exist in the same folder.
  *
  * @param string $folder
  * @param string|array $basenames basename without extension, e.g. verbaende
- * @return array|null ['format' => 'sql'|'txt', 'path' => string]
+ * @return array|null ['format' => 'sql'|'txt'|'csv', 'path' => string]
  */
 function mf_ratings_memberstats_file_optional($folder, $basenames) {
 	foreach (mf_ratings_memberstats_archive_folders($folder) as $search_folder) {
@@ -630,10 +663,10 @@ function mf_ratings_memberstats_file_optional($folder, $basenames) {
 
 function mf_ratings_memberstats_file_in_folder($folder, $basenames) {
 	if (!is_array($basenames)) $basenames = [$basenames];
-	$by_format = ['sql' => [], 'txt' => []];
+	$by_format = ['sql' => [], 'csv' => [], 'txt' => []];
 	$pattern = '/^('.implode('|', array_map(function($basename) {
 		return preg_quote($basename, '/');
-	}, $basenames)).')\.(sql|txt)$/i';
+	}, $basenames)).')\.(sql|csv|txt)$/i';
 	foreach (scandir($folder) as $entry) {
 		if ($entry === '.' OR $entry === '..') continue;
 		if (!preg_match($pattern, $entry, $match)) continue;
@@ -641,6 +674,8 @@ function mf_ratings_memberstats_file_in_folder($folder, $basenames) {
 	}
 	if ($by_format['sql'])
 		return ['format' => 'sql', 'path' => $by_format['sql'][0]];
+	if ($by_format['csv'])
+		return ['format' => 'csv', 'path' => $by_format['csv'][0]];
 	if ($by_format['txt'])
 		return ['format' => 'txt', 'path' => $by_format['txt'][0]];
 	return null;
@@ -969,6 +1004,189 @@ function mf_ratings_memberstats_load_txt($filename, $target_table, $snapshot_dat
 }
 
 /**
+ * stream-load a DWZ .csv dump (comma-separated values, ISO-8859-1) into
+ * a temporary table
+ *
+ * Intermediate DSB exports (~2014, *-LV-0-csv*.zip) ship spieler.csv,
+ * vereine.csv and verbaende.csv at the unzip root with a header row.
+ * Column names use hyphens (Mgl-Nr, FIDE-Elo, …); DWZ and Index are
+ * separate fields. Row mapping reuses the .txt INSERT builders via
+ * mf_ratings_memberstats_csv_*_fields().
+ *
+ * @param string $filename source .csv file
+ * @param string $target_table temporary table that should receive the rows
+ * @param string $snapshot_date YYYY-MM-DD, for progress log entries
+ * @return void
+ */
+function mf_ratings_memberstats_load_csv($filename, $target_table, $snapshot_date) {
+	$kind = substr($target_table, strlen('temp_memberstats_'));
+	if (str_starts_with($kind, 'spieler'))
+		$action = 'load_spieler';
+	elseif ($kind === 'vereine')
+		$action = 'load_vereine';
+	else
+		$action = 'load_verbaende';
+
+	$bytes_total = filesize($filename);
+	$handle = fopen($filename, 'r');
+	if (!$handle)
+		wrap_error(sprintf('memberstats: unable to open %s', $filename), E_USER_ERROR);
+
+	mf_ratings_memberstats_log($action, [
+		'snapshot' => $snapshot_date,
+		'bytes_done' => 0,
+		'bytes_total' => $bytes_total,
+		'rows_done' => 0
+	]);
+
+	$header_line = fgetcsv($handle, 0, ',', '"', '\\');
+	if (!$header_line)
+		wrap_error(sprintf('memberstats: empty CSV %s', $filename), E_USER_ERROR);
+	$header = mf_ratings_memberstats_csv_header($header_line);
+
+	$rows_done = 0;
+	$bytes_logged = ftell($handle);
+	$tick = wrap_setting('ratings_memberstats_log_tick_bytes');
+	$batch = [];
+	$batch_size = mf_ratings_memberstats_load_batch_size();
+	$insert_prefix = null;
+	$failed = false;
+
+	mf_ratings_memberstats_load_begin();
+
+	while (($fields = fgetcsv($handle, 0, ',', '"', '\\')) !== false) {
+		if ($fields === [null]) continue;
+		$row = mf_ratings_memberstats_csv_row($header, $fields);
+
+		if (str_starts_with($kind, 'spieler')) {
+			$txt_fields = mf_ratings_memberstats_csv_spieler_fields($row);
+			$sql = mf_ratings_memberstats_txt_spieler($txt_fields, $target_table);
+		} elseif ($kind === 'vereine') {
+			$txt_fields = mf_ratings_memberstats_csv_vereine_fields($row);
+			$sql = mf_ratings_memberstats_txt_vereine($txt_fields, $target_table);
+		} elseif ($kind === 'verbaende') {
+			$txt_fields = mf_ratings_memberstats_csv_verbaende_fields($row);
+			$sql = mf_ratings_memberstats_txt_verbaende($txt_fields, $target_table);
+		} else
+			wrap_error(sprintf('memberstats: unknown staging table %s', $target_table), E_USER_ERROR);
+		if (!$sql) continue;
+		$batch_row = mf_ratings_memberstats_txt_row($sql);
+		if (!$batch_row) {
+			if (!mf_ratings_memberstats_load_txt_flush($insert_prefix, $batch)) {
+				$failed = true;
+				break;
+			}
+			if (!wrap_db_query($sql, E_USER_WARNING)) {
+				$failed = true;
+				break;
+			}
+		} else {
+			if (!$insert_prefix) $insert_prefix = $batch_row['prefix'];
+			$batch[] = $batch_row['values'];
+			if (count($batch) >= $batch_size) {
+				if (!mf_ratings_memberstats_load_txt_flush($insert_prefix, $batch)) {
+					$failed = true;
+					break;
+				}
+			}
+		}
+		$rows_done++;
+		$bytes_done = ftell($handle);
+		if ($bytes_done - $bytes_logged >= $tick) {
+			mf_ratings_memberstats_log($action, [
+				'snapshot' => $snapshot_date,
+				'bytes_done' => $bytes_done,
+				'bytes_total' => $bytes_total,
+				'rows_done' => $rows_done
+			]);
+			$bytes_logged = $bytes_done;
+		}
+	}
+	fclose($handle);
+
+	if (!$failed AND !mf_ratings_memberstats_load_txt_flush($insert_prefix, $batch))
+		$failed = true;
+	mf_ratings_memberstats_load_end($failed);
+	if ($failed)
+		wrap_error(sprintf('memberstats: %s load failed for %s', $action, $filename), E_USER_ERROR);
+
+	mf_ratings_memberstats_log($action, [
+		'snapshot' => $snapshot_date,
+		'bytes_done' => $bytes_total,
+		'bytes_total' => $bytes_total,
+		'rows_done' => $rows_done
+	]);
+}
+
+function mf_ratings_memberstats_csv_header($fields) {
+	$header = [];
+	foreach ($fields as $index => $name) {
+		$name = trim((string)$name);
+		if ($name !== '')
+			$name = iconv('ISO-8859-1', 'UTF-8//TRANSLIT', $name);
+		$key = strtolower(str_replace('-', '_', $name));
+		$header[$key] = $index;
+	}
+	return $header;
+}
+
+function mf_ratings_memberstats_csv_row($header, $fields) {
+	$row = [];
+	foreach ($header as $key => $index) {
+		$value = $fields[$index] ?? '';
+		if ($value !== '' AND $value !== null)
+			$value = iconv('ISO-8859-1', 'UTF-8//TRANSLIT', (string)$value);
+		else
+			$value = '';
+		$row[$key] = $value;
+	}
+	return $row;
+}
+
+function mf_ratings_memberstats_csv_spieler_fields($row) {
+	$dwz_field = '';
+	$dwz = $row['dwz'] ?? '';
+	$index = $row['index'] ?? '';
+	if ($dwz !== '' OR $index !== '') {
+		$dwz_field = $dwz;
+		if ($index !== '') $dwz_field .= '-'.$index;
+	}
+	return [
+		$row['zps'] ?? '',
+		$row['mgl_nr'] ?? '',
+		$row['status'] ?? '',
+		$row['spielername'] ?? '',
+		$row['geschlecht'] ?? '',
+		$row['spielberechtigung'] ?? '',
+		$row['geburtsjahr'] ?? '',
+		$row['letzte_auswertung'] ?? '',
+		$dwz_field,
+		$row['fide_elo'] ?? '',
+		$row['fide_titel'] ?? '',
+		$row['fide_id'] ?? '',
+		$row['fide_land'] ?? ''
+	];
+}
+
+function mf_ratings_memberstats_csv_vereine_fields($row) {
+	return [
+		$row['zps'] ?? '',
+		$row['lv'] ?? '',
+		$row['verband'] ?? '',
+		$row['vereinname'] ?? ''
+	];
+}
+
+function mf_ratings_memberstats_csv_verbaende_fields($row) {
+	return [
+		$row['verband'] ?? '',
+		$row['lv'] ?? '',
+		$row['uebergeordnet'] ?? '',
+		$row['verbandname'] ?? ''
+	];
+}
+
+/**
  * split a single-row INSERT from mf_ratings_memberstats_txt_* for batching
  *
  * @param string $sql
@@ -1191,7 +1409,8 @@ function mf_ratings_memberstats_txt_number($value) {
  * create `contacts` + `contacts_identifiers` for federations from the
  * snapshot's verbaende staging table
  *
- * Only called when the snapshot ships verbaende.sql or verbaende.txt.
+ * Only called when the snapshot ships verbaende.sql, verbaende.csv,
+ * or verbaende.txt.
  * Parent links use Uebergeordnet from the same table (two-pass: create
  * contacts first, then contacts_contacts).
  *
