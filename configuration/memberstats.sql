@@ -55,7 +55,6 @@ CREATE TABLE `temp_memberstats_spieler` (
   `FIDE_Titel` char(3) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
   `FIDE_ID` int unsigned DEFAULT NULL,
   `FIDE_Land` char(3) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
-  PRIMARY KEY (`ZPS`,`Mgl_Nr`),
   KEY `FIDE_ID` (`FIDE_ID`),
   KEY `Spielername` (`Spielername`),
   KEY `ZPS` (`ZPS`),

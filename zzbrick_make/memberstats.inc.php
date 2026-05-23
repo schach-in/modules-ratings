@@ -615,7 +615,7 @@ function mf_ratings_memberstats_txt_spieler($fields, $target_table) {
 	if ($status === 'P' AND ($mgl_nr === '' OR $mgl_nr === '0')) return '';
 	if ($zps === '' OR $mgl_nr === '') return '';
 
-	$sql = sprintf('INSERT IGNORE INTO `%s` (`ZPS`, `Mgl_Nr`, `Status`, `Spielername`'
+	$sql = sprintf('INSERT INTO `%s` (`ZPS`, `Mgl_Nr`, `Status`, `Spielername`'
 		.', `Geschlecht`, `Spielberechtigung`, `Geburtsjahr`, `Letzte_Auswertung`'
 		.', `DWZ`, `DWZ_Index`, `FIDE_Elo`, `FIDE_Titel`, `FIDE_ID`, `FIDE_Land`)'
 		.' VALUES ("%s", "%s", %s, "%s", %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
