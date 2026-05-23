@@ -78,3 +78,20 @@ CREATE TABLE `temp_memberstats_vereine` (
   `Vereinname` varchar(64) NOT NULL DEFAULT '',
   PRIMARY KEY (`ZPS`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+/**
+ * Staging copy of dwz_verbaende — same four columns, schema frozen here.
+ * Loaded only when the snapshot ships verbaende.sql, verbaende.txt,
+ * verband.sql, or VERBAND.TXT; otherwise this table is not created.
+ */
+
+
+-- ratings_memberstats_temp_verbaende --
+CREATE TABLE `temp_memberstats_verbaende` (
+  `Verband` char(3) NOT NULL DEFAULT '',
+  `LV` char(1) NOT NULL DEFAULT '',
+  `Uebergeordnet` char(3) NOT NULL DEFAULT '',
+  `Verbandname` varchar(64) NOT NULL DEFAULT '',
+  PRIMARY KEY (`Verband`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

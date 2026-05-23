@@ -153,6 +153,13 @@
 			if (result.snapshot) extras.push(result.snapshot);
 			return time + '  contact' + (extras.length ? '  ' + extras.join(', ') : '');
 		}
+		if (entry.action === 'verband') {
+			if (result.verband_code) extras.push(result.verband_code);
+			if (result.contact) extras.push(result.contact);
+			if (result.contact_id) extras.push('#' + result.contact_id);
+			if (result.snapshot) extras.push(result.snapshot);
+			return time + '  verband' + (extras.length ? '  ' + extras.join(', ') : '');
+		}
 		if (result.snapshot) extras.push(result.snapshot);
 		if (result.bytes_total) {
 			const pct = Math.round(100 * (result.bytes_done || 0) / result.bytes_total);

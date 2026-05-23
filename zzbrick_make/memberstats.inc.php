@@ -171,7 +171,9 @@ function mod_ratings_make_memberstats($params) {
  *
  * unzips the archive into a temp folder, loads spieler and vereine data
  * into staging tables defined in configuration/memberstats.sql (from either
- * .sql or .txt source files, see below), auto-creates `contacts` for any ZPS codes whose club is not currently
+ * .sql or .txt source files, see below). When the snapshot includes
+ * verbaende.sql or verbaende.txt, missing federation contacts are created
+ * before clubs. auto-creates `contacts` for any ZPS codes whose club is not currently
  * linked, and inserts one row per player into memberstats with the given
  * snapshot_date. With $overwrite, existing rows for that date are removed
  * first so a re-import is idempotent.
@@ -183,6 +185,9 @@ function mod_ratings_make_memberstats($params) {
  *  - older ZIPs contain spieler.txt / vereine.txt with pipe-separated
  *    values in a DOS code page (CP850); column order differs from the
  *    SQL format, see mf_ratings_memberstats_load_txt()
+ *  - optional verbaende.sql / verbaende.txt, or legacy verband.sql /
+ *    VERBAND.TXT (any casing): when absent, federation auto-import is
+ *    skipped entirely
  *
  * @param array $archive ['date' => 'YYYY-MM-DD', 'filename' => string]
  * @param bool $overwrite when true, delete existing rows for this date first
@@ -209,6 +214,18 @@ function mf_ratings_memberstats_import($archive, $overwrite) {
 	foreach (['spieler', 'vereine'] as $kind) {
 		$loader = 'mf_ratings_memberstats_load_'.$files[$kind]['format'];
 		$loader($files[$kind]['path'], 'temp_memberstats_'.$kind, $archive['date']);
+	}
+
+	$verbaende = mf_ratings_memberstats_file_optional($folder, ['verbaende', 'verband']);
+	if ($verbaende) {
+		mf_ratings_memberstats_drop('temp_memberstats_verbaende');
+		$sql = wrap_sql_query('ratings_memberstats_temp_verbaende', 'memberstats');
+		wrap_db_query($sql);
+		$loader = 'mf_ratings_memberstats_load_'.$verbaende['format'];
+		$loader($verbaende['path'], 'temp_memberstats_verbaende', $archive['date']);
+		mf_ratings_memberstats_log('verbaende', ['snapshot' => $archive['date']]);
+		mf_ratings_memberstats_verbaende($archive['date']);
+		mf_ratings_memberstats_drop('temp_memberstats_verbaende');
 	}
 
 	mf_ratings_memberstats_log('clubs', ['snapshot' => $archive['date']]);
@@ -284,6 +301,36 @@ function mf_ratings_memberstats_files($folder, $archive) {
 }
 
 /**
+ * locate an optional source file in the unzipped archive folder
+ *
+ * Unlike spieler and vereine, verbaende are not required. Returns null
+ * when no matching .sql or .txt exists. Snapshots vary the basename
+ * (verbaende vs verband) and casing (VERBAND.TXT); $basenames lists
+ * accepted stems, matched case-insensitively via scandir().
+ *
+ * @param string $folder
+ * @param string|array $basenames basename without extension, e.g. verbaende
+ * @return array|null ['format' => 'sql'|'txt', 'path' => string]
+ */
+function mf_ratings_memberstats_file_optional($folder, $basenames) {
+	if (!is_array($basenames)) $basenames = [$basenames];
+	$by_format = ['sql' => [], 'txt' => []];
+	$pattern = '/^('.implode('|', array_map(function($basename) {
+		return preg_quote($basename, '/');
+	}, $basenames)).')\.(sql|txt)$/i';
+	foreach (scandir($folder) as $entry) {
+		if ($entry === '.' OR $entry === '..') continue;
+		if (!preg_match($pattern, $entry, $match)) continue;
+		$by_format[strtolower($match[2])][] = $folder.'/'.$entry;
+	}
+	if ($by_format['sql'])
+		return ['format' => 'sql', 'path' => $by_format['sql'][0]];
+	if ($by_format['txt'])
+		return ['format' => 'txt', 'path' => $by_format['txt'][0]];
+	return null;
+}
+
+/**
  * stream-load a DWZ .sql dump into a temporary table
  *
  * the SQL files are emitted in ISO-8859-1 with one REPLACE INTO statement
@@ -345,7 +392,13 @@ function mf_ratings_memberstats_load_sql($filename, $target_table, $snapshot_dat
 		if (!trim($line)) continue;
 		$line = iconv('ISO-8859-1', 'UTF-8', $line);
 		if (mf_ratings_memberstats_sql_dummy($line, $dummies)) continue;
-		$line = str_replace($needle, $replace, $line);
+		if ($kind === 'verbaende') {
+			foreach (['dwz_verbaende', 'dwz_verband', 'verband'] as $source_name) {
+				$line = str_replace('`'.$source_name.'`', $replace, $line);
+			}
+		} else {
+			$line = str_replace($needle, $replace, $line);
+		}
 		wrap_db_query($line, E_USER_WARNING);
 		$rows_done++;
 		$bytes_done = ftell($handle);
@@ -454,6 +507,9 @@ function mf_ratings_memberstats_sql_dummy($line, $patterns) {
  * vereine.txt has the same four columns as dwz_vereine in the same order:
  * ZPS|LV|Verband|Vereinname.
  *
+ * verbaende.txt / VERBAND.TXT matches dwz_verbaende:
+ * Verband|LV|Uebergeordnet|Verbandname.
+ *
  * The file encoding is CP850 (DOS multilingual) — `ü` is stored as the
  * single byte 0x81, which is what BBEdit mis-renders as `Å` in Mac OS
  * Roman.
@@ -491,8 +547,10 @@ function mf_ratings_memberstats_load_txt($filename, $target_table, $snapshot_dat
 
 		if ($kind === 'spieler')
 			$sql = mf_ratings_memberstats_txt_spieler($fields, $target_table);
-		else
+		elseif ($kind === 'vereine')
 			$sql = mf_ratings_memberstats_txt_vereine($fields, $target_table);
+		else
+			$sql = mf_ratings_memberstats_txt_verbaende($fields, $target_table);
 		if (!$sql) continue;
 		wrap_db_query($sql, E_USER_WARNING);
 		$rows_done++;
@@ -607,6 +665,32 @@ function mf_ratings_memberstats_txt_vereine($fields, $target_table) {
 }
 
 /**
+ * turn one parsed verbaende.txt row into an INSERT statement against the
+ * temporary table
+ *
+ * @param array $fields
+ * @param string $target_table
+ * @return string SQL, or '' if the row should be skipped
+ */
+function mf_ratings_memberstats_txt_verbaende($fields, $target_table) {
+	if (count($fields) < 4) return '';
+	$verband = trim($fields[0]);
+	$lv = $fields[1];
+	$uebergeordnet = trim($fields[2]);
+	$verbandname = $fields[3];
+	if ($verband === '' OR $verbandname === '') return '';
+	$sql = sprintf('INSERT INTO `%s` (`Verband`, `LV`, `Uebergeordnet`, `Verbandname`)'
+		.' VALUES ("%s", "%s", "%s", "%s")',
+		$target_table,
+		wrap_db_escape($verband),
+		wrap_db_escape($lv),
+		wrap_db_escape($uebergeordnet),
+		wrap_db_escape($verbandname)
+	);
+	return $sql;
+}
+
+/**
  * convert a legacy 6-char numeric ZPS code to the modern 5-char form
  *
  * old DSB exports used a 2-digit federation prefix (10, 11, 12, …) that
@@ -649,6 +733,79 @@ function mf_ratings_memberstats_txt_number($value) {
 	if ($value === '' OR $value === null) return 'NULL';
 	if (!is_numeric($value)) return 'NULL';
 	return (string)(int)$value;
+}
+
+/**
+ * create `contacts` + `contacts_identifiers` for federations from the
+ * snapshot's verbaende staging table
+ *
+ * Only called when the snapshot ships verbaende.sql or verbaende.txt.
+ * Parent links use Uebergeordnet from the same table (two-pass: create
+ * contacts first, then contacts_contacts).
+ *
+ * @param string $snapshot_date YYYY-MM-DD, for progress log entries
+ * @return void
+ */
+function mf_ratings_memberstats_verbaende($snapshot_date) {
+	$sql = 'SELECT v.Verband AS verband_code, v.Verbandname AS verband_name
+			, TRIM(v.Uebergeordnet) AS parent_code
+		FROM temp_memberstats_verbaende v
+		LEFT JOIN contacts_identifiers ci
+			ON ci.identifier = v.Verband
+			AND ci.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
+		WHERE ISNULL(ci.contact_identifier_id)
+		AND v.Verband <> ""
+		AND v.Verbandname <> ""';
+	$missing = wrap_db_fetch($sql, 'verband_code');
+	if (!$missing) return;
+
+	$created = [];
+	$contacts_created = 0;
+	foreach ($missing as $verband_code => $verband) {
+		$contact = [
+			'contact_category_id' => wrap_category_id('contact/federation'),
+			'contact' => $verband['verband_name']
+		];
+		$contact_id = zzform_insert('contacts', $contact);
+		if (!$contact_id) {
+			wrap_error(sprintf(
+				'memberstats: unable to insert federation for %s (%s)',
+				$verband_code, $verband['verband_name']
+			));
+			continue;
+		}
+		mf_ratings_memberstats_log('verband', [
+			'snapshot' => $snapshot_date,
+			'verband_code' => $verband_code,
+			'contact_id' => $contact_id,
+			'contact' => $verband['verband_name']
+		]);
+		$contacts_created++;
+		$identifier = [
+			'contact_id' => $contact_id,
+			'identifier' => $verband_code,
+			'identifier_category_id' => wrap_category_id('identifiers/pass_dsb'),
+			'current' => 'yes'
+		];
+		zzform_insert('contacts_identifiers', $identifier, E_USER_WARNING);
+		$created[$verband_code] = [
+			'contact_id' => $contact_id,
+			'parent_code' => $verband['parent_code'] ?? ''
+		];
+	}
+
+	foreach ($created as $verband_code => $verband) {
+		mf_ratings_memberstats_club_parent_link(
+			$verband['contact_id'],
+			$verband_code,
+			$verband['parent_code']
+		);
+	}
+
+	mf_ratings_memberstats_log('verbaende_done', [
+		'snapshot' => $snapshot_date,
+		'contacts_created' => $contacts_created
+	]);
 }
 
 /**
