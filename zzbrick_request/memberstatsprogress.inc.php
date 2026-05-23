@@ -20,10 +20,11 @@
  * it into a small status object the /_behaviour/ratings/memberstats.js
  * poller consumes. Each log entry has shape
  * `<timestamp> <action> <json-encoded payload>`; the last entry decides
- * the current state; the tail (optionally truncated) is returned for the
- * on-page log view. `ratings_memberstats_progress_tail` controls how many
- * log entries are sent: 0 means all entries, a positive value keeps only
- * the last N lines.
+ * the current state (always from the last line in the log file). Log
+ * entries for the current import run only are returned for the on-page
+ * log view (from the latest `queued`/`start` pair).
+ * `ratings_memberstats_progress_tail` optionally keeps only the last N of
+ * those entries: 0 means all, a positive value truncates the tail.
  *
  * State rules:
  *  - empty log: idle
@@ -52,8 +53,10 @@ function mod_ratings_memberstatsprogress() {
 	}
 	unset($entry);
 
+	$run = mod_ratings_memberstatsprogress_run($lines);
+
 	$tail_size = (int) wrap_setting('ratings_memberstats_progress_tail');
-	$tail = $tail_size > 0 ? array_slice($lines, -$tail_size) : $lines;
+	$tail = $tail_size > 0 ? array_slice($run, -$tail_size) : $run;
 
 	$data = [
 		'state' => 'idle',
@@ -103,4 +106,38 @@ function mod_ratings_memberstatsprogress() {
 	$page['text'] = json_encode($data);
 	$page['content_type'] = 'json';
 	return $page;
+}
+
+/**
+ * log lines belonging to the current import run only
+ *
+ * One run begins at `queued` (operator click) and `start` (worker). Walk
+ * backwards from the end of the log and return everything from that
+ * pair — or from `queued` alone when the worker has not logged `start`
+ * yet.
+ *
+ * @param array $lines decoded log rows from wrap_file_log()
+ * @return array
+ */
+function mod_ratings_memberstatsprogress_run($lines) {
+	if (!$lines) return [];
+
+	$begin = null;
+	for ($index = count($lines) - 1; $index >= 0; $index--) {
+		if ($lines[$index]['action'] !== 'start') continue;
+		$begin = $index;
+		if ($begin > 0 && $lines[$begin - 1]['action'] === 'queued')
+			$begin--;
+		break;
+	}
+	if ($begin === null) {
+		for ($index = count($lines) - 1; $index >= 0; $index--) {
+			if ($lines[$index]['action'] !== 'queued') continue;
+			$begin = $index;
+			break;
+		}
+	}
+	if ($begin === null) return [];
+
+	return array_slice($lines, $begin);
 }
