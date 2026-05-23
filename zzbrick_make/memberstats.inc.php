@@ -173,7 +173,9 @@ function mod_ratings_make_memberstats($params) {
  * into staging tables defined in configuration/memberstats.sql (from either
  * .sql or .txt source files, see below). When the snapshot includes
  * verbaende.sql or verbaende.txt, missing federation contacts are created
- * before clubs. auto-creates `contacts` for any ZPS codes whose club is not currently
+ * before clubs. Clubs or federations present in the chronologically
+ * previous archive's vereine/verbaende but absent from the current snapshot
+ * get contacts.end_date set to YYYY-MM-00 (month of the snapshot). auto-creates `contacts` for any ZPS codes whose club is not currently
  * linked, and inserts one row per player into memberstats with the given
  * snapshot_date. With $overwrite, existing rows for that date are removed
  * first so a re-import is idempotent.
@@ -233,6 +235,8 @@ function mf_ratings_memberstats_import($archive, $overwrite) {
 		mf_ratings_memberstats_drop('temp_memberstats_verbaende');
 	}
 
+	mf_ratings_memberstats_close_removed($archive['date'], (bool)$verbaende, $folder);
+
 	mf_ratings_memberstats_log('clubs', ['snapshot' => $archive['date']]);
 	mf_ratings_memberstats_clubs($archive['date'], $spieler_table);
 
@@ -253,6 +257,236 @@ function mf_ratings_memberstats_import($archive, $overwrite) {
 	// the unzip folder is ours; clear out any leftovers (verband.sql,
 	// VERBAND.TXT, readme variants, …) the snapshot may have shipped
 	mf_ratings_memberstats_rmtree($folder);
+}
+
+/**
+ * set end_date on club/federation contacts dropped from the DSB export
+ *
+ * Compares the current snapshot's vereine (and verbaende when shipped)
+ * staging tables with the chronologically previous DWZ archive. Codes
+ * that existed before but not now get end_date = YYYY-MM-00 from the
+ * current snapshot date, but only when a matching pass_dsb contact
+ * exists with end_date still NULL.
+ *
+ * Current snapshot codes are read from $current_folder (the archive
+ * just unzipped), not from staging tables that may already be dropped.
+ *
+ * @param string $snapshot_date YYYY-MM-DD
+ * @param bool $has_verbaende current snapshot includes verbaende data
+ * @param string $current_folder unzipped current archive directory
+ * @return void
+ */
+function mf_ratings_memberstats_close_removed($snapshot_date, $has_verbaende, $current_folder) {
+	$previous = mf_ratings_memberstats_previous_archive($snapshot_date);
+	if (!$previous) return;
+
+	mf_ratings_memberstats_log('close_removed', [
+		'snapshot' => $snapshot_date,
+		'previous_snapshot' => $previous['date']
+	]);
+
+	$previous_folder = mf_ratings_unzip('DWZ', $previous['filename']);
+	$contacts_closed = 0;
+
+	$previous_vereine = mf_ratings_memberstats_archive_codes($previous_folder, ['vereine'], true);
+	$current_vereine = mf_ratings_memberstats_archive_codes($current_folder, ['vereine'], true);
+	if ($previous_vereine) {
+		$removed = array_diff($previous_vereine, $current_vereine);
+		$contacts_closed += mf_ratings_memberstats_contacts_end_date(
+			$snapshot_date,
+			$removed,
+			[
+				wrap_category_id('contact/club'),
+				wrap_category_id('contact/chess-department')
+			],
+			'club_code'
+		);
+	}
+
+	if ($has_verbaende) {
+		$previous_verbaende = mf_ratings_memberstats_archive_codes(
+			$previous_folder,
+			['verbaende', 'verband']
+		);
+		$current_verbaende = mf_ratings_memberstats_archive_codes(
+			$current_folder,
+			['verbaende', 'verband']
+		);
+		if ($previous_verbaende) {
+			$removed = array_diff($previous_verbaende, $current_verbaende);
+			$contacts_closed += mf_ratings_memberstats_contacts_end_date(
+				$snapshot_date,
+				$removed,
+				[wrap_category_id('contact/federation')],
+				'verband_code'
+			);
+		}
+	}
+
+	mf_ratings_memberstats_rmtree($previous_folder);
+
+	mf_ratings_memberstats_log('close_done', [
+		'snapshot' => $snapshot_date,
+		'contacts_closed' => $contacts_closed
+	]);
+}
+
+/**
+ * chronologically previous DWZ archive before $snapshot_date
+ *
+ * @param string $snapshot_date YYYY-MM-DD
+ * @return array|null ['date' => string, 'filename' => string]
+ */
+function mf_ratings_memberstats_previous_archive($snapshot_date) {
+	foreach (mf_ratings_archives('DWZ') as $archive) {
+		if ($archive['date'] < $snapshot_date) return $archive;
+	}
+	return null;
+}
+
+/**
+ * pass_dsb codes from a vereine or verbaende file in an unzipped archive
+ *
+ * @param string $folder
+ * @param string|array $basenames file stem(s), e.g. vereine or verbaende/verband
+ * @param bool $normalize_zps apply mf_ratings_memberstats_zps_normalize (vereine .txt)
+ * @return array list of codes, empty when the file is missing
+ */
+function mf_ratings_memberstats_archive_codes($folder, $basenames, $normalize_zps = false) {
+	$file = mf_ratings_memberstats_file_optional($folder, $basenames);
+	if (!$file) return [];
+	if ($file['format'] === 'sql')
+		return mf_ratings_memberstats_sql_codes($file['path']);
+	return mf_ratings_memberstats_txt_codes($file['path'], $normalize_zps);
+}
+
+/**
+ * first-column codes from a DWZ .sql dump (one REPLACE INTO value per line)
+ *
+ * @param string $filename
+ * @return array
+ */
+function mf_ratings_memberstats_sql_codes($filename) {
+	$codes = [];
+	$handle = fopen($filename, 'r');
+	if (!$handle) return $codes;
+	while (($line = fgets($handle)) !== false) {
+		if (!str_contains($line, 'REPLACE INTO')) continue;
+		$line = iconv('ISO-8859-1', 'UTF-8', $line);
+		if (!preg_match('/VALUES\s*\((.*)\)\s*;?\s*$/', $line, $match)) continue;
+		$code = mf_ratings_memberstats_sql_first_value($match[1]);
+		if ($code === null || $code === '') continue;
+		$codes[$code] = true;
+	}
+	fclose($handle);
+	return array_keys($codes);
+}
+
+/**
+ * @param string $values leading fragment of a SQL VALUES tuple
+ * @return string|null
+ */
+function mf_ratings_memberstats_sql_first_value($values) {
+	$values = ltrim($values);
+	if ($values === '') return null;
+	if ($values[0] === '"' || $values[0] === "'") {
+		$quote = $values[0];
+		$end = strpos($values, $quote, 1);
+		if ($end === false) return null;
+		return substr($values, 1, $end - 1);
+	}
+	if (preg_match('/^null\b/i', $values)) return null;
+	if (preg_match('/^(\d+)/', $values, $match)) return $match[1];
+	return null;
+}
+
+/**
+ * first-column codes from a pipe-separated DWZ .txt file
+ *
+ * @param string $filename
+ * @param bool $normalize_zps
+ * @return array
+ */
+function mf_ratings_memberstats_txt_codes($filename, $normalize_zps = false) {
+	$codes = [];
+	$handle = fopen($filename, 'r');
+	if (!$handle) return $codes;
+	while (($line = fgets($handle)) !== false) {
+		$line = rtrim($line, "\r\n");
+		if ($line === '') continue;
+		$line = iconv('CP850', 'UTF-8//TRANSLIT', $line);
+		$fields = explode('|', $line);
+		if (!$fields) continue;
+		$code = $normalize_zps
+			? mf_ratings_memberstats_zps_normalize(trim($fields[0]))
+			: trim($fields[0]);
+		if ($code === '') continue;
+		$codes[$code] = true;
+	}
+	fclose($handle);
+	return array_keys($codes);
+}
+
+/**
+ * dissolution month for contacts.end_date from a snapshot date
+ *
+ * @param string $snapshot_date YYYY-MM-DD
+ * @return string YYYY-MM-00
+ */
+function mf_ratings_memberstats_end_date($snapshot_date) {
+	return substr($snapshot_date, 0, 7).'-00';
+}
+
+/**
+ * set end_date on live contacts whose pass_dsb code was removed
+ *
+ * @param string $snapshot_date YYYY-MM-DD
+ * @param array $codes pass_dsb identifiers no longer in the export
+ * @param array $category_ids contacts.contact_category_id values to match
+ * @param string $log_code_field club_code or verband_code in progress log
+ * @return int number of contacts updated
+ */
+function mf_ratings_memberstats_contacts_end_date($snapshot_date, $codes, $category_ids, $log_code_field) {
+	if (!$codes) return 0;
+	$codes = array_values(array_unique(array_filter($codes)));
+	if (!$codes) return 0;
+
+	$end_date = mf_ratings_memberstats_end_date($snapshot_date);
+	$escaped = array_map('wrap_db_escape', $codes);
+	$in = '"'.implode('","', $escaped).'"';
+	$categories = implode(',', array_map('intval', $category_ids));
+
+	$sql = 'SELECT ci.identifier AS code, c.contact_id, c.contact
+		FROM contacts c
+		INNER JOIN contacts_identifiers ci ON ci.contact_id = c.contact_id
+		WHERE ci.identifier IN ('.$in.')
+		AND ci.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
+		AND c.contact_category_id IN ('.$categories.')
+		AND ISNULL(c.end_date)';
+	$contacts = wrap_db_fetch($sql, 'code');
+	if (!$contacts) return 0;
+
+	$sql = 'UPDATE contacts c
+		INNER JOIN contacts_identifiers ci ON ci.contact_id = c.contact_id
+		SET c.end_date = "%s"
+		WHERE ci.identifier IN ('.$in.')
+		AND ci.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
+		AND c.contact_category_id IN ('.$categories.')
+		AND ISNULL(c.end_date)';
+	$sql = sprintf($sql, wrap_db_escape($end_date));
+	wrap_db_query($sql);
+
+	foreach ($contacts as $code => $contact) {
+		$entry = [
+			'snapshot' => $snapshot_date,
+			'contact_id' => $contact['contact_id'],
+			'contact' => $contact['contact'],
+			'end_date' => $end_date
+		];
+		$entry[$log_code_field] = $code;
+		mf_ratings_memberstats_log('contact_end', $entry);
+	}
+	return count($contacts);
 }
 
 /**

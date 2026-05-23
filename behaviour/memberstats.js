@@ -160,6 +160,15 @@
 			if (result.snapshot) extras.push(result.snapshot);
 			return time + '  verband' + (extras.length ? '  ' + extras.join(', ') : '');
 		}
+		if (entry.action === 'contact_end') {
+			if (result.club_code) extras.push(result.club_code);
+			if (result.verband_code) extras.push(result.verband_code);
+			if (result.contact) extras.push(result.contact);
+			if (result.contact_id) extras.push('#' + result.contact_id);
+			if (result.end_date) extras.push(result.end_date);
+			if (result.snapshot) extras.push(result.snapshot);
+			return time + '  contact_end' + (extras.length ? '  ' + extras.join(', ') : '');
+		}
 		if (result.snapshot) extras.push(result.snapshot);
 		if (result.bytes_total) {
 			const pct = Math.round(100 * (result.bytes_done || 0) / result.bytes_total);
@@ -169,6 +178,8 @@
 			extras.push(result.rows_done.toLocaleString() + ' ' + labels.rows);
 		if (result.contacts_created !== undefined && result.contacts_created !== null)
 			extras.push(result.contacts_created.toLocaleString() + ' contacts');
+		if (result.contacts_closed !== undefined && result.contacts_closed !== null)
+			extras.push(result.contacts_closed.toLocaleString() + ' closed');
 		if (result.overwrite) extras.push('overwrite');
 		if (result.club_code) extras.push(result.club_code);
 		if (result.contact) extras.push(result.contact);
