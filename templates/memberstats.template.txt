@@ -25,10 +25,12 @@
 <div class="memberstats"
 	data-progress-url="%%% path ratings_memberstats_progress %%%"
 	data-poll-ms="%%% item poll_ms %%%"
+	data-auto-delay-seconds="%%% item auto_delay_seconds %%%"
 	data-overwrite="%%% if overwrite %%%1%%% endif %%%"
 	data-import-next="%%% item import_next %%%"
 	data-missing-count="%%% item missing_count %%%">
 	<button class="memberstats-start" type="button" hidden></button>
+	<button class="memberstats-auto-stop" type="button" hidden></button>
 	<progress class="memberstats-bar" max="100" value="0" hidden></progress>
 	<p class="memberstats-status" hidden></p>
 	<pre class="memberstats-log" hidden></pre>

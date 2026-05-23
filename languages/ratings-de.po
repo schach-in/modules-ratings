@@ -82,6 +82,14 @@ msgstr "Verband"
 msgid "contact_end"
 msgstr "Organisation aufgelöst"
 
+#: behaviour/memberstats.js
+msgid "Stop auto import (%s)"
+msgstr "Auto-Import stoppen (%s)"
+
+#: behaviour/memberstats.js
+msgid "Auto import stopped"
+msgstr "Auto-Import gestoppt"
+
 #: configuration/settings.cfg
 msgid "URL under which the current FIDE Elo data is available in TXT format"
 msgstr "URL, unter der die aktuellen FIDE-Elo-Daten im TXT-Format vorliegen"

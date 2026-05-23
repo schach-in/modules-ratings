@@ -8,8 +8,10 @@
  * spieler.sql and vereine.sql for the next missing snapshot, loads them
  * into temporary tables and writes one memberstats row per player with
  * the snapshot date taken from the archive filename. One click in the
- * UI imports exactly one snapshot; subsequent snapshots are not chained
- * automatically. Snapshots already present in `memberstats` are skipped;
+ * UI imports exactly one snapshot; while the page stays open the JS
+ * poller can chain further snapshots automatically after each successful
+ * import (countdown configurable via ratings_memberstats_auto_delay_seconds).
+ * Snapshots already present in `memberstats` are skipped;
  * a single date can be re-imported with ?force=YYYY-MM-DD.
  *
  * Part of »Zugzwang Project«
@@ -31,9 +33,9 @@
  *    enqueues a sequential background job, then returns immediately.
  *  - POST with `sequential` (the worker job itself): acquires
  *    wrap_lock('memberstats', 'sequential', 1800), imports exactly one
- *    snapshot (logging each phase), releases the lock and stops. No
- *    chained next-snapshot dispatch — the operator clicks again for the
- *    next one, watching progress live via /_behaviour/ratings/memberstats.js.
+ *    snapshot (logging each phase), releases the lock and stops. Further
+ *    snapshots are started from the browser after a countdown when auto
+ *    import is enabled; see /_behaviour/ratings/memberstats.js.
  *
  * The 30-minute lock timeout is auto-recovery insurance only; a single
  * snapshot import completes well under that window. Foreign callers
@@ -103,6 +105,7 @@ function mod_ratings_make_memberstats($params) {
 	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 		$data['progress_url'] = wrap_path('ratings_memberstats_progress');
 		$data['poll_ms'] = (int) wrap_setting('ratings_memberstats_poll_interval') * 1000;
+		$data['auto_delay_seconds'] = wrap_setting('ratings_memberstats_auto_delay_seconds');
 		$page['text'] = wrap_template('memberstats', $data);
 		return $page;
 	}

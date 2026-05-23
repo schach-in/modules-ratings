@@ -24,6 +24,7 @@
 
 	const progressUrl = root.dataset.progressUrl || '';
 	const pollMs = parseInt(root.dataset.pollMs, 10) || 1000;
+	const autoDelay = parseInt(root.dataset.autoDelaySeconds, 10) || 10;
 	const overwrite = root.dataset.overwrite === '1';
 	const importNext = root.dataset.importNext || '';
 	const missingCount = parseInt(root.dataset.missingCount, 10) || 0;
@@ -41,15 +42,22 @@
 		logContact: '%%% text contact %%%',
 		logVerband: '%%% text verband %%%',
 		logContactEnd: '%%% text contact_end %%%',
-		failedStart: '%%% text Could not start background job. %%%'
+		failedStart: '%%% text Could not start background job. %%%',
+		autoStop: '%%% text Stop auto import (%s) %%%',
+		autoStopped: '%%% text Auto import stopped %%%'
 	};
 
 	const button = root.querySelector('.memberstats-start');
+	const autoButton = root.querySelector('.memberstats-auto-stop');
 	const bar = root.querySelector('.memberstats-bar');
 	const status = root.querySelector('.memberstats-status');
 	const log = root.querySelector('.memberstats-log');
 
 	let pollTimer = null;
+	let countdownTimer = null;
+	let auto = true;
+	let watched = false;
+	let remaining = missingCount;
 
 	function startButtonLabel() {
 		return overwrite ? labels.reimport + ' ' + importNext : labels.importNext;
@@ -57,6 +65,31 @@
 
 	function show(el) { el.hidden = false; }
 	function hide(el) { el.hidden = true; }
+
+	function clearCountdown() {
+		if (countdownTimer) clearInterval(countdownTimer);
+		countdownTimer = null;
+		hide(autoButton);
+	}
+
+	function scheduleNext() {
+		if (!auto || overwrite || remaining <= 0) return;
+		let left = autoDelay;
+		autoButton.disabled = false;
+		autoButton.textContent = labels.autoStop.replace('%s', left);
+		show(autoButton);
+		hide(button);
+		countdownTimer = setInterval(function () {
+			left--;
+			if (left <= 0) {
+				clearCountdown();
+				remaining--;
+				start();
+				return;
+			}
+			autoButton.textContent = labels.autoStop.replace('%s', left);
+		}, 1000);
+	}
 
 	function renderIdle(state) {
 		hide(bar);
@@ -67,7 +100,11 @@
 		} else {
 			hide(log);
 		}
-		if (overwrite || missingCount > 0) {
+		if (countdownTimer) {
+			hide(button);
+			return;
+		}
+		if (overwrite || remaining > 0) {
 			button.textContent = startButtonLabel();
 			button.disabled = false;
 			show(button);
@@ -81,7 +118,9 @@
 	}
 
 	function renderBusy(state) {
+		clearCountdown();
 		hide(button);
+		hide(autoButton);
 		if (state.percent !== null && state.percent !== undefined) {
 			bar.value = state.percent;
 			bar.removeAttribute('indeterminate');
@@ -108,6 +147,8 @@
 	}
 
 	function renderStuck(state) {
+		clearCountdown();
+		watched = false;
 		hide(bar);
 		const parts = [labels.stuck];
 		if (state.snapshot) parts.push(state.snapshot);
@@ -120,7 +161,7 @@
 		show(status);
 		log.textContent = (state.tail || []).map(formatEntry).join('\n');
 		show(log);
-		if (overwrite || missingCount > 0) {
+		if (overwrite || remaining > 0) {
 			button.textContent = startButtonLabel();
 			button.disabled = false;
 			show(button);
@@ -201,7 +242,15 @@
 			if (!response.ok) return;
 			const state = await response.json();
 			render(state);
-			if (state.state !== 'busy') stopPolling();
+			if (state.state === 'busy') {
+				watched = true;
+			} else {
+				stopPolling();
+				if (watched && state.action === 'done' && remaining > 0) {
+					watched = false;
+					scheduleNext();
+				}
+			}
 		} catch (e) {
 			// network glitch — next tick will retry
 		}
@@ -220,7 +269,10 @@
 
 	async function start() {
 		button.disabled = true;
-		// optimistic busy state so the operator sees instant feedback
+		clearCountdown();
+		auto = true;
+		watched = true;
+		autoButton.disabled = false;
 		renderBusy({
 			state: 'busy',
 			action: 'queued',
@@ -236,9 +288,9 @@
 		try {
 			const response = await fetch(window.location.href, {method: 'POST'});
 			if (!response.ok) throw new Error(response.statusText);
-			// the worker will append log lines; the next poll picks them up
 		} catch (e) {
 			stopPolling();
+			watched = false;
 			hide(bar);
 			status.textContent = labels.failedStart;
 			show(status);
@@ -249,10 +301,18 @@
 	}
 
 	button.addEventListener('click', start);
+	autoButton.addEventListener('click', function () {
+		auto = false;
+		clearCountdown();
+		autoButton.textContent = labels.autoStopped;
+		autoButton.disabled = true;
+		show(autoButton);
+		button.disabled = false;
+		show(button);
+	});
 
 	async function init() {
 		if (!progressUrl) {
-			// nothing to poll — fall back to the static idle UI
 			renderIdle(null);
 			return;
 		}
@@ -261,7 +321,10 @@
 			if (!response.ok) throw new Error(response.statusText);
 			const state = await response.json();
 			render(state);
-			if (state.state === 'busy') startPolling();
+			if (state.state === 'busy') {
+				watched = true;
+				startPolling();
+			}
 		} catch (e) {
 			renderIdle(null);
 		}

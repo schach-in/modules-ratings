@@ -80,6 +80,14 @@ msgstr ""
 msgid "contact_end"
 msgstr ""
 
+#: behaviour/memberstats.js
+msgid "Stop auto import (%s)"
+msgstr ""
+
+#: behaviour/memberstats.js
+msgid "Auto import stopped"
+msgstr ""
+
 #: configuration/settings.cfg
 msgid "URL under which the current FIDE Elo data is available in TXT format"
 msgstr ""
