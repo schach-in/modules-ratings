@@ -51,7 +51,7 @@ CREATE TABLE `temp_memberstats_spieler_v1` (
   KEY `Spielername` (`Spielername`),
   KEY `ZPS` (`ZPS`),
   KEY `Mgl_Nr` (`Mgl_Nr`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
 /**
@@ -84,7 +84,7 @@ CREATE TABLE `temp_memberstats_spieler_v2` (
   KEY `ZPS` (`ZPS`),
   KEY `Mgl_Nr` (`Mgl_Nr`),
   KEY `PID` (`PID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
 /**
@@ -100,7 +100,7 @@ CREATE TABLE `temp_memberstats_vereine` (
   `Verband` char(3) NOT NULL DEFAULT '',
   `Vereinname` varchar(64) NOT NULL DEFAULT '',
   PRIMARY KEY (`ZPS`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
 /**
@@ -117,4 +117,4 @@ CREATE TABLE `temp_memberstats_verbaende` (
   `Uebergeordnet` char(3) NOT NULL DEFAULT '',
   `Verbandname` varchar(64) NOT NULL DEFAULT '',
   PRIMARY KEY (`Verband`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
