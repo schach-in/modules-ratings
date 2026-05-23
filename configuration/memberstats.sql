@@ -31,8 +31,8 @@
 -- ratings_memberstats_temp_spieler_v1 --
 CREATE TABLE `temp_memberstats_spieler_v1` (
   `ZPS` varchar(5) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
-  /* alphanumeric in old .txt snapshots (e.g. "B49"); dwz_spieler: smallint */
-  `Mgl_Nr` varchar(8) NOT NULL,
+  /* nullable: passive players and others may have no membership number */
+  `Mgl_Nr` varchar(8) NULL DEFAULT NULL,
   `Status` char(1) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
   `Spielername` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `Spielername_G` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -66,7 +66,7 @@ CREATE TABLE `temp_memberstats_spieler_v1` (
 CREATE TABLE `temp_memberstats_spieler_v2` (
   `PID` int unsigned NOT NULL,
   `ZPS` varchar(5) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
-  `Mgl_Nr` varchar(8) NOT NULL,
+  `Mgl_Nr` varchar(8) NULL DEFAULT NULL,
   `Status` char(1) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
   `Spielername` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `Geschlecht` char(1) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,

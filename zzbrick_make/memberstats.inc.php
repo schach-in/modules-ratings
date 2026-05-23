@@ -404,9 +404,8 @@ function mf_ratings_memberstats_file_optional($folder, $basenames) {
  *
  * the SQL files are emitted in ISO-8859-1 with one REPLACE INTO statement
  * per line; we convert each line to UTF-8, swap the original table name
- * for the temporary one and run the statement. Dummy rows (passive
- * players with no Mgl_Nr and unnamed players) are skipped, identical to
- * the filter in zzbrick_make/ratings-prepare-dwz.inc.php
+ * for the temporary one and run the statement. Dummy rows (unnamed
+ * players) are skipped.
  *
  * spieler.sql exists in two column layouts, each with its own staging
  * table in configuration/memberstats.sql:
@@ -491,8 +490,8 @@ function mf_ratings_memberstats_load_sql($filename, $target_table, $snapshot_dat
 /**
  * dummy-row filter patterns for spieler.sql v1 and v2
  *
- * matches the same three cases as zzbrick_make/ratings-prepare-dwz.inc.php
- * (passive without Mgl_Nr, active/passive without name)
+ * matches unnamed players (same as the name filter in
+ * zzbrick_make/ratings-prepare-dwz.inc.php)
  *
  * @param string $source_table
  * @param string $version 'v1' or 'v2'
@@ -502,13 +501,13 @@ function mf_ratings_memberstats_sql_dummies($source_table, $version) {
 	$prefix = '/^REPLACE INTO `'.preg_quote($source_table, '/').'` VALUES ';
 	if ($version === 'v1') {
 		return [
-			$prefix.'\(\s*\'\d+\'\s*,\s*NULL\s*,\s*\'P\',/',
-			$prefix.'\(\s*\'\d+\'\s*,\s*\'\d+\'\s*,\s*\'A\'\s*,\s*\'\',/',
-			$prefix.'\(\s*\'\d+\'\s*,\s*\'\d+\'\s*,\s*\'P\'\s*,\s*\'\',/'
+			$prefix.'\(\s*\'[^\']*\'\s*,\s*[^\)]*,\s*\'A\'\s*,\s*\'\',/',
+			$prefix.'\(\s*\'[^\']*\'\s*,\s*[^\)]*,\s*\'P\'\s*,\s*\'\',/',
+			$prefix.'\(\s*"[^"]*"\s*,\s*[^,]*,\s*"A"\s*,\s*"",/',
+			$prefix.'\(\s*"[^"]*"\s*,\s*[^,]*,\s*"P"\s*,\s*"",/'
 		];
 	}
 	return [
-		$prefix.'\(\d+,"[0-9A-Z]+",null,"P",/',
 		$prefix.'\(\d+,"[0-9A-Z]+",\d+,"A","",/',
 		$prefix.'\(\d+,"[0-9A-Z]+",\d+,"P","",/'
 	];
@@ -627,8 +626,7 @@ function mf_ratings_memberstats_load_txt($filename, $target_table, $snapshot_dat
 
 /**
  * turn one parsed spieler.txt row into an INSERT statement against the
- * temporary table; same dummy-row filters as the SQL loader (passive
- * players with no Mgl_Nr, players without a name)
+ * temporary table; skip rows without a Spielername
  *
  * INSERT IGNORE because old .txt snapshots occasionally list the same
  * (ZPS, Mgl_Nr) twice — once as the established member and once with
@@ -662,16 +660,15 @@ function mf_ratings_memberstats_txt_spieler($fields, $target_table) {
 	$fide_land        = $fields[12];
 
 	if ($spielername === '') return '';
-	if ($status === 'P' AND ($mgl_nr === '' OR $mgl_nr === '0')) return '';
-	if ($zps === '' OR $mgl_nr === '') return '';
+	if ($zps === '') return '';
 
 	$sql = sprintf('INSERT INTO `%s` (`ZPS`, `Mgl_Nr`, `Status`, `Spielername`'
 		.', `Geschlecht`, `Spielberechtigung`, `Geburtsjahr`, `Letzte_Auswertung`'
 		.', `DWZ`, `DWZ_Index`, `FIDE_Elo`, `FIDE_Titel`, `FIDE_ID`, `FIDE_Land`)'
-		.' VALUES ("%s", "%s", %s, "%s", %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
+		.' VALUES ("%s", %s, %s, "%s", %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
 		$target_table,
 		wrap_db_escape($zps),
-		wrap_db_escape($mgl_nr),
+		mf_ratings_memberstats_txt_string($mgl_nr),
 		mf_ratings_memberstats_txt_string($status),
 		wrap_db_escape($spielername),
 		mf_ratings_memberstats_txt_string($geschlecht),
