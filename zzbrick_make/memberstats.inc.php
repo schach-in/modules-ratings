@@ -582,7 +582,9 @@ function mf_ratings_memberstats_rmtree($path) {
  * the .sql variant where both exist
  *
  * Basenames and extensions are matched case-insensitively (SPIELER.TXT
- * on Linux, etc.) via mf_ratings_memberstats_file_optional().
+ * on Linux, etc.). Older *-txt ZIPs ship files in a nested subfolder
+ * (e.g. 2008-05-28-LV-0-txt/SPIELER.TXT); see
+ * mf_ratings_memberstats_file_optional().
  *
  * @param string $folder
  * @param string $archive original ZIP path, only used for error reporting
@@ -610,13 +612,23 @@ function mf_ratings_memberstats_files($folder, $archive) {
  * Unlike spieler and vereine, verbaende are not required. Returns null
  * when no matching .sql or .txt exists. Snapshots vary the basename
  * (verbaende vs verband) and casing (VERBAND.TXT); $basenames lists
- * accepted stems, matched case-insensitively via scandir().
+ * accepted stems, matched case-insensitively via scandir(). When the
+ * unzip root holds only a subfolder (common for *-txt archives), that
+ * subfolder is searched too.
  *
  * @param string $folder
  * @param string|array $basenames basename without extension, e.g. verbaende
  * @return array|null ['format' => 'sql'|'txt', 'path' => string]
  */
 function mf_ratings_memberstats_file_optional($folder, $basenames) {
+	foreach (mf_ratings_memberstats_archive_folders($folder) as $search_folder) {
+		$file = mf_ratings_memberstats_file_in_folder($search_folder, $basenames);
+		if ($file) return $file;
+	}
+	return null;
+}
+
+function mf_ratings_memberstats_file_in_folder($folder, $basenames) {
 	if (!is_array($basenames)) $basenames = [$basenames];
 	$by_format = ['sql' => [], 'txt' => []];
 	$pattern = '/^('.implode('|', array_map(function($basename) {
@@ -632,6 +644,17 @@ function mf_ratings_memberstats_file_optional($folder, $basenames) {
 	if ($by_format['txt'])
 		return ['format' => 'txt', 'path' => $by_format['txt'][0]];
 	return null;
+}
+
+function mf_ratings_memberstats_archive_folders($folder) {
+	$folders = [$folder];
+	foreach (scandir($folder) as $entry) {
+		if ($entry === '.' OR $entry === '..') continue;
+		$child = $folder.'/'.$entry;
+		if (is_dir($child) AND !is_link($child))
+			$folders[] = $child;
+	}
+	return $folders;
 }
 
 /**
