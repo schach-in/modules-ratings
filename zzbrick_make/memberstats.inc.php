@@ -202,19 +202,24 @@ function mf_ratings_memberstats_import($archive, $overwrite) {
 
 	// Staging tables from configuration/memberstats.sql — not LIKE dwz_*,
 	// so snapshot import keeps working when the live DWZ schema changes.
-	// Drop any leftovers from a previous failed run before recreating.
-	mf_ratings_memberstats_drop('temp_memberstats_spieler');
-	$sql = wrap_sql_query('ratings_memberstats_temp_spieler', 'memberstats');
-	wrap_db_query($sql);
-
+	mf_ratings_memberstats_drop('temp_memberstats_spieler_v1');
+	mf_ratings_memberstats_drop('temp_memberstats_spieler_v2');
 	mf_ratings_memberstats_drop('temp_memberstats_vereine');
 	$sql = wrap_sql_query('ratings_memberstats_temp_vereine', 'memberstats');
 	wrap_db_query($sql);
 
-	foreach (['spieler', 'vereine'] as $kind) {
-		$loader = 'mf_ratings_memberstats_load_'.$files[$kind]['format'];
-		$loader($files[$kind]['path'], 'temp_memberstats_'.$kind, $archive['date']);
-	}
+	$spieler_version = mf_ratings_memberstats_spieler_version($files['spieler']);
+	$spieler_table = 'temp_memberstats_spieler_'.$spieler_version;
+	$sql = wrap_sql_query('ratings_memberstats_temp_spieler_'.$spieler_version, 'memberstats');
+	wrap_db_query($sql);
+
+	$loader = 'mf_ratings_memberstats_load_'.$files['spieler']['format'];
+	$loader($files['spieler']['path'], $spieler_table, $archive['date']);
+
+	$loader = 'mf_ratings_memberstats_load_'.$files['vereine']['format'];
+	$loader($files['vereine']['path'], 'temp_memberstats_vereine', $archive['date']);
+
+	mf_ratings_memberstats_spieler_geschlecht_default($spieler_table);
 
 	$verbaende = mf_ratings_memberstats_file_optional($folder, ['verbaende', 'verband']);
 	if ($verbaende) {
@@ -229,7 +234,7 @@ function mf_ratings_memberstats_import($archive, $overwrite) {
 	}
 
 	mf_ratings_memberstats_log('clubs', ['snapshot' => $archive['date']]);
-	mf_ratings_memberstats_clubs($archive['date']);
+	mf_ratings_memberstats_clubs($archive['date'], $spieler_table);
 
 	if ($overwrite) {
 		$sql = sprintf(
@@ -240,14 +245,78 @@ function mf_ratings_memberstats_import($archive, $overwrite) {
 	}
 
 	mf_ratings_memberstats_log('insert', ['snapshot' => $archive['date']]);
-	mf_ratings_memberstats_insert($archive['date']);
+	mf_ratings_memberstats_insert($archive['date'], $spieler_table);
 
-	mf_ratings_memberstats_drop('temp_memberstats_spieler');
+	mf_ratings_memberstats_drop($spieler_table);
 	mf_ratings_memberstats_drop('temp_memberstats_vereine');
 
 	// the unzip folder is ours; clear out any leftovers (verband.sql,
 	// VERBAND.TXT, readme variants, …) the snapshot may have shipped
 	mf_ratings_memberstats_rmtree($folder);
+}
+
+/**
+ * set Geschlecht to M where the DSB export left it NULL (meaning male)
+ *
+ * Same normalisation as zzbrick_make/ratings-prepare-dwz.inc.php; applied
+ * after every spieler load (.sql or .txt) before memberstats rows are built.
+ *
+ * @param string $spieler_table temp_memberstats_spieler_v1 or _v2
+ * @return void
+ */
+function mf_ratings_memberstats_spieler_geschlecht_default($spieler_table) {
+	$sql = sprintf(
+		'UPDATE `%s` SET Geschlecht = "M" WHERE ISNULL(Geschlecht)',
+		$spieler_table
+	);
+	wrap_db_query($sql);
+}
+
+/**
+ * pick the spieler staging table version (v1 or v2) for this snapshot
+ *
+ * .txt snapshots always use v1. .sql snapshots are classified from the
+ * first REPLACE INTO line — see mf_ratings_memberstats_sql_spieler_version().
+ *
+ * @param array $file ['format' => 'sql'|'txt', 'path' => string]
+ * @return string 'v1' or 'v2'
+ */
+function mf_ratings_memberstats_spieler_version($file) {
+	if ($file['format'] === 'txt') return 'v1';
+	$handle = fopen($file['path'], 'r');
+	if (!$handle)
+		wrap_error(sprintf('memberstats: unable to open %s', $file['path']), E_USER_ERROR);
+	$version = mf_ratings_memberstats_sql_spieler_version($handle);
+	fclose($handle);
+	return $version;
+}
+
+/**
+ * peek the first REPLACE INTO line of an open spieler.sql to pick v1 or v2
+ *
+ * v2: VALUES (1234,"AB01",… — bare integer PID first
+ * v1: VALUES ('10614',… or ("10614",… — quoted ZPS first
+ *
+ * @param resource $handle open file handle, rewound on return
+ * @return string 'v1' or 'v2'
+ */
+function mf_ratings_memberstats_sql_spieler_version($handle) {
+	rewind($handle);
+	$version = 'v2';
+	while (($line = fgets($handle)) !== false) {
+		if (!str_contains($line, 'REPLACE INTO')) continue;
+		if (preg_match('/REPLACE INTO `\w+` VALUES \(\s*\d+,/', $line)) {
+			$version = 'v2';
+			break;
+		}
+		if (preg_match('/REPLACE INTO `\w+` VALUES \(\s*[\'"]/', $line)) {
+			$version = 'v1';
+			break;
+		}
+		break;
+	}
+	rewind($handle);
+	return $version;
 }
 
 /**
@@ -339,18 +408,12 @@ function mf_ratings_memberstats_file_optional($folder, $basenames) {
  * players with no Mgl_Nr and unnamed players) are skipped, identical to
  * the filter in zzbrick_make/ratings-prepare-dwz.inc.php
  *
- * Two dump variants are supported for spieler.sql:
- *  - modern (post 2024-05-22): 16 columns, PID first, bare integers and
- *    double-quoted strings, `null` lowercase
- *  - legacy (pre 2024-05-22): 15 columns, ZPS first, an extra
- *    `Spielername_G` between `Spielername` and `Geschlecht`, single-quoted
- *    values and uppercase `NULL`
+ * spieler.sql exists in two column layouts, each with its own staging
+ * table in configuration/memberstats.sql:
+ *  - v1: ZPS first, 15 columns, Spielername_G (single- or double-quoted)
+ *  - v2: PID first, 16 columns, bare integer (post 2024-05-22)
  *
- * The legacy schema is materialised on the temp table on demand so the
- * positional VALUES (…) line up.
- *
- * The source table name is derived from $target_table by stripping the
- * `temp_memberstats_` prefix.
+ * The source table name in the dump is always dwz_spieler.
  *
  * @param string $filename source .sql file
  * @param string $target_table temporary table that should receive the rows
@@ -359,8 +422,15 @@ function mf_ratings_memberstats_file_optional($folder, $basenames) {
  */
 function mf_ratings_memberstats_load_sql($filename, $target_table, $snapshot_date) {
 	$kind = substr($target_table, strlen('temp_memberstats_'));
-	$action = 'load_'.$kind;
-	$source_table = 'dwz_'.$kind;
+	if (str_starts_with($kind, 'spieler')) {
+		$source_table = 'dwz_spieler';
+		$spieler_version = str_ends_with($kind, '_v2') ? 'v2' : 'v1';
+		$action = 'load_spieler';
+	} else {
+		$source_table = 'dwz_'.$kind;
+		$spieler_version = null;
+		$action = 'load_'.$kind;
+	}
 	$needle = '`'.$source_table.'`';
 	$replace = '`'.$target_table.'`';
 
@@ -376,14 +446,10 @@ function mf_ratings_memberstats_load_sql($filename, $target_table, $snapshot_dat
 		'rows_done' => 0
 	]);
 
-	$format = mf_ratings_memberstats_sql_format($handle);
-	if ($target_table === 'temp_memberstats_spieler' AND $format === 'legacy') {
-		// see configuration/memberstats.sql
-		$sql = 'ALTER TABLE `temp_memberstats_spieler` DROP COLUMN `PID`';
-		wrap_db_query($sql);
-	}
+	$dummies = [];
+	if ($spieler_version)
+		$dummies = mf_ratings_memberstats_sql_dummies($source_table, $spieler_version);
 
-	$dummies = mf_ratings_memberstats_sql_dummies($source_table, $format);
 	$rows_done = 0;
 	$bytes_logged = 0;
 	$tick = wrap_setting('ratings_memberstats_log_tick_bytes');
@@ -423,41 +489,18 @@ function mf_ratings_memberstats_load_sql($filename, $target_table, $snapshot_dat
 }
 
 /**
- * peek the first REPLACE INTO line of an open .sql dump to tell modern
- * (post 2024-05-22) from legacy dumps apart, then rewind for the caller
- *
- * modern: `REPLACE INTO …` VALUES (1234,"AB01",… — bare integer first
- * legacy: `REPLACE INTO …` VALUES ('1234', '255', … — single-quoted first
- *
- * @param resource $handle open file handle, rewound on return
- * @return string 'modern' (default) or 'legacy'
- */
-function mf_ratings_memberstats_sql_format($handle) {
-	rewind($handle);
-	$format = 'modern';
-	while (($line = fgets($handle)) !== false) {
-		if (!str_contains($line, 'REPLACE INTO')) continue;
-		if (preg_match('/REPLACE INTO `\w+` VALUES \(\s*\'/', $line))
-			$format = 'legacy';
-		break;
-	}
-	rewind($handle);
-	return $format;
-}
-
-/**
- * dummy-row filter patterns for the SQL dump variants
+ * dummy-row filter patterns for spieler.sql v1 and v2
  *
  * matches the same three cases as zzbrick_make/ratings-prepare-dwz.inc.php
  * (passive without Mgl_Nr, active/passive without name)
  *
  * @param string $source_table
- * @param string $format 'modern' or 'legacy'
+ * @param string $version 'v1' or 'v2'
  * @return array list of regex patterns
  */
-function mf_ratings_memberstats_sql_dummies($source_table, $format) {
+function mf_ratings_memberstats_sql_dummies($source_table, $version) {
 	$prefix = '/^REPLACE INTO `'.preg_quote($source_table, '/').'` VALUES ';
-	if ($format === 'legacy') {
+	if ($version === 'v1') {
 		return [
 			$prefix.'\(\s*\'\d+\'\s*,\s*NULL\s*,\s*\'P\',/',
 			$prefix.'\(\s*\'\d+\'\s*,\s*\'\d+\'\s*,\s*\'A\'\s*,\s*\'\',/',
@@ -521,7 +564,12 @@ function mf_ratings_memberstats_sql_dummy($line, $patterns) {
  */
 function mf_ratings_memberstats_load_txt($filename, $target_table, $snapshot_date) {
 	$kind = substr($target_table, strlen('temp_memberstats_'));
-	$action = 'load_'.$kind;
+	if (str_starts_with($kind, 'spieler'))
+		$action = 'load_spieler';
+	elseif ($kind === 'vereine')
+		$action = 'load_vereine';
+	else
+		$action = 'load_verbaende';
 
 	$bytes_total = filesize($filename);
 	$handle = fopen($filename, 'r');
@@ -545,12 +593,14 @@ function mf_ratings_memberstats_load_txt($filename, $target_table, $snapshot_dat
 		$line = iconv('CP850', 'UTF-8//TRANSLIT', $line);
 		$fields = explode('|', $line);
 
-		if ($kind === 'spieler')
+		if (str_starts_with($kind, 'spieler'))
 			$sql = mf_ratings_memberstats_txt_spieler($fields, $target_table);
 		elseif ($kind === 'vereine')
 			$sql = mf_ratings_memberstats_txt_vereine($fields, $target_table);
-		else
+		elseif ($kind === 'verbaende')
 			$sql = mf_ratings_memberstats_txt_verbaende($fields, $target_table);
+		else
+			wrap_error(sprintf('memberstats: unknown staging table %s', $target_table), E_USER_ERROR);
 		if (!$sql) continue;
 		wrap_db_query($sql, E_USER_WARNING);
 		$rows_done++;
@@ -837,9 +887,10 @@ function mf_ratings_memberstats_verbaende($snapshot_date) {
  * `current` filter.
  *
  * @param string $snapshot_date YYYY-MM-DD, for progress log entries
+ * @param string $spieler_table temp_memberstats_spieler_v1 or _v2
  * @return void
  */
-function mf_ratings_memberstats_clubs($snapshot_date) {
+function mf_ratings_memberstats_clubs($snapshot_date, $spieler_table) {
 	$collapse = 'IF(
 			FIND_IN_SET(SUBSTRING(s.ZPS, 1, 1),
 				"/*_SETTING ratings_dsb_federations_are_clubs _*/")
@@ -851,7 +902,7 @@ function mf_ratings_memberstats_clubs($snapshot_date) {
 			, v.Verband AS parent_code
 		FROM (
 			SELECT DISTINCT '.$collapse.' AS code
-			FROM temp_memberstats_spieler s
+			FROM `%s` s
 			WHERE s.Spielername <> ""
 		) codes
 		LEFT JOIN temp_memberstats_vereine v
@@ -862,6 +913,7 @@ function mf_ratings_memberstats_clubs($snapshot_date) {
 		WHERE ISNULL(ci.contact_identifier_id)
 		AND NOT ISNULL(v.Vereinname)
 		AND v.Vereinname <> ""';
+	$sql = sprintf($sql, $spieler_table);
 	$missing = wrap_db_fetch($sql, 'club_code');
 	if (!$missing) return;
 
@@ -944,12 +996,13 @@ function mf_ratings_memberstats_club_parent_link($contact_id, $club_code, $paren
 }
 
 /**
- * insert one memberstats row per player from temp_memberstats_spieler
+ * insert one memberstats row per player from the spieler staging table
  *
  * @param string $snapshot_date YYYY-MM-DD
+ * @param string $spieler_table temp_memberstats_spieler_v1 or _v2
  * @return void
  */
-function mf_ratings_memberstats_insert($snapshot_date) {
+function mf_ratings_memberstats_insert($snapshot_date, $spieler_table) {
 	$sql = 'INSERT INTO memberstats
 			(snapshot_date, club_code, club_contact_id,
 				birth_year, rating, sex, status)
@@ -967,7 +1020,7 @@ function mf_ratings_memberstats_insert($snapshot_date) {
 				WHEN "A" THEN "active"
 				WHEN "P" THEN "passive"
 			  END
-		FROM temp_memberstats_spieler s
+		FROM `%s` s
 		LEFT JOIN contacts_identifiers ci
 			ON ci.identifier = IF(
 				FIND_IN_SET(SUBSTRING(s.ZPS, 1, 1),
@@ -978,6 +1031,6 @@ function mf_ratings_memberstats_insert($snapshot_date) {
 			)
 			AND ci.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
 		WHERE s.Spielername <> ""';
-	$sql = sprintf($sql, wrap_db_escape($snapshot_date));
+	$sql = sprintf($sql, wrap_db_escape($snapshot_date), $spieler_table);
 	wrap_db_query($sql);
 }
