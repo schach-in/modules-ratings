@@ -57,6 +57,8 @@
 	let countdownTimer = null;
 	let auto = true;
 	let watched = false;
+	let starting = false;
+	let startTime = 0;
 	let remaining = missingCount;
 
 	function startButtonLabel() {
@@ -241,9 +243,18 @@
 			const response = await fetch(progressUrl, {cache: 'no-store'});
 			if (!response.ok) return;
 			const state = await response.json();
+			if (starting && state.state === 'idle' && state.action === 'done'
+				&& state.ts < startTime) {
+				return;
+			}
+			if (starting && (state.state === 'busy' || state.action === 'queued'))
+				starting = false;
 			render(state);
 			if (state.state === 'busy') {
 				watched = true;
+				starting = false;
+			} else if (starting) {
+				// POST sent; wait for queued/start — keep polling
 			} else {
 				stopPolling();
 				if (watched && state.action === 'done' && remaining > 0) {
@@ -272,6 +283,8 @@
 		clearCountdown();
 		auto = true;
 		watched = true;
+		starting = true;
+		startTime = Math.floor(Date.now() / 1000);
 		autoButton.disabled = false;
 		renderBusy({
 			state: 'busy',
@@ -290,6 +303,7 @@
 			if (!response.ok) throw new Error(response.statusText);
 		} catch (e) {
 			stopPolling();
+			starting = false;
 			watched = false;
 			hide(bar);
 			status.textContent = labels.failedStart;

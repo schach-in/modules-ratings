@@ -97,6 +97,8 @@ function mod_ratings_memberstatsprogress() {
 			$data['state'] = 'idle';
 		elseif ($last['action'] === 'error')
 			$data['state'] = 'stuck';
+		elseif ($last['action'] === 'queued')
+			$data['state'] = 'busy';
 		elseif ($last['timestamp'] >= time() - $stale_after)
 			$data['state'] = 'busy';
 		else
@@ -111,10 +113,10 @@ function mod_ratings_memberstatsprogress() {
 /**
  * log lines belonging to the current import run only
  *
- * One run begins at `queued` (operator click) and `start` (worker). Walk
- * backwards from the end of the log and return everything from that
- * pair — or from `queued` alone when the worker has not logged `start`
- * yet.
+ * One run begins at `queued` (operator click) and `start` (worker). When
+ * the last log line is `queued`, return only that line — do not walk back
+ * to an earlier run's `start`. After `done`/`error`, return the finished
+ * run for context on the idle page.
  *
  * @param array $lines decoded log rows from wrap_file_log()
  * @return array
@@ -122,22 +124,33 @@ function mod_ratings_memberstatsprogress() {
 function mod_ratings_memberstatsprogress_run($lines) {
 	if (!$lines) return [];
 
-	$begin = null;
-	for ($index = count($lines) - 1; $index >= 0; $index--) {
-		if ($lines[$index]['action'] !== 'start') continue;
-		$begin = $index;
-		if ($begin > 0 && $lines[$begin - 1]['action'] === 'queued')
-			$begin--;
-		break;
+	$count = count($lines);
+	$last = $lines[$count - 1];
+
+	if ($last['action'] === 'queued')
+		return array_slice($lines, $count - 1);
+
+	if ($last['action'] !== 'done' AND $last['action'] !== 'error') {
+		for ($index = $count - 1; $index >= 0; $index--) {
+			if ($lines[$index]['action'] === 'start') {
+				$begin = $index;
+				if ($begin > 0 AND $lines[$begin - 1]['action'] === 'queued')
+					$begin--;
+				return array_slice($lines, $begin);
+			}
+			if ($lines[$index]['action'] === 'queued')
+				return array_slice($lines, $index);
+		}
+		return $lines;
 	}
-	if ($begin === null) {
-		for ($index = count($lines) - 1; $index >= 0; $index--) {
-			if ($lines[$index]['action'] !== 'queued') continue;
+
+	for ($index = $count - 2; $index >= 0; $index--) {
+		if ($lines[$index]['action'] === 'start') {
 			$begin = $index;
-			break;
+			if ($begin > 0 AND $lines[$begin - 1]['action'] === 'queued')
+				$begin--;
+			return array_slice($lines, $begin);
 		}
 	}
-	if ($begin === null) return [];
-
-	return array_slice($lines, $begin);
+	return array_slice($lines, -1);
 }
