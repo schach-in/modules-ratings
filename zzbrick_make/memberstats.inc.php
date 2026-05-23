@@ -691,6 +691,11 @@ function mf_ratings_memberstats_txt_number($value) {
  * left unmapped — the corresponding memberstats rows will have a NULL
  * club_contact_id, but club_code is still populated.
  *
+ * Each new club is also linked to its federation parent in
+ * `contacts_contacts` (relation/member, published). The parent contact
+ * is resolved via the first three characters of the club code against
+ * `contacts_identifiers` (pass_dsb), ignoring the `current` flag.
+ *
  * @param string $snapshot_date YYYY-MM-DD, for progress log entries
  * @return void
  */
@@ -747,12 +752,53 @@ function mf_ratings_memberstats_clubs($snapshot_date) {
 			'current' => 'yes'
 		];
 		zzform_insert('contacts_identifiers', $identifier, E_USER_WARNING);
+		mf_ratings_memberstats_club_parent_link($contact_id, $club_code);
 	}
 
 	mf_ratings_memberstats_log('clubs_done', [
 		'snapshot' => $snapshot_date,
 		'contacts_created' => $contacts_created
 	]);
+}
+
+/**
+ * link a new club contact to its federation parent in contacts_contacts
+ *
+ * Parent code is the first three characters of the club's pass_dsb
+ * identifier (e.g. `E1301` → `E13`). The parent contact_id is looked up
+ * in contacts_identifiers without filtering on `current`. Three-character
+ * club codes and missing parents are skipped quietly except for a warning
+ * when no parent identifier exists.
+ *
+ * @param int $contact_id new club contact
+ * @param string $club_code pass_dsb identifier stored on the club
+ * @return void
+ */
+function mf_ratings_memberstats_club_parent_link($contact_id, $club_code) {
+	if (strlen($club_code) <= 3) return;
+	$parent_code = substr($club_code, 0, 3);
+	if ($parent_code === $club_code) return;
+
+	$sql = 'SELECT contact_id FROM contacts_identifiers
+		WHERE identifier = "%s"
+		AND identifier_category_id = /*_ID categories identifiers/pass_dsb _*/';
+	$sql = sprintf($sql, wrap_db_escape($parent_code));
+	$parent_contact_id = wrap_db_fetch($sql, '', 'single value');
+	if (!$parent_contact_id) {
+		wrap_error(sprintf(
+			'memberstats: no parent contact for %s (parent code %s)',
+			$club_code, $parent_code
+		), E_USER_WARNING);
+		return;
+	}
+
+	$line = [
+		'contact_id' => $contact_id,
+		'main_contact_id' => $parent_contact_id,
+		'relation_category_id' => wrap_category_id('relation/member'),
+		'published' => 'yes'
+	];
+	zzform_insert('contacts_contacts', $line, E_USER_WARNING);
 }
 
 /**
