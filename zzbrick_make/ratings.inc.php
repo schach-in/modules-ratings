@@ -10,7 +10,7 @@
  * @author Jacob Roggon
  * @author Gustaf Mossakowski <gustaf@koenige.org>
  * @copyright Copyright © ... Jacob Roggon
- * @copyright Copyright © 2013-2014, 2016-2017, 2019-2024 Gustaf Mossakowski
+ * @copyright Copyright © 2013-2014, 2016-2017, 2019-2024, 2026 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
@@ -51,16 +51,22 @@ function mod_ratings_make_ratings($params) {
 	// big files, no timeout please
 	wrap_setting('syndication_timeout_ms', false);
 
-	if (!wrap_setting('local_access') AND $data['action'] !== 'sync') {
-		wrap_include('syndication', 'zzwrap');
+	wrap_include('syndication', 'zzwrap');
+	if (!wrap_setting('local_access')) {
 		$lock_realm = strtolower(implode('-', $params));
-		$wait_seconds = 300;
-		$lock = wrap_lock($lock_realm, 'wait', $wait_seconds);
-		if ($lock) {
-			$page['status'] = 403;
-			$page['text'] = sprintf(wrap_text(
+		if ($data['action'] === 'sync') {
+			$lock = wrap_lock($lock_realm, 'sequential', 600);
+			$lock_msg = wrap_text('Rating sync is already running. Please wait for it to finish.');
+		} else {
+			$wait_seconds = 300;
+			$lock = wrap_lock($lock_realm, 'wait', $wait_seconds);
+			$lock_msg = sprintf(wrap_text(
 				'Please wait. Rating sync is only allowed to run once every %s.'
 			), wrap_duration($wait_seconds));
+		}
+		if ($lock) {
+			$page['status'] = 403;
+			$page['text'] = $lock_msg;
 			return $page;
 		}
 	}

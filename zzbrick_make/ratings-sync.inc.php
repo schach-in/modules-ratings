@@ -8,7 +8,7 @@
  * https://www.zugzwang.org/modules/ratings
  *
  * @author Gustaf Mossakowski <gustaf@koenige.org>
- * @copyright Copyright © 2024 Gustaf Mossakowski
+ * @copyright Copyright © 2024, 2026 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
@@ -62,6 +62,7 @@ function mod_ratings_make_ratings_sync($params) {
 		break;
 	case 'fail':
 		$action = false;
+		wrap_unlock('sync-'.$rating);
 		wrap_quit(503, 'Sync job failed. Read log for details.');
 		break;
 	}
@@ -105,6 +106,7 @@ function mod_ratings_make_ratings_sync($params) {
 			$date = $line['date'];
 		}
 		wrap_setting_write('ratings_status['.$data['rating'].']', $date);
+		wrap_unlock('sync-'.$rating);
 		break;
 	}
 	
