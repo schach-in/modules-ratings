@@ -8,7 +8,7 @@
  * https://www.zugzwang.org/modules/ratings
  *
  * @author Gustaf Mossakowski <gustaf@koenige.org>
- * @copyright Copyright © 2022, 2024-2025 Gustaf Mossakowski
+ * @copyright Copyright © 2022, 2024-2026 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
@@ -19,6 +19,7 @@ function mod_ratings_clubratings($params) {
 	$sql = 'SELECT contact
 			, contacts.identifier AS club_identifier
 			, contacts.parameters
+			, IF(contacts.end_date < CURDATE(), 1, NULL) AS dissolved
 		FROM contacts
 		LEFT JOIN contacts_identifiers
 			ON contacts.contact_id = contacts_identifiers.contact_id
@@ -29,6 +30,8 @@ function mod_ratings_clubratings($params) {
 	$sql = sprintf($sql, wrap_db_escape($params[0]));
 	$data = wrap_db_fetch($sql);
 	if (!$data) return false;
+	if ($data['dissolved'])
+		wrap_quit(410, wrap_text('This club either does not exist anymore or is not a member of the federation anymore.'));
 	if ($data['parameters']) parse_str($data['parameters'], $data['parameters']);
 
 	$conditions = [];

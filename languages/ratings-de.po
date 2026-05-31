@@ -226,6 +226,10 @@ msgstr "Mitgliederstatistik-Import läuft bereits."
 msgid "Imported %s"
 msgstr "%s importiert"
 
+#: zzbrick_request/clubratings.inc.php
+msgid "This club either does not exist anymore or is not a member of the federation anymore."
+msgstr "Dieser Verein existiert nicht mehr oder ist nicht mehr Mitglied im Verband."
+
 #: zzbrick_tables/fide-players.php
 msgid "Federation"
 msgstr "Verband"

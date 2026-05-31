@@ -220,6 +220,10 @@ msgstr ""
 msgid "Imported %s"
 msgstr ""
 
+#: zzbrick_request/clubratings.inc.php
+msgid "This club either does not exist anymore or is not a member of the federation anymore."
+msgstr ""
+
 #: zzbrick_tables/fide-players.php
 msgid "Federation"
 msgstr ""
