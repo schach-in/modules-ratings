@@ -533,6 +533,19 @@ function mf_ratings_nuliga_save_club($club, $run_id) {
 		$value = $club[$field] ?? null;
 		$values[] = $value === null ? 'NULL' : '"'.wrap_db_escape($value).'"';
 	}
+	$on_duplicate = [];
+	$row_alias = mf_ratings_nuliga_mysql_insert_row_alias();
+	foreach ($fields as $field) {
+		if ($row_alias)
+			$on_duplicate[] = $field.' = new.'.$field;
+		else
+			$on_duplicate[] = $field.' = VALUES('.$field.')';
+	}
+	$on_duplicate[] = $row_alias
+		? 'import_run_id = new.import_run_id'
+		: 'import_run_id = VALUES(import_run_id)';
+	$on_duplicate[] = 'last_update = NOW()';
+	$row_alias_sql = $row_alias ? ' AS new' : '';
 	$sql = 'INSERT INTO nuliga_clubs (
 			nuliga_club_id, zps, club_name, federation, confederation,
 			contact_name, contact_street, contact_postcode, contact_place,
@@ -541,25 +554,41 @@ function mf_ratings_nuliga_save_club($club, $run_id) {
 			%d, %s, %s, %s, %s,
 			%s, %s, %s, %s,
 			%s, %s, %s, %d, NOW()
-		) AS new ON DUPLICATE KEY UPDATE
-			zps = new.zps,
-			club_name = new.club_name,
-			federation = new.federation,
-			confederation = new.confederation,
-			contact_name = new.contact_name,
-			contact_street = new.contact_street,
-			contact_postcode = new.contact_postcode,
-			contact_place = new.contact_place,
-			phone = new.phone,
-			email = new.email,
-			website = new.website,
-			import_run_id = new.import_run_id,
-			last_update = NOW()';
+		)'.$row_alias_sql.' ON DUPLICATE KEY UPDATE
+			'.implode(",\n\t\t\t", $on_duplicate);
 	$sql = sprintf(
 		$sql,
 		...array_merge([$club['nuliga_club_id']], $values, [$run_id])
 	);
 	wrap_db_query($sql);
+}
+
+/**
+ * Whether INSERT … AS alias ON DUPLICATE KEY UPDATE is supported (MySQL 8.0.19+).
+ *
+ * @return bool
+ */
+function mf_ratings_nuliga_mysql_insert_row_alias() {
+	static $supported;
+
+	if (isset($supported))
+		return $supported;
+
+	$version = mysqli_get_server_info(wrap_db_connection());
+	if (stripos($version, 'MariaDB') !== false) {
+		$supported = false;
+		return $supported;
+	}
+	if (!preg_match('/^(\d+)\.(\d+)\.(\d+)/', $version, $match)) {
+		$supported = false;
+		return $supported;
+	}
+	$supported = version_compare(
+		sprintf('%d.%d.%d', $match[1], $match[2], $match[3]),
+		'8.0.19',
+		'>='
+	);
+	return $supported;
 }
 
 /**
