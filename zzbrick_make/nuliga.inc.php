@@ -22,12 +22,17 @@
  * - DE.xx.xx: import one federation (searchPattern)
  * - gapfill: GET lookup by ZPS for clubs missing in staging
  * - merge: POST write id_nuliga identifiers onto contacts
+ * - clubs: POST enqueue or run hourly import + merge (background job)
  *
  * @param array $params
  * @return array|false
  */
 function mod_ratings_make_nuliga($params) {
 	wrap_include('nuliga', 'ratings');
+
+	if (!empty($params[0]) AND $params[0] === 'clubs')
+		return mod_ratings_make_nuliga_clubs($params);
+
 	wrap_package_activate('zzform');
 
 	if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -105,5 +110,55 @@ function mod_ratings_make_nuliga($params) {
 	}
 	$data['overview'] = 1;
 	$page['text'] = wrap_template('nuliga', $data);
+	return $page;
+}
+
+/**
+ * Hourly nuLiga import + merge (background job worker).
+ *
+ * POST without sequential: enqueue worker via job manager.
+ * POST with sequential: import all federations, then merge id_nuliga.
+ *
+ * @param array $params
+ * @return array
+ */
+function mod_ratings_make_nuliga_clubs($params) {
+	wrap_setting('cache', false);
+
+	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+		$page['text'] = wrap_text('nuLiga clubs (POST to enqueue or run).');
+		return $page;
+	}
+
+	if (!array_key_exists('sequential', $_POST)) {
+		wrap_job(wrap_path('nuliga_clubs'), [
+			'sequential' => 1,
+			'job_category_id' => wrap_category_id('jobs/nuliga'),
+			'trigger' => 1,
+		]);
+		wrap_job_debug('JOB STARTING nuliga clubs', $_POST);
+		$page['text'] = wrap_text('Background job queued.');
+		return $page;
+	}
+
+	$lock = wrap_lock('nuliga', 'sequential', 3600);
+	if ($lock) {
+		$page['status'] = 403;
+		$page['text'] = wrap_text('nuLiga import is already running.');
+		return $page;
+	}
+
+	$import = mf_ratings_nuliga_import(null);
+	$merge = mf_ratings_nuliga_merge_identifiers();
+	wrap_unlock('nuliga');
+
+	$page['text'] = sprintf(
+		wrap_text('nuLiga clubs: %d clubs saved, merge matched %d, inserted %d, updated %d, skipped %d.'),
+		$import['clubs_saved'] ?? 0,
+		$merge['matched'] ?? 0,
+		$merge['inserted'] ?? 0,
+		$merge['updated'] ?? 0,
+		$merge['skipped'] ?? 0
+	);
 	return $page;
 }
