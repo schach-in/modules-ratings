@@ -8,7 +8,7 @@
  * https://www.zugzwang.org/modules/ratings
  *
  * @author Gustaf Mossakowski <gustaf@koenige.org>
- * @copyright Copyright © 2024-2025 Gustaf Mossakowski
+ * @copyright Copyright © 2024-2026 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
@@ -186,4 +186,30 @@ function mf_ratings_players_dsb($filters = []) {
 	$data = wrap_db_fetch($sql, 'player_id_dsb');
 	if ($single) return reset($data);
 	return $data;
+}
+
+/**
+ * convert a legacy 6-char numeric ZPS code to the modern 5-char form
+ *
+ * old DSB exports used a 2-digit federation prefix (10, 11, 12, …) that
+ * was renamed to a single letter (A, B, C, …), so a 6-char code like
+ * "100123" becomes "A0123". Only codes that are exactly six characters
+ * long with a numeric prefix in 10–35 are converted; codes already in
+ * the modern form (letter + 4 digits) or shorter legacy codes are
+ * returned unchanged.
+ *
+ * @param string $zps
+ * @return string
+ */
+function mf_ratings_zps_normalize($zps) {
+	$zps = strtoupper(trim($zps));
+	if (strlen($zps) !== 6)
+		return $zps;
+	$prefix = substr($zps, 0, 2);
+	if (!ctype_digit($prefix))
+		return $zps;
+	$prefix = (int) $prefix;
+	if ($prefix < 10 OR $prefix > 35)
+		return $zps;
+	return chr(ord('A') + $prefix - 10).substr($zps, 2);
 }

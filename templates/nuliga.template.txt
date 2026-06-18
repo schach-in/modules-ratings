@@ -1,0 +1,101 @@
+# ratings module
+# HTML output: nuLiga club import
+#
+# Part of »Zugzwang Project«
+# https://www.zugzwang.org/modules/ratings
+#
+# @author Gustaf Mossakowski <gustaf@koenige.org>
+# @copyright Copyright © 2026 Gustaf Mossakowski
+# @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
+#
+<div id="zzform">
+
+%%% if overview %%%
+<h1>nuLiga Import</h1>
+
+<p>Staging tables: <strong>%%% item clubs %%%</strong> clubs, <strong>%%% item venues %%%</strong> venues.
+Schach.in clubs without nuLiga row: <strong>%%% item missing %%%</strong>.</p>
+
+<form method="post" action="import/">
+<p><button type="submit">Import all federations</button></p>
+</form>
+
+<form method="post" action="gapfill/">
+<p><button type="submit">Gap fill by ZPS</button>
+<small>for schach.in clubs missing in staging</small></p>
+</form>
+
+<form method="post" action="merge/">
+<p><button type="submit">Merge nuLiga IDs into contacts</button>
+<small>writes <code>identifiers/id_nuliga</code> matched by ZPS</small></p>
+</form>
+
+<h2>Import one federation (GET)</h2>
+<ul>
+%%% loop federation_links %%%
+<li><a href="%%% item federation %%%/">%%% item federation %%%</a> — %%% item label %%%</li>
+%%% loop end %%%
+</ul>
+
+%%% if runs %%%
+<h2>Recent import runs</h2>
+<table class="list">
+<thead>
+<tr><th>Run</th><th>Federation</th><th>Clubs</th><th>Venues</th><th>Started</th><th>Finished</th><th>Errors</th></tr>
+</thead>
+<tbody>
+%%% loop runs %%%
+<tr>
+<td>%%% item run_id %%%</td>
+<td>%%% item federation %%%</td>
+<td class="number">%%% item clubs_saved %%% / %%% item clubs_fetched %%%</td>
+<td class="number">%%% item venues_saved %%%</td>
+<td>%%% item started_at %%%</td>
+<td>%%% item finished_at %%%</td>
+<td>%%% item error_message %%%</td>
+</tr>
+%%% loop end %%%
+</tbody>
+</table>
+%%% endif %%%
+
+%%% endif %%%
+
+%%% if import_done %%%
+<h1>nuLiga import finished</h1>
+<p>Run #%%% item run_id %%%: <strong>%%% item clubs_saved %%%</strong> clubs,
+<strong>%%% item venues_saved %%%</strong> venues
+(%%% item clubs_fetched %%% parsed).</p>
+%%% if errors %%%
+<ul>
+%%% loop errors %%%
+<li>%%% item message %%%</li>
+%%% loop end %%%
+</ul>
+%%% endif %%%
+<ul>
+%%% loop federation_results %%%
+<li>%%% item federation %%% (%%% item label %%%): %%% item clubs %%% clubs, %%% item venues %%% venues</li>
+%%% loop end %%%
+</ul>
+<p><a href="../">Back to overview</a></p>
+%%% endif %%%
+
+%%% if gapfill_done %%%
+<h1>nuLiga gap fill</h1>
+<p>Looked up <strong>%%% item gapfill %%%</strong> missing ZPS codes;
+saved <strong>%%% item clubs_saved %%%</strong> clubs,
+<strong>%%% item venues_saved %%%</strong> venues.</p>
+<p><a href="../">Back to overview</a></p>
+%%% endif %%%
+
+%%% if merge_done %%%
+<h1>nuLiga identifier merge</h1>
+<p>Matched by ZPS: <strong>%%% item matched %%%</strong>,
+inserted: <strong>%%% item inserted %%%</strong>,
+updated: <strong>%%% item updated %%%</strong>,
+skipped (no contact): <strong>%%% item skipped %%%</strong>.</p>
+<p><a href="../">Back to overview</a></p>
+%%% endif %%%
+
+</div>

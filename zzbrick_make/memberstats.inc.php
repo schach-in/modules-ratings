@@ -355,7 +355,7 @@ function mf_ratings_memberstats_previous_archive($snapshot_date) {
  *
  * @param string $folder
  * @param string|array $basenames file stem(s), e.g. vereine or verbaende/verband
- * @param bool $normalize_zps apply mf_ratings_memberstats_zps_normalize (vereine .txt)
+ * @param bool $normalize_zps apply mf_ratings_zps_normalize (vereine .txt)
  * @return array list of codes, empty when the file is missing
  */
 function mf_ratings_memberstats_archive_codes($folder, $basenames, $normalize_zps = false) {
@@ -426,7 +426,7 @@ function mf_ratings_memberstats_txt_codes($filename, $normalize_zps = false) {
 		$fields = explode('|', $line);
 		if (!$fields) continue;
 		$code = $normalize_zps
-			? mf_ratings_memberstats_zps_normalize(trim($fields[0]))
+			? mf_ratings_zps_normalize(trim($fields[0]))
 			: trim($fields[0]);
 		if ($code === '') continue;
 		$codes[$code] = true;
@@ -455,7 +455,7 @@ function mf_ratings_memberstats_csv_codes($filename, $normalize_zps = false) {
 		$code = trim((string)($fields[0] ?? ''));
 		if ($code === '') continue;
 		if ($normalize_zps)
-			$code = mf_ratings_memberstats_zps_normalize($code);
+			$code = mf_ratings_zps_normalize($code);
 		$codes[$code] = true;
 	}
 	fclose($handle);
@@ -1339,7 +1339,7 @@ function mf_ratings_memberstats_load_end($failed) {
  */
 function mf_ratings_memberstats_txt_spieler($fields, $target_table) {
 	if (count($fields) < 13) return '';
-	$zps              = mf_ratings_memberstats_zps_normalize($fields[0]);
+	$zps              = mf_ratings_zps_normalize($fields[0]);
 	$mgl_nr           = $fields[1];
 	$status           = $fields[2] !== '' ? $fields[2] : 'A';
 	$spielername      = $fields[3];
@@ -1395,7 +1395,7 @@ function mf_ratings_memberstats_txt_spieler($fields, $target_table) {
  */
 function mf_ratings_memberstats_txt_vereine($fields, $target_table) {
 	if (count($fields) < 4) return '';
-	$zps         = mf_ratings_memberstats_zps_normalize($fields[0]);
+	$zps         = mf_ratings_zps_normalize($fields[0]);
 	$lv          = $fields[1];
 	$verband     = $fields[2];
 	$vereinname  = $fields[3];
@@ -1435,28 +1435,6 @@ function mf_ratings_memberstats_txt_verbaende($fields, $target_table) {
 		wrap_db_escape($verbandname)
 	);
 	return $sql;
-}
-
-/**
- * convert a legacy 6-char numeric ZPS code to the modern 5-char form
- *
- * old DSB exports used a 2-digit federation prefix (10, 11, 12, …) that
- * was renamed to a single letter (A, B, C, …), so a 6-char code like
- * "100123" becomes "A0123". Only codes that are exactly six characters
- * long with a numeric prefix in 10–35 are converted; codes already in
- * the modern form (letter + 4 digits) or shorter legacy codes are
- * returned unchanged.
- *
- * @param string $zps
- * @return string
- */
-function mf_ratings_memberstats_zps_normalize($zps) {
-	if (strlen($zps) !== 6) return $zps;
-	$prefix = substr($zps, 0, 2);
-	if (!ctype_digit($prefix)) return $zps;
-	$prefix = (int)$prefix;
-	if ($prefix < 10 OR $prefix > 35) return $zps;
-	return chr(ord('A') + $prefix - 10).substr($zps, 2);
 }
 
 /**
