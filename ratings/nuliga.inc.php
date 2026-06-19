@@ -42,6 +42,7 @@ function mf_ratings_nuliga_list_url($federation, $confederation = null) {
  */
 function mf_ratings_nuliga_fetch($url) {
 	wrap_include('syndication', 'zzwrap');
+	wrap_lock_wait('nuliga', 1);
 	$result = wrap_syndication($url, [
 		'type' => 'html',
 		'error_code' => E_USER_NOTICE,
@@ -232,7 +233,6 @@ function mf_ratings_nuliga_import($federation = null) {
 			'clubs' => count($clubs),
 			'venues' => $counts['venues'],
 		];
-		usleep(200000);
 	}
 
 	$error_message = $summary['errors']
@@ -273,7 +273,6 @@ function mf_ratings_nuliga_gapfill() {
 		$saved = mf_ratings_nuliga_save_clubs([$club], $run_id);
 		$counts['clubs_saved'] += $saved['clubs'];
 		$counts['venues_saved'] += $saved['venues'];
-		usleep(200000);
 	}
 	mf_ratings_nuliga_import_run_finish($run_id, [
 		'clubs_fetched' => count($missing),
