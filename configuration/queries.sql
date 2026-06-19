@@ -6,7 +6,7 @@
  * https://www.zugzwang.org/modules/ratings
  *
  * @author Gustaf Mossakowski <gustaf@koenige.org>
- * @copyright Copyright © 2023-2025 Gustaf Mossakowski
+ * @copyright Copyright © 2023-2026 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
@@ -238,6 +238,7 @@ LEFT JOIN fide_players
 LEFT JOIN contacts_identifiers
 	ON dwz_spieler.ZPS = contacts_identifiers.identifier
 	AND contacts_identifiers.current = "yes"
+	AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
 LEFT JOIN contacts USING (contact_id)
 WHERE (ISNULL(Status) OR Status != "%s")
 %s

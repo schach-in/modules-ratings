@@ -6,7 +6,7 @@
  * https://www.zugzwang.org/modules/ratings
  *
  * @author Gustaf Mossakowski <gustaf@koenige.org>
- * @copyright Copyright © 2012-2016, 2019-2022, 2024 Gustaf Mossakowski
+ * @copyright Copyright © 2012-2016, 2019-2022, 2024, 2026 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
@@ -48,7 +48,7 @@ contacts_contacts[0][published] = 'yes';
 contacts_contacts[0][relation_category_id] = /*_ID categories relation/member _*/;
 
 -- verbaende_field_contacts_contacts[0][main_contact_id] --
-SELECT identifier, contact_id FROM contacts_identifiers WHERE identifier IN ('%s') AND current = 'yes';
+SELECT identifier, contact_id FROM contacts_identifiers WHERE identifier IN ('%s') AND current = 'yes' AND identifier_category_id = /*_ID categories identifiers/pass_dsb _*/;
 
 -- verbaende_field_contacts_contacts[0][main_contact_id]__implode --
 /* ', ' */
@@ -96,7 +96,7 @@ contacts_contacts[0][published] = 'yes';
 contacts_contacts[0][relation_category_id] = /*_ID categories relation/member _*/;
 
 -- vereine_field_contacts_contacts[0][main_contact_id] --
-SELECT identifier, contact_id FROM contacts_identifiers WHERE identifier IN ('%s') AND current = 'yes';
+SELECT identifier, contact_id FROM contacts_identifiers WHERE identifier IN ('%s') AND current = 'yes' AND identifier_category_id = /*_ID categories identifiers/pass_dsb _*/;
 
 -- vereine_field_contacts_contacts[0][main_contact_id]__implode --
 /* ', ' */
