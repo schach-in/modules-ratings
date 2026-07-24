@@ -1,0 +1,1194 @@
+# ratings module
+# Translations, admin
+#
+# Part of »Zugzwang Project«
+# https://www.zugzwang.org/modules/ratings
+#
+# @author Gustaf Mossakowski <gustaf@koenige.org>
+# @copyright Copyright © 2026 Gustaf Mossakowski
+# @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Zugzwang Project -- ratings module\n"
+"POT-Creation-Date: 2026-07-24 20:29+0000\n"
+"PO-Revision-Date: \n"
+"Last-Translator: Gustaf Mossakowski <gustaf@koenige.org>\n"
+"Language-Team: \n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.9\n"
+
+#: behaviour/memberstats.js:35
+msgid "Import next missing snapshot"
+msgstr "Nächsten fehlenden Stichtag importieren"
+
+#: behaviour/memberstats.js:36
+msgid "Re-import snapshot"
+msgstr "Stichtag erneut importieren"
+
+#: behaviour/memberstats.js:37
+msgid "Queued …"
+msgstr "In Warteschlange…"
+
+#: behaviour/memberstats.js:38
+msgid "Memberstats import is running."
+msgstr "Mitgliederstatistik-Import läuft."
+
+#: behaviour/memberstats.js:39
+msgid "Previous memberstats import did not finish."
+msgstr "Der vorherige Mitgliederstatistik-Import wurde nicht abgeschlossen."
+
+#: behaviour/memberstats.js:40 zzbrick_make/memberstats.inc.php:122
+#: zzbrick_make/memberstats.inc.php:148
+msgid "All snapshots imported."
+msgstr "Alle Stichtage importiert."
+
+#: behaviour/memberstats.js:41
+msgid "rows"
+msgstr "Zeilen"
+
+#: behaviour/memberstats.js:42
+msgid "contacts"
+msgstr "Kontakte"
+
+#: behaviour/memberstats.js:43
+msgid "closed"
+msgstr "geschlossen"
+
+#: behaviour/memberstats.js:44
+msgid "overwrite"
+msgstr "überschreiben"
+
+# log action label in memberstats progress UI
+#: behaviour/memberstats.js:45 zzbrick_tables/nuliga-clubs.php:72
+msgid "Contact"
+msgstr "Kontakt"
+
+# log action label in memberstats progress UI
+#: behaviour/memberstats.js:46 zzbrick_tables/fide-players.php:32
+#: zzbrick_tables/fide-players.php:134 zzbrick_tables/nuliga-clubs.php:65
+#: zzbrick_tables/nuliga-clubs.php:147
+msgid "Federation"
+msgstr "Verband"
+
+# log action label in memberstats progress UI
+#: behaviour/memberstats.js:47
+msgid "Organisation dissolved"
+msgstr "Organisation aufgelöst"
+
+#: behaviour/memberstats.js:48
+msgid "Could not start background job."
+msgstr "Hintergrundjob konnte nicht gestartet werden."
+
+#: behaviour/memberstats.js:49
+msgid "Stop auto import (%s)"
+msgstr "Auto-Import stoppen (%s)"
+
+#: behaviour/memberstats.js:50
+msgid "Auto import stopped"
+msgstr "Auto-Import gestoppt"
+
+#: configuration/access.cfg:19
+msgid "Update person data with foreign sources"
+msgstr "Personendaten mit externen Quellen aktualisieren"
+
+#: configuration/routes.cfg:12
+msgid "Rating list for a club"
+msgstr "Ratingliste für einen Verein"
+
+#: configuration/routes.cfg:17
+msgid "Import of members"
+msgstr "Import von Mitgliedern"
+
+#: configuration/routes.cfg:22
+msgid "Import of organisations"
+msgstr "Import von Organisationen"
+
+#: configuration/routes.cfg:28
+msgid "Player profile on DSB webpage"
+msgstr "Spielerprofil auf der DSB-Website"
+
+#: configuration/routes.cfg:33
+msgid "Player profile on DSB webpage with ID"
+msgstr "Spielerprofil auf der DSB-Webseite mit ID"
+
+#: configuration/routes.cfg:38
+msgid "Player profile on FIDE webpage"
+msgstr "Spielerprofil auf der FIDE-Website"
+
+#: configuration/routes.cfg:43
+msgid "Import member statistics from DWZ snapshots"
+msgstr "Mitgliederstatistiken aus DWZ-Snapshots importieren"
+
+#: configuration/routes.cfg:50
+msgid "Progress JSON for the memberstats import poller"
+msgstr ""
+
+#: configuration/routes.cfg:56
+msgid "Import nuLiga club lists into staging tables"
+msgstr "nuLiga-Vereinslisten in Staging-Tabellen importieren"
+
+#: configuration/routes.cfg:63
+msgid "Hourly nuLiga clubs import and merge (background job)"
+msgstr ""
+
+#: configuration/routes.cfg:70
+msgid "Ratings sync"
+msgstr "Synchronisierung der Ratingzahlen"
+
+#: configuration/settings.cfg:21
+msgid "If club code differs from identifier in German database"
+msgstr ""
+
+#: configuration/settings.cfg:24
+msgid "List of days where download file was corrupt and should not be used"
+msgstr ""
+
+#: configuration/settings.cfg:28
+msgid ""
+"List of days where download file for DWZ was corrupt and should not be used"
+msgstr ""
+
+#: configuration/settings.cfg:32
+msgid ""
+"List of days where download file for Elo was corrupt and should not be used"
+msgstr ""
+
+#: configuration/settings.cfg:36
+msgid ""
+"Maximum no. of entries where a datacheck overview links to an list of all "
+"problems (for performance reasons)"
+msgstr ""
+
+#: configuration/settings.cfg:41
+msgid ""
+"folder for downloaded rating archives (DWZ, Elo, …), one subfolder per rating"
+msgstr ""
+
+#: configuration/settings.cfg:47
+msgid "Timeout in seconds for socket based stream"
+msgstr ""
+
+#: configuration/settings.cfg:52
+msgid "Establish a connection via SSL to server"
+msgstr ""
+
+#: configuration/settings.cfg:57
+msgid "URL of DeWIS service"
+msgstr ""
+
+#: configuration/settings.cfg:62
+msgid "Time to wait between each request to DeWIS"
+msgstr ""
+
+#: configuration/settings.cfg:67
+msgid ""
+"Some federations in the DSB have a club code, too, that is undocumented."
+msgstr ""
+
+#: configuration/settings.cfg:71
+msgid ""
+"URL under which the current DWZ data of the German Chess Federation is "
+"available in SQL format"
+msgstr "URL, unter der die aktuellen DSB-DWZ-Daten im SQL-Format vorliegen"
+
+#: configuration/settings.cfg:76
+msgid "URL under which the current FIDE Elo data is available in TXT format"
+msgstr "URL, unter der die aktuellen FIDE-Elo-Daten im TXT-Format vorliegen"
+
+#: configuration/settings.cfg:81
+msgid "Name of file with FIDE Elo data"
+msgstr ""
+
+#: configuration/settings.cfg:85
+msgid "Use rating list from schachbund.de (DSB)"
+msgstr ""
+
+#: configuration/settings.cfg:90
+msgid "Use rating list from fide.com (FIDE)"
+msgstr ""
+
+#: configuration/settings.cfg:95
+msgid "use logfile for sync of Elo rating data"
+msgstr ""
+
+#: configuration/settings.cfg:100
+msgid "List of fields for Elo sync log"
+msgstr ""
+
+#: configuration/settings.cfg:107 configuration/settings.cfg:129
+msgid "Logfile tokens might contain spaces?"
+msgstr ""
+
+#: configuration/settings.cfg:112
+msgid "Validity of entries in Elo sync log"
+msgstr ""
+
+#: configuration/settings.cfg:117
+msgid "use logfile for memberstats import"
+msgstr ""
+
+#: configuration/settings.cfg:122
+msgid "List of fields for memberstats import log"
+msgstr ""
+
+#: configuration/settings.cfg:135
+msgid "Validity of entries in memberstats import log"
+msgstr ""
+
+#: configuration/settings.cfg:140
+msgid "Categories of contacts or contacts that have members with ratings"
+msgstr ""
+
+#: configuration/settings.cfg:146
+msgid ""
+"Emit a progress log entry per this many source-file bytes consumed by the "
+"memberstats loaders"
+msgstr ""
+
+#: configuration/settings.cfg:151
+msgid ""
+"Rows per batched REPLACE/INSERT when loading DWZ snapshot files into "
+"memberstats staging tables"
+msgstr ""
+
+#: configuration/settings.cfg:156
+msgid "Polling interval in seconds for memberstats progress display"
+msgstr ""
+
+#: configuration/settings.cfg:161
+msgid ""
+"Time in seconds without a memberstats log entry after which the worker is "
+"considered stuck"
+msgstr ""
+
+#: configuration/settings.cfg:166
+msgid ""
+"Number of memberstats log entries returned to the progress poller (0 = all)"
+msgstr ""
+
+#: configuration/settings.cfg:171
+msgid ""
+"Countdown in seconds before the next snapshot import starts automatically "
+"while the memberstats page stays open"
+msgstr ""
+
+#: configuration/settings.cfg:176
+msgid "nuLiga clubSearch endpoint (GET list and GET by ZPS)"
+msgstr ""
+
+#: configuration/settings.cfg:181
+msgid "nuLiga clubSearch confederation parameter (e.g. LV0 DSB)"
+msgstr ""
+
+#: configuration/settings.cfg:185
+msgid ""
+"nuLiga clubSearch searchPattern values per state federation (code => label)"
+msgstr ""
+
+#: configuration/settings.cfg:208
+msgid "Last imported status of the German DWZ database"
+msgstr "Letzter importierter Stand der DSB-DWZ-Datenbank"
+
+#: configuration/settings.cfg:212
+msgid "Last imported status of the FIDE Elo database"
+msgstr "Letzter importierter Stand der FIDE-Elo-Datenbank"
+
+#: ratings/nuliga.inc.php:208
+msgid "Unknown nuLiga federation %s."
+msgstr ""
+
+#: ratings/nuliga.inc.php:296
+msgid "Category identifiers/id_nuliga is not configured."
+msgstr ""
+
+#: ratings/sync.inc.php:53
+msgid "php with ZipArchive class needed to extract files. (%s)"
+msgstr ""
+
+#: ratings/sync.inc.php:61
+msgid "Error while unpacking file %s, Code %s"
+msgstr "Fehler beim entpacken der Datei %s, Code %s"
+
+#: templates/datacheck.template.txt:15
+msgid "No data available."
+msgstr ""
+
+#: templates/datacheck.template.txt:37
+msgid "%s records total"
+msgstr ""
+
+#: templates/datachecks.template.txt:18 templates/dewis-members.template.txt:24
+#: templates/dewis-members.template.txt:35 zzbrick_tables/dwz-spieler.php:88
+#: zzbrick_tables/fide-players.php:40
+msgid "Title"
+msgstr "Titel"
+
+#: templates/datachecks.template.txt:19
+msgid "Count"
+msgstr ""
+
+#: templates/dewis-clubimport.template.txt:18
+#: templates/dewis-federations.template.txt:18
+msgid "Club code"
+msgstr ""
+
+#: templates/dewis-clubimport.template.txt:19
+#: templates/dewis-federations.template.txt:19
+#: templates/dewis-members.template.txt:36
+#: templates/dewis-organisations.template.txt:20
+#: zzbrick_tables/dwz-spieler.php:29 zzbrick_tables/memberstats.php:34
+#: zzbrick_tables/nuliga-clubs.php:35 zzbrick_tables/nuliga-venues.php:26
+msgid "Club"
+msgstr "Verein"
+
+#: templates/dewis-clubimport.template.txt:20
+#: templates/dewis-federations.template.txt:20
+#: templates/dewis-members.template.txt:37
+#: templates/dewis-organisations.template.txt:25
+#: templates/ratings-sync.template.txt:19
+msgid "Updated"
+msgstr ""
+
+#: templates/dewis-clubimport.template.txt:21
+#: templates/ratings-sync.template.txt:18
+msgid "Action"
+msgstr ""
+
+#: templates/dewis-clubimport.template.txt:30
+msgid "Add club"
+msgstr ""
+
+#: templates/dewis-import.template.txt:18
+msgid "Club identifier"
+msgstr ""
+
+#: templates/dewis-import.template.txt:19
+#: templates/dewis-members.template.txt:38 zzbrick_tables/dwz-spieler.php:48
+#: zzbrick_tables/memberstats.php:68 zzbrick_tables/memberstats.php:100
+msgid "Status"
+msgstr "Status"
+
+#: templates/dewis-import.template.txt:20
+msgid "URL"
+msgstr ""
+
+#: templates/dewis-import.template.txt:21
+msgid "Time"
+msgstr ""
+
+#: templates/dewis-members.template.txt:16
+msgid "Type"
+msgstr ""
+
+#: templates/dewis-members.template.txt:21 zzbrick_tables/dwz-spieler.php:22
+msgid "PID"
+msgstr ""
+
+#: templates/dewis-members.template.txt:22
+msgid "Surname"
+msgstr ""
+
+#: templates/dewis-members.template.txt:23
+msgid "First name"
+msgstr ""
+
+#: templates/dewis-members.template.txt:25 zzbrick_tables/nuliga-venues.php:38
+msgid "No."
+msgstr "Nr."
+
+# tab heading for status column
+#: templates/dewis-members.template.txt:26 zzbrick_tables/memberstats.php:67
+msgid "St."
+msgstr "St."
+
+#: templates/dewis-members.template.txt:27
+#: templates/dewis-update.template.txt:21 zzbrick_tables/memberstats.php:57
+msgid "Rating"
+msgstr "Wertung"
+
+#: templates/dewis-members.template.txt:28
+msgid "In."
+msgstr ""
+
+#: templates/dewis-members.template.txt:29
+msgid "Tournament"
+msgstr "Turnier"
+
+#: templates/dewis-members.template.txt:30
+msgid "Finished On"
+msgstr "Fertiggestellt am"
+
+# tab heading for sex column
+#: templates/dewis-members.template.txt:31 zzbrick_tables/fide-players.php:34
+#: zzbrick_tables/memberstats.php:61
+msgid "S."
+msgstr "G."
+
+# tab heading for birth_year column
+#: templates/dewis-members.template.txt:32 zzbrick_tables/dwz-spieler.php:68
+#: zzbrick_tables/fide-players.php:112 zzbrick_tables/memberstats.php:52
+msgid "Birth"
+msgstr "Geb."
+
+#: templates/dewis-members.template.txt:33
+msgid "FIDE ID"
+msgstr "FIDE-ID"
+
+#: templates/dewis-members.template.txt:34 zzbrick_tables/dwz-spieler.php:85
+msgid "Elo"
+msgstr "Elo"
+
+#: templates/dewis-organisations.template.txt:19
+#: templates/personupdate.template.txt:33 zzbrick_tables/fide-players.php:22
+#: zzbrick_tables/memberstats.php:22 zzbrick_tables/nuliga-clubs.php:22
+#: zzbrick_tables/nuliga-venues.php:22 zzbrick_tables/wikidata-players.php:22
+#: zzbrick_tables/wikidata-uris.php:22
+msgid "ID"
+msgstr "ID"
+
+#: templates/dewis-organisations.template.txt:21
+#: zzbrick_tables/memberstats.php:30 zzbrick_tables/memberstats.php:92
+msgid "Club Code"
+msgstr "ZPS-Nummer"
+
+#: templates/dewis-organisations.template.txt:22
+msgid "Parent"
+msgstr ""
+
+#: templates/dewis-organisations.template.txt:23
+msgid "Assessor"
+msgstr ""
+
+#: templates/dewis-organisations.template.txt:24
+msgid "Last Sync"
+msgstr ""
+
+#: templates/dewis-update.template.txt:17 zzbrick_tables/dwz-spieler.php:34
+#: zzbrick_tables/nuliga-clubs.php:30 zzbrick_tables/nuliga-clubs.php:155
+msgid "ZPS"
+msgstr ""
+
+#: templates/dewis-update.template.txt:18
+msgid "Member No."
+msgstr ""
+
+#: templates/dewis-update.template.txt:19 zzbrick_tables/dwz-spieler.php:78
+msgid "DWZ"
+msgstr "DWZ"
+
+#: templates/dewis-update.template.txt:20
+msgid "DWZ index"
+msgstr "DWZ-Index"
+
+#: templates/dewis-update.template.txt:22
+msgid "Rating index"
+msgstr ""
+
+#: templates/federationids.template.txt:15
+msgid "No updates necessary."
+msgstr "Keine Aktualisierungen erforderlich."
+
+#: templates/memberstats.template.txt:15
+msgid "No DWZ archives found."
+msgstr "Keine DWZ-Archive gefunden."
+
+#: templates/memberstats.template.txt:19
+msgid "DWZ archives on disk"
+msgstr "DWZ-Archive auf der Festplatte"
+
+#: templates/memberstats.template.txt:20
+msgid "Snapshots imported"
+msgstr "Importierte Stichtage"
+
+#: templates/memberstats.template.txt:21
+msgid "Snapshots missing"
+msgstr "Fehlende Stichtage"
+
+#: templates/memberstats.template.txt:25
+msgid "Sorry, there is no archive for %s."
+msgstr "Entschuldigung, es gibt kein Archiv für %s."
+
+#: templates/personupdate.template.txt:34
+#: zzbrick_tables/wikidata-players.php:39
+msgid "Person"
+msgstr "Person"
+
+#: templates/personupdate.template.txt:35
+msgid "Changes"
+msgstr "Änderungen"
+
+#: templates/ratings-sync.template.txt:17
+msgid "Timestamp"
+msgstr "Zeitstempel"
+
+#: templates/ratings-sync.template.txt:20
+msgid "Inserted"
+msgstr "Eingefügt"
+
+#: templates/ratings-sync.template.txt:21
+msgid "Nothing"
+msgstr "Nichts"
+
+#: templates/ratings-sync.template.txt:22
+msgid "Next"
+msgstr "Nächster"
+
+#: templates/ratingsync.template.txt:17
+msgid "Start download"
+msgstr "Download starten"
+
+#: templates/ratingsync.template.txt:18
+msgid "Start synchronization"
+msgstr "Synchronisierung starten"
+
+#: templates/ratingsync.template.txt:19
+msgid "Start import"
+msgstr "Import starten"
+
+#: zzbrick_make/dewis.inc.php:59
+msgid "There is no organisation with the code %s."
+msgstr "Es gibt keine Organisation mit dem Code %s."
+
+#: zzbrick_make/dewis.inc.php:360
+msgid "Illegal line in DWZ update."
+msgstr "Fehlerhafte Zeile im DWZ-Update."
+
+#: zzbrick_make/dewis.inc.php:398
+msgid "Duplicate membership."
+msgstr "Doppelte Mitgliedschaft."
+
+#: zzbrick_make/memberstats.inc.php:131 zzbrick_make/nuliga.inc.php:143
+msgid "Background job queued."
+msgstr "Hintergrundjob in Warteschlange gestellt."
+
+#: zzbrick_make/memberstats.inc.php:142
+msgid "Memberstats import is already running."
+msgstr "Mitgliederstatistik-Import läuft bereits."
+
+#: zzbrick_make/memberstats.inc.php:169
+msgid "Imported %s"
+msgstr "%s importiert"
+
+#: zzbrick_make/memberstats.inc.php:560 zzbrick_make/memberstats.inc.php:738
+#: zzbrick_make/memberstats.inc.php:1004 zzbrick_make/memberstats.inc.php:1113
+msgid "Unable to open %s"
+msgstr "Kann %s nicht öffnen"
+
+#: zzbrick_make/memberstats.inc.php:638
+msgid "No %s.sql, %s.csv or %s.txt found in archive %s"
+msgstr ""
+
+#: zzbrick_make/memberstats.inc.php:812 zzbrick_make/memberstats.inc.php:1076
+#: zzbrick_make/memberstats.inc.php:1191
+msgid "%s load failed for %s"
+msgstr ""
+
+#: zzbrick_make/memberstats.inc.php:1036 zzbrick_make/memberstats.inc.php:1151
+msgid "Unknown staging table %s"
+msgstr ""
+
+#: zzbrick_make/memberstats.inc.php:1124
+msgid "Empty CSV %s"
+msgstr ""
+
+#: zzbrick_make/memberstats.inc.php:1500
+msgid "Unable to insert federation for %s (%s)"
+msgstr ""
+
+#: zzbrick_make/memberstats.inc.php:1604
+msgid "Unable to insert contact for %s (%s)"
+msgstr ""
+
+#: zzbrick_make/memberstats.inc.php:1656
+msgid "No parent contact for %s (parent code %s)"
+msgstr ""
+
+#: zzbrick_make/nuliga.inc.php:132
+msgid "nuLiga clubs (POST to enqueue or run)."
+msgstr ""
+
+#: zzbrick_make/nuliga.inc.php:150
+msgid "nuLiga import is already running."
+msgstr ""
+
+#: zzbrick_make/nuliga.inc.php:159
+msgid ""
+"nuLiga clubs: %d clubs saved, merge matched %d, inserted %d, updated %d, "
+"skipped %d."
+msgstr ""
+
+#: zzbrick_make/personupdate.inc.php:193
+msgid "Delete FIDE code? (old: %d)."
+msgstr "FIDE-Code löschen? (Alt: %d)."
+
+#: zzbrick_make/personupdate.inc.php:212
+msgid "Player name differs: DWZ database %s / DSJ %s"
+msgstr "Spielername weicht ab: DWZ-DB %s / DSJ %s"
+
+#: zzbrick_make/personupdate.inc.php:240
+msgid "FIDE code %d would be added."
+msgstr "FIDE-Code %d würde ergänzt."
+
+#: zzbrick_make/personupdate.inc.php:251
+msgid "FIDE code %d could not be added."
+msgstr "FIDE-Code %d konnte nicht ergänzt werden."
+
+#: zzbrick_make/personupdate.inc.php:254
+msgid "FIDE code added."
+msgstr "FIDE-Code ergänzt."
+
+#: zzbrick_make/personupdate.inc.php:269
+msgid "FIDE code %d would be corrected to %d."
+msgstr "FIDE-Code %d würde zu %d korrigiert."
+
+#: zzbrick_make/personupdate.inc.php:278
+msgid "FIDE code could not be corrected."
+msgstr "FIDE-Code konnte nicht korrigiert werden."
+
+#: zzbrick_make/personupdate.inc.php:281
+msgid "FIDE code corrected (old: %d, new %d)."
+msgstr "FIDE-Code korrigiert (alt: %d, neu %d)."
+
+#: zzbrick_make/personupdate.inc.php:295
+msgid "ZPS code %s would be set to inactive."
+msgstr "ZPS-Code %s würde auf inaktiv gesetzt."
+
+#: zzbrick_make/personupdate.inc.php:304
+msgid "ZPS code %s could not be deactivated."
+msgstr "ZPS-Code %s konnte nicht deaktiviert werden."
+
+#: zzbrick_make/personupdate.inc.php:307
+msgid "ZPS code %s set to inactive."
+msgstr "ZPS-Code %s auf inaktiv gesetzt."
+
+#: zzbrick_make/personupdate.inc.php:331
+msgid "ZPS code %s would be set back to active."
+msgstr "ZPS-Code %s würde wieder auf aktiv gesetzt."
+
+#: zzbrick_make/personupdate.inc.php:333
+msgid "ZPS code %s would be added."
+msgstr "ZPS-Code %s würde ergänzt."
+
+#: zzbrick_make/personupdate.inc.php:353
+msgid "ZPS code %s could not be added."
+msgstr "ZPS-Code %s konnte nicht ergänzt werden."
+
+#: zzbrick_make/personupdate.inc.php:356
+msgid "ZPS code %s added."
+msgstr "ZPS-Code %s ergänzt."
+
+#: zzbrick_make/personupdate.inc.php:372
+msgid "Year of birth would be changed from %s to %s."
+msgstr "Geburtsjahr würde geändert von %s zu %s."
+
+#: zzbrick_make/personupdate.inc.php:375
+msgid "Year of birth %s would be added."
+msgstr "Geburtsjahr %s würde ergänzt."
+
+#: zzbrick_make/personupdate.inc.php:380
+msgid "Year of birth NOT changed from %s to %s."
+msgstr "Geburtsjahr NICHT geändert von %s zu %s."
+
+#: zzbrick_make/personupdate.inc.php:389
+msgid "Year of birth could not be updated."
+msgstr "Geburtsjahr konnte nicht aktualisiert werden."
+
+#: zzbrick_make/personupdate.inc.php:392
+msgid "Year of birth changed (%d => %d)."
+msgstr "Geburtsjahr geändert (%d => %d)."
+
+#: zzbrick_make/personupdate.inc.php:394
+msgid "Year of birth %d added."
+msgstr "Geburtsjahr %d ergänzt."
+
+#: zzbrick_make/personupdate.inc.php:408
+msgid "Sex would be corrected to %s."
+msgstr "Geschlecht würde korrigiert zu %s."
+
+#: zzbrick_make/personupdate.inc.php:413
+msgid "Sex NOT corrected to %s."
+msgstr "Geschlecht NICHT korrigiert zu %s."
+
+#: zzbrick_make/personupdate.inc.php:423
+msgid "Sex could not be corrected."
+msgstr "Geschlecht konnte nicht korrigiert werden."
+
+#: zzbrick_make/personupdate.inc.php:426
+msgid "Sex corrected (%s)."
+msgstr "Geschlecht korrigiert (%s)."
+
+#: zzbrick_make/personupdate.inc.php:439
+msgid "Person with contact ID %d would be deleted"
+msgstr "Person mit Kontakt-ID %d würde gelöscht"
+
+#: zzbrick_make/personupdate.inc.php:445
+msgid "Person could not be deleted."
+msgstr "Person konnte nicht gelöscht werden."
+
+#: zzbrick_make/personupdate.inc.php:448
+msgid "Person deleted."
+msgstr "Person gelöscht."
+
+#: zzbrick_make/personupdate.inc.php:462
+msgid "Identifier %s would be updated."
+msgstr "Kennung %s würde aktualisiert."
+
+#: zzbrick_make/personupdate.inc.php:471
+msgid "Identifier could not be updated."
+msgstr "Kennung konnte nicht aktualisiert werden."
+
+#: zzbrick_make/personupdate.inc.php:478
+msgid "Identifier updated from %s to %s."
+msgstr "Kennung wurde von %s auf %s aktualisiert."
+
+#: zzbrick_make/ratings.inc.php
+msgid "Download %s rating data"
+msgstr "%s-Wertungsdaten herunterladen"
+
+#: zzbrick_make/ratings.inc.php
+msgid "Import %s rating data"
+msgstr "%s-Wertungsdaten importieren"
+
+#: zzbrick_make/ratings.inc.php:62
+msgid "Rating sync is already running. Please wait for it to finish."
+msgstr ""
+
+#: zzbrick_make/ratings.inc.php:67
+msgid "Please wait. Rating sync is only allowed to run once every %s."
+msgstr ""
+"Bitte warten. Die Synchronisierung der Ratingzahlen darf nur einmal alle %s "
+"laufen."
+
+#: zzbrick_make/ratings-download.inc.php:43
+msgid "Unable to download rating file for %s."
+msgstr ""
+
+#: zzbrick_make/ratings-download.inc.php:49
+msgid "No meta data given after download rating file for %s"
+msgstr ""
+
+#: zzbrick_make/ratings-download.inc.php:72
+msgid "File path for downloaded rating file for %s is wrong: %s/%s."
+msgstr "Dateipfad für die Rating-Datei %s ist falsch: %s/%s."
+
+#: zzbrick_make/ratings-prepare-dwz.inc.php:54
+msgid "File %s not found for rating import."
+msgstr ""
+
+#: zzbrick_make/ratings-prepare-dwz.inc.php:58
+msgid "File for rating import %s is empty."
+msgstr ""
+
+#: zzbrick_make/ratings-prepare-elo.inc.php:44
+msgid "Unable to open rating file %s"
+msgstr ""
+
+#: zzbrick_make/ratings-sync.inc.php:44
+msgid "Unable to read log line, key `result`."
+msgstr ""
+
+#: zzbrick_make/ratings-sync.inc.php:78
+msgid "No download URL for sync of rating data."
+msgstr ""
+
+#: zzbrick_make/ratings-sync.inc.php:116
+msgid "Synchronize %s rating data"
+msgstr "%s-Wertungsdaten synchronisieren"
+
+#: zzbrick_make/ratings-sync.inc.php:118
+msgid "Sync %s"
+msgstr ""
+
+#: zzbrick_tables/dwz-spieler.php:19
+msgid "DWZ players"
+msgstr "DWZ-Spieler"
+
+#: zzbrick_tables/dwz-spieler.php:25
+msgid "Player name"
+msgstr "Spielername"
+
+#: zzbrick_tables/dwz-spieler.php:35 zzbrick_tables/memberstats.php:32
+msgid "ZPS code of the club"
+msgstr "ZPS-Nummer des Vereins"
+
+#: zzbrick_tables/dwz-spieler.php:37
+msgid "Member number"
+msgstr "Mitgliedsnummer"
+
+#: zzbrick_tables/dwz-spieler.php:38
+msgid "Mem."
+msgstr "Mitgl."
+
+#: zzbrick_tables/dwz-spieler.php:41
+msgid "Member number in club"
+msgstr "Mitgliedsnummer im Verein"
+
+#: zzbrick_tables/dwz-spieler.php:47
+msgid "St"
+msgstr ""
+
+#: zzbrick_tables/dwz-spieler.php:50 zzbrick_tables/dwz-spieler.php:64
+msgid "A"
+msgstr ""
+
+#: zzbrick_tables/dwz-spieler.php:50
+msgid "P"
+msgstr ""
+
+#: zzbrick_tables/dwz-spieler.php:53 zzbrick_tables/fide-players.php:35
+#: zzbrick_tables/memberstats.php:62
+msgid "Sex"
+msgstr "Geschlecht"
+
+#: zzbrick_tables/dwz-spieler.php:54
+msgid "G."
+msgstr ""
+
+#: zzbrick_tables/dwz-spieler.php:57 zzbrick_tables/fide-players.php:37
+msgid "M"
+msgstr ""
+
+#: zzbrick_tables/dwz-spieler.php:57
+msgid "W"
+msgstr ""
+
+#: zzbrick_tables/dwz-spieler.php:60
+msgid "Playing eligibility"
+msgstr "Spielberechtigung"
+
+#: zzbrick_tables/dwz-spieler.php:61
+msgid "Sb."
+msgstr ""
+
+#: zzbrick_tables/dwz-spieler.php:64
+msgid "-"
+msgstr ""
+
+#: zzbrick_tables/dwz-spieler.php:64
+msgid "D"
+msgstr ""
+
+#: zzbrick_tables/dwz-spieler.php:64
+msgid "E"
+msgstr ""
+
+#: zzbrick_tables/dwz-spieler.php:64
+msgid "G"
+msgstr ""
+
+#: zzbrick_tables/dwz-spieler.php:64
+msgid "J"
+msgstr ""
+
+#: zzbrick_tables/dwz-spieler.php:67 zzbrick_tables/memberstats.php:53
+msgid "Birth Year"
+msgstr "Geburtsjahr"
+
+#: zzbrick_tables/dwz-spieler.php:72
+msgid "Last evaluation"
+msgstr "Letzte Auswertung"
+
+#: zzbrick_tables/dwz-spieler.php:73
+msgid "DWZ eval."
+msgstr "DWZ Ausw."
+
+#: zzbrick_tables/dwz-spieler.php:76
+msgid "Week of last tournament evaluation"
+msgstr "Woche der letzten Turnierauswertung"
+
+#: zzbrick_tables/dwz-spieler.php:81
+msgid "I."
+msgstr ""
+
+#: zzbrick_tables/dwz-spieler.php:82
+msgid "DWZ Index"
+msgstr ""
+
+#: zzbrick_tables/dwz-spieler.php:92
+msgid "FIDE-ID"
+msgstr "FIDE-ID"
+
+#: zzbrick_tables/dwz-spieler.php:99
+msgid "FIDE country"
+msgstr "FIDE-Land"
+
+#: zzbrick_tables/dwz-spieler.php:102 zzbrick_tables/fide-players.php:121
+#: zzbrick_tables/nuliga-clubs.php:116 zzbrick_tables/nuliga-venues.php:57
+#: zzbrick_tables/wikidata-players.php:46 zzbrick_tables/wikidata-uris.php:39
+msgid "Last update"
+msgstr "Stand"
+
+#: zzbrick_tables/fide-players.php:19
+msgid "FIDE Players"
+msgstr "FIDE-Spieler"
+
+#: zzbrick_tables/fide-players.php:26 zzbrick_tables/wikidata-players.php:32
+msgid "identification number of a player within FIDE database"
+msgstr "Identifikationsnummer eines Spielers in der FIDE-Datenbank"
+
+#: zzbrick_tables/fide-players.php:29
+msgid "Player"
+msgstr "Spieler"
+
+#: zzbrick_tables/fide-players.php:30
+msgid "name of a player"
+msgstr ""
+
+#: zzbrick_tables/fide-players.php:37
+msgid "F"
+msgstr ""
+
+#: zzbrick_tables/fide-players.php:47
+msgid "Title W"
+msgstr ""
+
+#: zzbrick_tables/fide-players.php:48
+msgid "Title women"
+msgstr ""
+
+#: zzbrick_tables/fide-players.php:54
+msgid "Title other"
+msgstr ""
+
+#: zzbrick_tables/fide-players.php:60
+msgid "FOA"
+msgstr ""
+
+#: zzbrick_tables/fide-players.php:61
+msgid "Foa rating"
+msgstr ""
+
+#: zzbrick_tables/fide-players.php:67
+msgid "Std"
+msgstr ""
+
+#: zzbrick_tables/fide-players.php:68
+msgid "Standard rating"
+msgstr ""
+
+#: zzbrick_tables/fide-players.php:72 zzbrick_tables/fide-players.php:87
+#: zzbrick_tables/fide-players.php:102
+msgid "g."
+msgstr ""
+
+#: zzbrick_tables/fide-players.php:73
+msgid "Standard games"
+msgstr ""
+
+#: zzbrick_tables/fide-players.php:75
+msgid "number of STANDARD rated games in given period"
+msgstr ""
+
+#: zzbrick_tables/fide-players.php:77 zzbrick_tables/fide-players.php:92
+#: zzbrick_tables/fide-players.php:107
+msgid "K"
+msgstr ""
+
+#: zzbrick_tables/fide-players.php:78
+msgid "Standard k factor"
+msgstr ""
+
+#: zzbrick_tables/fide-players.php:82
+msgid "Rapid"
+msgstr ""
+
+#: zzbrick_tables/fide-players.php:83
+msgid "Rapid rating"
+msgstr ""
+
+#: zzbrick_tables/fide-players.php:88
+msgid "Rapid games"
+msgstr ""
+
+#: zzbrick_tables/fide-players.php:90
+msgid "number of RAPID rated games in given period"
+msgstr ""
+
+#: zzbrick_tables/fide-players.php:93
+msgid "Rapid k factor"
+msgstr ""
+
+#: zzbrick_tables/fide-players.php:97
+msgid "Blitz"
+msgstr ""
+
+#: zzbrick_tables/fide-players.php:98
+msgid "Blitz rating"
+msgstr ""
+
+#: zzbrick_tables/fide-players.php:103
+msgid "Blitz games"
+msgstr ""
+
+#: zzbrick_tables/fide-players.php:105
+msgid "number of BLITZ rated games in given period"
+msgstr ""
+
+#: zzbrick_tables/fide-players.php:108
+msgid "Blitz k factor"
+msgstr ""
+
+#: zzbrick_tables/fide-players.php:114
+msgid "year of birth of a player"
+msgstr ""
+
+#: zzbrick_tables/fide-players.php:116
+msgid "Flag"
+msgstr ""
+
+#: zzbrick_tables/fide-players.php:118
+msgid "i"
+msgstr ""
+
+#: zzbrick_tables/fide-players.php:118
+msgid "w"
+msgstr ""
+
+#: zzbrick_tables/fide-players.php:118
+msgid "wi"
+msgstr ""
+
+#: zzbrick_tables/memberstats.php:19
+msgid "Member Statistics"
+msgstr "Mitgliederstatistik"
+
+#: zzbrick_tables/memberstats.php:26 zzbrick_tables/memberstats.php:84
+msgid "Snapshot Date"
+msgstr "Stichtag"
+
+#: zzbrick_tables/memberstats.php:65
+msgid "diverse"
+msgstr "divers"
+
+#: zzbrick_tables/memberstats.php:65
+msgid "female"
+msgstr "weiblich"
+
+#: zzbrick_tables/memberstats.php:65
+msgid "male"
+msgstr "männlich"
+
+#: zzbrick_tables/memberstats.php:70
+msgid "active"
+msgstr "aktiv"
+
+#: zzbrick_tables/memberstats.php:70
+msgid "passive"
+msgstr "passiv"
+
+#: zzbrick_tables/nuliga-clubs.php:19
+msgid "nuLiga Clubs"
+msgstr "nuLiga-Vereine"
+
+#: zzbrick_tables/nuliga-clubs.php:27
+msgid "nuLiga club number"
+msgstr "nuLiga-Vereinsnummer"
+
+#: zzbrick_tables/nuliga-clubs.php:33
+msgid "German club code (club pass number)"
+msgstr "Passnummer Verein"
+
+#: zzbrick_tables/nuliga-clubs.php:48
+msgid "Venues"
+msgstr "Spielorte"
+
+#: zzbrick_tables/nuliga-clubs.php:68
+msgid "Confederation"
+msgstr "Bund"
+
+#: zzbrick_tables/nuliga-clubs.php:76 zzbrick_tables/nuliga-venues.php:47
+msgid "Street"
+msgstr "Straße"
+
+#: zzbrick_tables/nuliga-clubs.php:81
+msgid "Contact postcode"
+msgstr ""
+
+#: zzbrick_tables/nuliga-clubs.php:83 zzbrick_tables/nuliga-venues.php:53
+msgid "Postcode/Place"
+msgstr "PLZ/Ort"
+
+#: zzbrick_tables/nuliga-clubs.php:88
+msgid "Contact place"
+msgstr ""
+
+#: zzbrick_tables/nuliga-clubs.php:92
+msgid "Phone"
+msgstr "Telefon"
+
+#: zzbrick_tables/nuliga-clubs.php:96
+msgid "Email"
+msgstr ""
+
+#: zzbrick_tables/nuliga-clubs.php:100
+msgid "Website"
+msgstr "Website"
+
+#: zzbrick_tables/nuliga-clubs.php:104
+msgid "Import run"
+msgstr ""
+
+#: zzbrick_tables/nuliga-venues.php:19
+msgid "nuLiga Venues"
+msgstr "nuLiga-Spielorte"
+
+#: zzbrick_tables/nuliga-venues.php:44
+msgid "Venue"
+msgstr "Spielort"
+
+#: zzbrick_tables/nuliga-venues.php:50
+msgid "Postcode"
+msgstr "PLZ"
+
+#: zzbrick_tables/nuliga-venues.php:55
+msgid "Place"
+msgstr "Ort"
+
+#: zzbrick_tables/wikidata-players.php:19
+msgid "Wikidata Chess Players"
+msgstr "Wikidata-Schachspieler"
+
+#: zzbrick_tables/wikidata-players.php:27 zzbrick_tables/wikidata-uris.php:29
+msgid "Wikidata Q-ID"
+msgstr "Wikidata-Q-ID"
+
+#: zzbrick_tables/wikidata-players.php:31
+msgid "Fide"
+msgstr ""
+
+#: zzbrick_tables/wikidata-players.php:42
+msgid "Wikipedia"
+msgstr "Wikipedia"
+
+#: zzbrick_tables/wikidata-uris.php:19
+msgid "Wikipedia Chess Players"
+msgstr "Wikipedia-Schachspieler"
+
+#: zzbrick_tables/wikidata-uris.php:26
+msgid "Wikidata-ID"
+msgstr "Wikidata-ID"
+
+#: zzbrick_tables/wikidata-uris.php:32
+msgid "URI"
+msgstr "URI"
+
+#: zzbrick_tables/wikidata-uris.php:36
+msgid "URI Language"
+msgstr "URI-Sprache"
+
+#: zzform/editing.inc.php:194
+msgid "Conflicting contact IDs found. Contact IDs: %s, identifiers: %s"
+msgstr "Abweichende Kontakt-IDs gefunden. Kontakt-IDs: %s, Kennungen: %s"
+
+#: zzform/hooks.inc.php:76
+msgid ""
+"Incorrect transmission: ZPS from the club differs from the person‘s ZPS: %s, "
+"club: %s"
+msgstr ""
+"Falsche Übermittlung: ZPS vom Verein weicht von ZPS der Person ab: %s, "
+"Verein: %s"

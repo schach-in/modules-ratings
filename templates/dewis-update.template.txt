@@ -8,15 +8,18 @@
 # @copyright Copyright © 2024 Gustaf Mossakowski
 # @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
 #
+# Variables
+# translate_pot = admin
+#
 <table>
 <thead>
 <tr>
 <td>%%% text ZPS %%%</td>
-<td>%%% text Mgl_Nr %%%</td>
+<td>%%% text Member No. %%%</td>
 <td>%%% text DWZ %%%</td>
-<td>%%% text DWZ_Index %%%</td>
-<td>%%% text rating %%%</td>
-<td>%%% text ratingIndex %%%</td>
+<td>%%% text DWZ index %%%</td>
+<td>%%% text Rating %%%</td>
+<td>%%% text Rating index %%%</td>
 </tr>
 </thead>
 <tbody>

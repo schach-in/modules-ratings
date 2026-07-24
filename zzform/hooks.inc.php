@@ -72,8 +72,8 @@ function mf_ratings_person_hook_restrict_to_club($record) {
 	list($club_code, $membership_no) = explode('-', $record['contact_id']);
 	if ($club_code == $club_code_from_id) return true;
 
-	wrap_error(wrap_text(
-		'Falsche Übermittlung: ZPS vom Verein weicht von ZPS der Person ab: %s, Verein: %s',
-		$record['contact_id'], $club_code_from_id), E_USER_ERROR
+	wrap_error([
+		'Incorrect transmission: ZPS from the club differs from the person‘s ZPS: %s, club: %s',
+		$record['contact_id'], $club_code_from_id], E_USER_ERROR
 	);
 }

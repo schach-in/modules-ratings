@@ -14,6 +14,9 @@
  * @author Gustaf Mossakowski <gustaf@koenige.org>
  * @copyright Copyright © 2026 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
+ *
+ * Variables
+ * translate_pot = admin
  */
 
 (function () {
@@ -31,7 +34,7 @@
 	const labels = {
 		importNext: '%%% text Import next missing snapshot %%%',
 		reimport: '%%% text Re-import snapshot %%%',
-		queued: '%%% text Queued… %%%',
+		queued: '%%% text Queued … %%%',
 		running: '%%% text Memberstats import is running. %%%',
 		stuck: '%%% text Previous memberstats import did not finish. %%%',
 		done: '%%% text All snapshots imported. %%%',
@@ -39,9 +42,9 @@
 		contacts: '%%% text contacts %%%',
 		closed: '%%% text closed %%%',
 		overwrite: '%%% text overwrite %%%',
-		logContact: '%%% text contact %%%',
-		logVerband: '%%% text verband %%%',
-		logContactEnd: '%%% text contact_end %%%',
+		logContact: '%%% text Contact %%%',
+		logVerband: '%%% text Federation %%%',
+		logContactEnd: '%%% text Organisation dissolved %%%',
 		failedStart: '%%% text Could not start background job. %%%',
 		autoStop: '%%% text Stop auto import (%s) %%%',
 		autoStopped: '%%% text Auto import stopped %%%'

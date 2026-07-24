@@ -12,6 +12,9 @@
  * @copyright Copyright © ... Jacob Roggon
  * @copyright Copyright © 2013-2014, 2016-2017, 2019-2020, 2022-2026 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
+ *
+ * Variables
+ * translate_pot = admin
  */
 
 
@@ -37,12 +40,15 @@ function mod_ratings_make_ratings_download($params) {
 	wrap_include('syndication', 'zzwrap');
 	$rating_data = wrap_syndication($data['url'], ['type' => 'file']);
 	if (!$rating_data)
-		wrap_error(sprintf(wrap_text('Unable to download rating file for %s.'), $params[0]), E_USER_ERROR);
+		wrap_error(['Unable to download rating file for %s.', ['values' => [$params[0]]]], E_USER_ERROR);
 
 	// save metadata
 	$meta = $rating_data['_'];
 	if (empty($meta['filename']))
-		wrap_error(sprintf(wrap_text('No meta data given after download rating file for %s (meta: %s).'), $params[0], json_encode($meta)), E_USER_ERROR);
+		wrap_error([
+			'No meta data given after download rating file for %s',
+			['values' => [$params[0]], 'data' => $meta]
+		], E_USER_ERROR);
 
 	// move current rating file into ratings_dir/[rating]/[year] unless already done
 	// 1. create folder
@@ -62,9 +68,10 @@ function mod_ratings_make_ratings_download($params) {
 	// 3. archive file
 	$destination = realpath($destination_folder);
 	if (!$destination) {
-		wrap_error(sprintf(
-			wrap_text('File path for downloaded rating file for %s is wrong: %s/%s.'), $data['rating'], $destination_folder, $filename
-		), E_USER_ERROR);
+		wrap_error([
+			'File path for downloaded rating file for %s is wrong: %s/%s.',
+			['values' => [$data['rating'], $destination_folder, $filename]]
+		], E_USER_ERROR);
 	}
 	$data['filename'] = $destination.'/'.$filename;
 	if (!file_exists($data['filename'])) {

@@ -49,12 +49,18 @@ function mf_ratings_unzip($rating, $archive) {
 	mkdir($dest_folder);
 
 	if (!class_exists('ZipArchive')) {
-		wrap_error(sprintf('php with ZipArchive class needed to extract files. (%s)', __FUNCTION__), E_USER_ERROR);
+		wrap_error([
+			'php with ZipArchive class needed to extract files. (%s)',
+			['values' => [__FUNCTION__]]
+		], E_USER_ERROR);
 	}
 	$zip = new ZipArchive;
 	$res = $zip->open($archive);
 	if ($res !== true) {
-		wrap_error(sprintf(wrap_text('Error while unpacking file %s, Code %s'), $archive, $res), E_USER_ERROR);
+		wrap_error([
+			'Error while unpacking file %s, Code %s',
+			['values' => [$archive, $res]]
+		], E_USER_ERROR);
 		return '';
 	}
 	$zip->extractTo($dest_folder);

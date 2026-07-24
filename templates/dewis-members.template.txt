@@ -8,6 +8,9 @@
 # @copyright Copyright © 2024-2025 Gustaf Mossakowski
 # @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
 #
+# Variables
+# translate_pot = admin
+#
 <h2>%%% item vkz %%% – %%% item name %%%</h2>
 
 %%% text Type %%%: %%% item organisationsart %%%
@@ -15,24 +18,24 @@
 <table class="toplist" id="js-members">
 <thead>
 <tr class="sortable">
-<th>%%% text pid %%%</th>
-<th>%%% text surname %%%</th>
-<th>%%% text firstname %%%</th>
-<th>%%% text title %%%</th>
+<th>%%% text PID %%%</th>
+<th>%%% text Surname %%%</th>
+<th>%%% text First name %%%</th>
+<th>%%% text Title %%%</th>
 <th class="number">%%% text No. %%%</th>
 <th>%%% text St. %%%</th>
-<th class="number">%%% text rating %%%</th>
+<th class="number">%%% text Rating %%%</th>
 <th class="number">%%% text In. %%%</th>
-<th>%%% text tcode %%%</th>
-<th>%%% text finishedOn %%%</th>
+<th>%%% text Tournament %%%</th>
+<th>%%% text Finished On %%%</th>
 <th>%%% text S. %%%</th>
 <th class="number">%%% text Birth %%%</th>
 <th class="number">%%% text FIDE ID %%%</th>
 <th class="number">%%% text Elo %%%</th>
 <th>%%% text Title %%%</th>
-<th>%%% text club %%%</th>
+<th>%%% text Club %%%</th>
 <th>%%% text Updated %%%</th>
-<th>%%% text status %%%</th>
+<th>%%% text Status %%%</th>
 </tr>
 </thead>
 <tbody>

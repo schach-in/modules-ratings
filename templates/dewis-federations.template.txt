@@ -8,13 +8,16 @@
 # @copyright Copyright © 2024-2025 Gustaf Mossakowski
 # @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
 #
+# Variables
+# translate_pot = admin
+#
 <div id="zzform">
 <table class="toplist" id="js-org">
 <thead>
 <tr class="sortable">
-<th class="number" style="padding-right: 1rem;">%%% text vkz %%%</th>
+<th class="number" style="padding-right: 1rem;">%%% text Club code %%%</th>
 <th>%%% text Club %%%</th>
-<th>%%% text last_update %%%</th>
+<th>%%% text Updated %%%</th>
 </tr>
 </thead>
 <tbody>

@@ -8,14 +8,17 @@
 # @copyright Copyright © 2024-2025 Gustaf Mossakowski
 # @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
 #
+# Variables
+# translate_pot = admin
+#
 <table class="toplist" id="js-import">
 <tbody>
 <thead>
 <tr class="sortable">
-<th>%%% text club_identifier %%%</th>
-<th>%%% text status %%%</th>
-<th>%%% text url %%%</th>
-<th>%%% text time %%%</th>
+<th>%%% text Club identifier %%%</th>
+<th>%%% text Status %%%</th>
+<th>%%% text URL %%%</th>
+<th>%%% text Time %%%</th>
 <tr>
 </thead>
 %%% loop start %%%

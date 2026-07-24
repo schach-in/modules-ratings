@@ -10,6 +10,9 @@
  * @author Gustaf Mossakowski <gustaf@koenige.org>
  * @copyright Copyright © 2026 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
+ *
+ * Variables
+ * translate_pot = admin
  */
 
 
@@ -27,7 +30,7 @@ $zz['fields'][1]['link'] = 'https://dsb-schach.liga.nu/cgi-bin/WebObjects/nuLiga
 $zz['fields'][2]['title'] = 'ZPS';
 $zz['fields'][2]['field_name'] = 'zps';
 $zz['fields'][2]['size'] = 6;
-$zz['fields'][2]['explanation'] = 'German club code (Passnummer Verein)';
+$zz['fields'][2]['explanation'] = 'German club code (club pass number)';
 
 $zz['fields'][3]['title'] = 'Club';
 $zz['fields'][3]['field_name'] = 'club_name';

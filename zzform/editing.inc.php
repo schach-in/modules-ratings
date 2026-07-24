@@ -8,7 +8,7 @@
  * https://www.zugzwang.org/modules/ratings
  *
  * @author Gustaf Mossakowski <gustaf@koenige.org>
- * @copyright Copyright © 2012-2025 Gustaf Mossakowski
+ * @copyright Copyright © 2012-2026 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  */
 
@@ -190,11 +190,10 @@ function mf_ratings_person_add($player) {
 		$old_contact_id = '';
 		foreach ($contact_ids as $contact_id) {
 			if ($old_contact_id AND $contact_id !== $old_contact_id) {
-				wrap_error(sprintf(
-					'Abweichende Kontakt-IDs gefunden. Kontakt-IDs: %s, Kennungen: %s'
-					, implode(', ', $contact_ids)
-					, implode(', ', $id_text)
-				));
+				wrap_error([
+					'Conflicting contact IDs found. Contact IDs: %s, identifiers: %s',
+					['values' => [implode(', ', $contact_ids), implode(', ', $id_text)]]
+				]);
 			}
 			$old_contact_id = $contact_id;
 		}

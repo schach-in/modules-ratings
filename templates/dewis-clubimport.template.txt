@@ -8,13 +8,16 @@
 # @copyright Copyright © 2024-2025 Gustaf Mossakowski
 # @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
 #
+# Variables
+# translate_pot = admin
+#
 <form method="POST" action="">
 <table class="toplist" id="js-org">
 <thead>
 <tr class="sortable">
-<th>%%% text vkz %%%</th>
+<th>%%% text Club code %%%</th>
 <th>%%% text Club %%%</th>
-<th>%%% text Last Update %%%</th>
+<th>%%% text Updated %%%</th>
 <th>%%% text Action %%%</th>
 </tr>
 </thead>

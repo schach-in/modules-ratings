@@ -10,6 +10,9 @@
  * @author Gustaf Mossakowski <gustaf@koenige.org>
  * @copyright Copyright © 2024, 2026 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
+ *
+ * Variables
+ * translate_pot = admin
  */
 
 
@@ -20,14 +23,17 @@ $zz['fields'][1]['title'] = 'ID';
 $zz['fields'][1]['field_name'] = 'uri_id';
 $zz['fields'][1]['type'] = 'id';
 
+$zz['fields'][2]['title'] = 'Wikidata-ID';
 $zz['fields'][2]['field_name'] = 'wikidata_id';
 $zz['fields'][2]['prefix'] = 'Q';
 $zz['fields'][2]['explanation'] = 'Wikidata Q-ID';
 $zz['fields'][2]['link'] = 'https://www.wikidata.org/wiki/Q';
 
+$zz['fields'][3]['title'] = 'URI';
 $zz['fields'][3]['field_name'] = 'uri';
 $zz['fields'][3]['type'] = 'url';
 
+$zz['fields'][4]['title'] = 'URI Language';
 $zz['fields'][4]['field_name'] = 'uri_lang';
 
 $zz['fields'][99]['field_name'] = 'last_update';

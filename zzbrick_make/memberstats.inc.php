@@ -20,6 +20,9 @@
  * @author Gustaf Mossakowski <gustaf@koenige.org>
  * @copyright Copyright © 2025-2026 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
+ *
+ * Variables
+ * translate_pot = admin
  */
 
 
@@ -554,7 +557,7 @@ function mf_ratings_memberstats_spieler_version($file) {
 	if ($file['format'] === 'txt' OR $file['format'] === 'csv') return 'v1';
 	$handle = fopen($file['path'], 'r');
 	if (!$handle)
-		wrap_error(sprintf('memberstats: unable to open %s', $file['path']), E_USER_ERROR);
+		wrap_error(['Unable to open %s', ['values' => [$file['path']]]], E_USER_ERROR);
 	$version = mf_ratings_memberstats_sql_spieler_version($handle);
 	fclose($handle);
 	return $version;
@@ -631,10 +634,10 @@ function mf_ratings_memberstats_files($folder, $archive) {
 	foreach (['spieler', 'vereine'] as $kind) {
 		$file = mf_ratings_memberstats_file_optional($folder, $kind);
 		if (!$file) {
-			wrap_error(sprintf(
-				'memberstats: no %s.sql, %s.csv or %s.txt found in archive %s',
-				$kind, $kind, $kind, $archive
-			), E_USER_ERROR);
+			wrap_error([
+				'No %s.sql, %s.csv or %s.txt found in archive %s',
+				['values' => [$kind, $kind, $kind, $archive]]
+			], E_USER_ERROR);
 		}
 		$files[$kind] = $file;
 	}
@@ -732,7 +735,7 @@ function mf_ratings_memberstats_load_sql($filename, $target_table, $snapshot_dat
 	$bytes_total = filesize($filename);
 	$handle = fopen($filename, 'r');
 	if (!$handle)
-		wrap_error(sprintf('memberstats: unable to open %s', $filename), E_USER_ERROR);
+		wrap_error(['Unable to open %s', ['values' => [$filename]]], E_USER_ERROR);
 
 	mf_ratings_memberstats_log($action, [
 		'snapshot' => $snapshot_date,
@@ -806,7 +809,7 @@ function mf_ratings_memberstats_load_sql($filename, $target_table, $snapshot_dat
 		$failed = true;
 	mf_ratings_memberstats_load_end($failed);
 	if ($failed)
-		wrap_error(sprintf('memberstats: %s load failed for %s', $action, $filename), E_USER_ERROR);
+		wrap_error(['%s load failed for %s', ['values' => [$action, $filename]]], E_USER_ERROR);
 
 	mf_ratings_memberstats_log($action, [
 		'snapshot' => $snapshot_date,
@@ -998,7 +1001,7 @@ function mf_ratings_memberstats_load_txt($filename, $target_table, $snapshot_dat
 	$bytes_total = filesize($filename);
 	$handle = fopen($filename, 'r');
 	if (!$handle)
-		wrap_error(sprintf('memberstats: unable to open %s', $filename), E_USER_ERROR);
+		wrap_error(['Unable to open %s', ['values' => [$filename]]], E_USER_ERROR);
 
 	mf_ratings_memberstats_log($action, [
 		'snapshot' => $snapshot_date,
@@ -1030,7 +1033,7 @@ function mf_ratings_memberstats_load_txt($filename, $target_table, $snapshot_dat
 		elseif ($kind === 'verbaende')
 			$sql = mf_ratings_memberstats_txt_verbaende($fields, $target_table);
 		else
-			wrap_error(sprintf('memberstats: unknown staging table %s', $target_table), E_USER_ERROR);
+			wrap_error(['Unknown staging table %s', ['values' => [$target_table]]], E_USER_ERROR);
 		if (!$sql) continue;
 		$row = mf_ratings_memberstats_txt_row($sql);
 		if (!$row) {
@@ -1070,7 +1073,7 @@ function mf_ratings_memberstats_load_txt($filename, $target_table, $snapshot_dat
 		$failed = true;
 	mf_ratings_memberstats_load_end($failed);
 	if ($failed)
-		wrap_error(sprintf('memberstats: %s load failed for %s', $action, $filename), E_USER_ERROR);
+		wrap_error(['%s load failed for %s', ['values' => [$action, $filename]]], E_USER_ERROR);
 
 	mf_ratings_memberstats_log($action, [
 		'snapshot' => $snapshot_date,
@@ -1107,7 +1110,7 @@ function mf_ratings_memberstats_load_csv($filename, $target_table, $snapshot_dat
 	$bytes_total = filesize($filename);
 	$handle = fopen($filename, 'r');
 	if (!$handle)
-		wrap_error(sprintf('memberstats: unable to open %s', $filename), E_USER_ERROR);
+		wrap_error(['Unable to open %s', ['values' => [$filename]]], E_USER_ERROR);
 
 	mf_ratings_memberstats_log($action, [
 		'snapshot' => $snapshot_date,
@@ -1118,7 +1121,7 @@ function mf_ratings_memberstats_load_csv($filename, $target_table, $snapshot_dat
 
 	$header_line = fgetcsv($handle, 0, ',', '"', '\\');
 	if (!$header_line)
-		wrap_error(sprintf('memberstats: empty CSV %s', $filename), E_USER_ERROR);
+		wrap_error(['Empty CSV %s', ['values' => [$filename]]], E_USER_ERROR);
 	$header = mf_ratings_memberstats_csv_header($header_line);
 
 	$rows_done = 0;
@@ -1145,7 +1148,7 @@ function mf_ratings_memberstats_load_csv($filename, $target_table, $snapshot_dat
 			$txt_fields = mf_ratings_memberstats_csv_verbaende_fields($row);
 			$sql = mf_ratings_memberstats_txt_verbaende($txt_fields, $target_table);
 		} else
-			wrap_error(sprintf('memberstats: unknown staging table %s', $target_table), E_USER_ERROR);
+			wrap_error(['Unknown staging table %s', ['values' => [$target_table]]], E_USER_ERROR);
 		if (!$sql) continue;
 		$batch_row = mf_ratings_memberstats_txt_row($sql);
 		if (!$batch_row) {
@@ -1185,7 +1188,7 @@ function mf_ratings_memberstats_load_csv($filename, $target_table, $snapshot_dat
 		$failed = true;
 	mf_ratings_memberstats_load_end($failed);
 	if ($failed)
-		wrap_error(sprintf('memberstats: %s load failed for %s', $action, $filename), E_USER_ERROR);
+		wrap_error(['%s load failed for %s', ['values' => [$action, $filename]]], E_USER_ERROR);
 
 	mf_ratings_memberstats_log($action, [
 		'snapshot' => $snapshot_date,
@@ -1494,10 +1497,7 @@ function mf_ratings_memberstats_verbaende($snapshot_date) {
 		];
 		$contact_id = zzform_insert('contacts', $contact);
 		if (!$contact_id) {
-			wrap_error(sprintf(
-				'memberstats: unable to insert federation for %s (%s)',
-				$verband_code, $verband['verband_name']
-			));
+			wrap_error(['Unable to insert federation for %s (%s)', ['values' => [$verband_code, $verband['verband_name']]]]);
 			continue;
 		}
 		mf_ratings_memberstats_log('verband', [
@@ -1601,10 +1601,7 @@ function mf_ratings_memberstats_clubs($snapshot_date, $spieler_table) {
 		];
 		$contact_id = zzform_insert('contacts', $contact);
 		if (!$contact_id) {
-			wrap_error(sprintf(
-				'memberstats: unable to insert contact for %s (%s)',
-				$club_code, $club['club_name']
-			));
+			wrap_error(['Unable to insert contact for %s (%s)', ['values' => [$club_code, $club['club_name']]]]);
 			continue;
 		}
 		mf_ratings_memberstats_log('contact', [
@@ -1655,10 +1652,10 @@ function mf_ratings_memberstats_club_parent_link($contact_id, $club_code, $paren
 	$sql = sprintf($sql, wrap_db_escape($parent_code));
 	$parent_contact_id = wrap_db_fetch($sql, '', 'single value');
 	if (!$parent_contact_id) {
-		wrap_error(sprintf(
-			'memberstats: no parent contact for %s (parent code %s)',
-			$club_code, $parent_code
-		), E_USER_WARNING);
+		wrap_error([
+			'No parent contact for %s (parent code %s)',
+			['values' => [$club_code, $parent_code]]
+		], E_USER_WARNING);
 		return;
 	}
 

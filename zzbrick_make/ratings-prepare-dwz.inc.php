@@ -10,8 +10,11 @@
  * @author Jacob Roggon
  * @author Gustaf Mossakowski <gustaf@koenige.org>
  * @copyright Copyright © ... Jacob Roggon
- * @copyright Copyright © 2013-2014, 2016-2017, 2019-2024 Gustaf Mossakowski
+ * @copyright Copyright © 2013-2014, 2016-2017, 2019-2024, 2026 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
+ *
+ * Variables
+ * translate_pot = admin
  */
 
 

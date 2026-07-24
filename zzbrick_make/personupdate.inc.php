@@ -8,8 +8,11 @@
  * https://www.zugzwang.org/modules/ratings
  *
  * @author Gustaf Mossakowski <gustaf@koenige.org>
- * @copyright Copyright © 2015, 2019-2022, 2024 Gustaf Mossakowski
+ * @copyright Copyright © 2015, 2019-2022, 2024-2026 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
+ *
+ * Variables
+ * translate_pot = admin
  */
 
 
@@ -186,7 +189,10 @@ function mod_ratings_make_personupdate_update($diff, $person, $existing, $notes,
 			} elseif ($value) {
 				$notes[$i] = mod_ratings_make_personupdate_update_id_fide($value, $existing['fide_pk_id'], $existing['player_id_fide']);
 			} else {
-				$notes[$i]['note'] = sprintf('FIDE-Code löschen? (Alt: %d).', $existing['player_id_fide']);
+				$notes[$i]['note'] = wrap_text(
+					'Delete FIDE code? (old: %d).',
+					['values' => [$existing['player_id_fide']]]
+				);
 			}
 			break;
 		case 'player_pass_dsb':
@@ -202,9 +208,9 @@ function mod_ratings_make_personupdate_update($diff, $person, $existing, $notes,
 			$notes[$i] = mod_ratings_make_personupdate_update_sex($person['sex'], $existing['person_id']);
 			break;
 		case 'player':
-			$notes[$i]['note'] = sprintf('Spielername weicht ab: DWZ-DB %s / DSJ %s'
-				, $person['player']
-				, $existing['player']
+			$notes[$i]['note'] = wrap_text(
+				'Player name differs: DWZ database %s / DSJ %s',
+				['values' => [$person['player'], $existing['player']]]
 			);
 			break;
 		default:
@@ -231,7 +237,7 @@ function mod_ratings_make_personupdate_update($diff, $person, $existing, $notes,
  */
 function mod_ratings_make_personupdate_add_id_fide($new, $contact_id) {
 	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-		$note['note'] = sprintf('FIDE-Code %d würde ergänzt.', $new);
+		$note['note'] = wrap_text('FIDE code %d would be added.', ['values' => [$new]]);
 		return $note;
 	}
 	$line = [
@@ -242,10 +248,10 @@ function mod_ratings_make_personupdate_add_id_fide($new, $contact_id) {
 	];
 	$result = zzform_insert('contacts-identifiers', $line);
 	if (!$result) {
-		$note['note'] = wrap_text('FIDE-Code %d konnte nicht ergänzt werden.', ['values' => [$new]]);
+		$note['note'] = wrap_text('FIDE code %d could not be added.', ['values' => [$new]]);
 		$note['error'] = true;
 	} else {
-		$note['note'] = 'FIDE-Code ergänzt.';
+		$note['note'] = wrap_text('FIDE code added.');
 	}
 	return $note;
 }
@@ -260,7 +266,7 @@ function mod_ratings_make_personupdate_add_id_fide($new, $contact_id) {
  */
 function mod_ratings_make_personupdate_update_id_fide($new, $contact_identifier_id, $old) {
 	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-		$note['note'] = sprintf('FIDE-Code %d würde korrigiert zu %d.', $old, $new);
+		$note['note'] = wrap_text('FIDE code %d would be corrected to %d.', ['values' => [$old, $new]]);
 		return $note;
 	}
 	$line = [
@@ -269,10 +275,10 @@ function mod_ratings_make_personupdate_update_id_fide($new, $contact_identifier_
 	];
 	$result = zzform_update('contacts-identifiers', $line);
 	if (is_null($result)) {
-		$note['note'] = 'FIDE-Code konnte nicht korrigiert werden.';
+		$note['note'] = wrap_text('FIDE code could not be corrected.');
 		$note['error'] = true;
 	} else {
-		$note['note'] = sprintf('FIDE-Code korrigert (Alt: %d, neu %d).', $old, $new);
+		$note['note'] = wrap_text('FIDE code corrected (old: %d, new %d).', ['values' => [$old, $new]]);
 	}
 	return $note;
 }
@@ -286,7 +292,7 @@ function mod_ratings_make_personupdate_update_id_fide($new, $contact_identifier_
  */
 function mod_ratings_make_personupdate_remove_zps_code($contact_identifier_id, $old) {
 	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-		$note['note'] = wrap_text('ZPS-Code %s würde auf inaktiv gesetzt.', ['values' => [$old]]);
+		$note['note'] = wrap_text('ZPS code %s would be set to inactive.', ['values' => [$old]]);
 		return $note;
 	}
 	$line = [
@@ -295,10 +301,10 @@ function mod_ratings_make_personupdate_remove_zps_code($contact_identifier_id, $
 	];
 	$result = zzform_update('contacts-identifiers', $line);
 	if (is_null($result)) {
-		$note['note'] = wrap_text('ZPS-Code %s konnte nicht inaktiviert werden.', ['values' => [$old]]);
+		$note['note'] = wrap_text('ZPS code %s could not be deactivated.', ['values' => [$old]]);
 		$note['error'] = true;
 	} else {
-		$note['note'] = wrap_text('ZPS-Code %s auf inaktiv gesetzt.', ['values' => [$old]]);
+		$note['note'] = wrap_text('ZPS code %s set to inactive.', ['values' => [$old]]);
 	}
 	return $note;
 }
@@ -322,9 +328,9 @@ function mod_ratings_make_personupdate_add_zps_code($new, $contact_id) {
 	$pk_id = wrap_db_fetch($sql, '', 'single value');
 	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 		if ($pk_id) {
-			$note['note'] = sprintf('ZPS-Code %s würde wieder auf aktiv gestellt.', $new);
+			$note['note'] = wrap_text('ZPS code %s would be set back to active.', ['values' => [$new]]);
 		} else {
-			$note['note'] = sprintf('ZPS-Code %s würde ergänzt.', $new);
+			$note['note'] = wrap_text('ZPS code %s would be added.', ['values' => [$new]]);
 		}
 		return $note;
 	}
@@ -344,10 +350,10 @@ function mod_ratings_make_personupdate_add_zps_code($new, $contact_id) {
 		$result = zzform_insert('contacts-identifiers', $line);
 	}
 	if (is_null($result)) {
-		$note['note'] = sprintf('ZPS-Code %s konnte nicht ergänzt werden.', $new);
+		$note['note'] = wrap_text('ZPS code %s could not be added.', ['values' => [$new]]);
 		$note['error'] = true;
 	} else {
-		$note['note'] = wrap_text('ZPS-Code %s ergänzt.', ['values' => [$new]]);
+		$note['note'] = wrap_text('ZPS code %s added.', ['values' => [$new]]);
 	}
 	return $note;
 }
@@ -363,15 +369,15 @@ function mod_ratings_make_personupdate_add_zps_code($new, $contact_id) {
 function mod_ratings_make_personupdate_update_birth($new, $person_id, $old) {
 	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 		if ($old) {
-			$note['note'] = sprintf('Geburtsjahr würde geändert von %s zu %s.', $old, $new);
+			$note['note'] = wrap_text('Year of birth would be changed from %s to %s.', ['values' => [$old, $new]]);
 			$note['checkbox'] = 'birth-'.$person_id;
 		} else {
-			$note['note'] = sprintf('Geburtsjahr %s würde ergänzt.', $new);
+			$note['note'] = wrap_text('Year of birth %s would be added.', ['values' => [$new]]);
 		}
 		return $note;
 	}
 	if (empty($_POST['birth-'.$person_id])) {
-		$note['note'] = sprintf('Geburtsjahr NICHT geändert von %s zu %s.', $old, $new);
+		$note['note'] = wrap_text('Year of birth NOT changed from %s to %s.', ['values' => [$old, $new]]);
 		return $note;
 	}
 	$line = [
@@ -380,13 +386,12 @@ function mod_ratings_make_personupdate_update_birth($new, $person_id, $old) {
 	];
 	$result = zzform_update('persons', $line);
 	if (is_null($result)) {
-		$note['note'] = 'Geburtsjahr konnte nicht aktualisiert werden.';
+		$note['note'] = wrap_text('Year of birth could not be updated.');
 		$note['error'] = true;
 	} elseif ($old) {
-		$note['note'] = sprintf('Geburtsjahr geändert (%d => %d).', $old, $new);
+		$note['note'] = wrap_text('Year of birth changed (%d => %d).', ['values' => [$old, $new]]);
 	} else {
-		$note['note'] = sprintf('Geburtsjahr %d ergänzt.', $new
-		);
+		$note['note'] = wrap_text('Year of birth %d added.', ['values' => [$new]]);
 	}
 	return $note;
 }
@@ -400,12 +405,12 @@ function mod_ratings_make_personupdate_update_birth($new, $person_id, $old) {
  */
 function mod_ratings_make_personupdate_update_sex($new, $person_id) {
 	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-		$note['note'] = sprintf('Geschlecht würde korrigiert zu %s.', $new);
+		$note['note'] = wrap_text('Sex would be corrected to %s.', ['values' => [$new]]);
 		$note['checkbox'] = 'sex-'.$person_id;
 		return $note;
 	}
 	if (empty($_POST['sex-'.$person_id])) {
-		$note['note'] = sprintf('Geschlecht NICHT korrigiert zu %s.', $new);
+		$note['note'] = wrap_text('Sex NOT corrected to %s.', ['values' => [$new]]);
 		return $note;
 	}
 	$new = $new === 'W' ? 'female' : 'male';
@@ -415,10 +420,10 @@ function mod_ratings_make_personupdate_update_sex($new, $person_id) {
 	];
 	$result = zzform_update('persons', $line);
 	if (is_null($result)) {
-		$note['note'] = 'Geschlecht konnte nicht korrigiert werden.';
+		$note['note'] = wrap_text('Sex could not be corrected.');
 		$note['error'] = true;
 	} else {
-		$note['note'] = sprintf('Geschlecht korrigiert (%s).', $new);
+		$note['note'] = wrap_text('Sex corrected (%s).', ['values' => [$new]]);
 	}
 	return $note;
 }
@@ -431,16 +436,16 @@ function mod_ratings_make_personupdate_update_sex($new, $person_id) {
  */
 function mod_ratings_make_personupdate_delete($contact_id) {
 	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-		$note['note'] = sprintf('Person mit Contact ID %d würde gelöscht', $contact_id);
+		$note['note'] = wrap_text('Person with contact ID %d would be deleted', ['values' => [$contact_id]]);
 		return $note;
 	}
 	
 	$deleted = zzform_delete('contacts', $contact_id);
 	if (!$deleted) {
-		$note['note'] = 'Person konnte nicht gelöscht werden.';
+		$note['note'] = wrap_text('Person could not be deleted.');
 		$note['error'] = true;
 	} else {
-		$note['note'] = 'Person gelöscht.';
+		$note['note'] = wrap_text('Person deleted.');
 	}
 	return $note;
 }
@@ -454,7 +459,7 @@ function mod_ratings_make_personupdate_delete($contact_id) {
 function mod_ratings_make_personupdate_change_identifier($contact_id, $old) {
 	$note = [];
 	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-		$note['note'] = sprintf('Kennung %s würde aktualisiert.', $old);
+		$note['note'] = wrap_text('Identifier %s would be updated.', ['values' => [$old]]);
 		return $note;
 	}
 	$line = [
@@ -463,14 +468,14 @@ function mod_ratings_make_personupdate_change_identifier($contact_id, $old) {
 	];
 	$contact_id = zzform_update('forms/persons', $line);
 	if (is_null($contact_id)) {
-		$note['note'] = 'Kennung konnte nicht aktualisiert werden.';
+		$note['note'] = wrap_text('Identifier could not be updated.');
 		$note['error'] = true;
 	} else {
 		$sql = 'SELECT identifier FROM contacts WHERE contact_id = %d';
 		$sql = sprintf($sql, $contact_id);
 		$new = wrap_db_fetch($sql, '', 'single value');
 		if ($new)
-			$note['note'] = sprintf('Kennung wurde von %s auf %s aktualisiert.', $old, $new);
+			$note['note'] = wrap_text('Identifier updated from %s to %s.', ['values' => [$old, $new]]);
 	}
 	return $note;
 }

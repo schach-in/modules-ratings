@@ -8,8 +8,11 @@
  * https://www.zugzwang.org/modules/ratings
  *
  * @author Gustaf Mossakowski <gustaf@koenige.org>
- * @copyright Copyright © 2024-2025 Gustaf Mossakowski
+ * @copyright Copyright © 2024-2026 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
+ *
+ * Variables
+ * translate_pot = admin
  */
 
 
@@ -354,7 +357,7 @@ function mod_ratings_make_dewis_update() {
 	$template = 'UPDATE dwz_spieler SET DWZ = "%s", DWZ_Index = "%s" WHERE ZPS = "%s" AND IF(Mgl_Nr < 100, LPAD(Mgl_Nr, 3, "0"), Mgl_Nr) = "%s";';
 	foreach ($updates as $line) {
 		if (!$line['rating'] OR !$line['Mgl_Nr']) {
-			wrap_error('illegal line in DWZ update: '.json_encode($line));
+			wrap_error(['Illegal line in DWZ update.', ['data' => $line]]);
 			continue;
 		}
 		$sql = sprintf($template, $line['rating'], $line['ratingIndex'], $line['ZPS'], $line['Mgl_Nr']);
@@ -392,7 +395,7 @@ function mod_ratings_make_dewis_insert() {
 		);';
 	foreach ($data as $line) {
 		if ($line['duplicate']) {
-			wrap_error('Duplicate membership. '.json_encode($line));
+			wrap_error(['Duplicate membership.', ['data' => $line]]);
 			continue;
 		}
 		$sql = sprintf($template

@@ -11,7 +11,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Zugzwang Project -- ratings module\n"
-"POT-Creation-Date: \n"
+"POT-Creation-Date: 2026-07-24 20:08+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Gustaf Mossakowski <gustaf@koenige.org>\n"
 "Language-Team: \n"
@@ -22,327 +22,41 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 3.9\n"
 
-#: behaviour/memberstats.js
-msgid "Import next missing snapshot"
-msgstr "Nächsten fehlenden Stichtag importieren"
-
-#: behaviour/memberstats.js
-msgid "Re-import snapshot"
-msgstr "Stichtag erneut importieren"
-
-#: behaviour/memberstats.js
-msgid "Queued…"
-msgstr "In Warteschlange…"
-
-#: behaviour/memberstats.js
-msgid "Memberstats import is running."
-msgstr "Mitgliederstatistik-Import läuft."
-
-#: behaviour/memberstats.js
-msgid "Previous memberstats import did not finish."
-msgstr "Der vorherige Mitgliederstatistik-Import wurde nicht abgeschlossen."
-
-#: behaviour/memberstats.js
-#: zzbrick_make/memberstats.inc.php
-msgid "All snapshots imported."
-msgstr "Alle Stichtage importiert."
-
-#: behaviour/memberstats.js
-msgid "rows"
-msgstr "Zeilen"
-
-#: behaviour/memberstats.js
-msgid "Could not start background job."
-msgstr "Hintergrundjob konnte nicht gestartet werden."
-
-#: behaviour/memberstats.js
-msgid "contacts"
-msgstr "Kontakte"
-
-#: behaviour/memberstats.js
-msgid "closed"
-msgstr "geschlossen"
-
-#: behaviour/memberstats.js
-msgid "overwrite"
-msgstr "überschreiben"
-
-# log action label in memberstats progress UI
-#: behaviour/memberstats.js
-msgid "contact"
-msgstr "Kontakt"
-
-# log action label in memberstats progress UI
-#: behaviour/memberstats.js
-msgid "verband"
-msgstr "Verband"
-
-# log action label in memberstats progress UI
-#: behaviour/memberstats.js
-msgid "contact_end"
-msgstr "Organisation aufgelöst"
-
-#: behaviour/memberstats.js
-msgid "Stop auto import (%s)"
-msgstr "Auto-Import stoppen (%s)"
-
-#: behaviour/memberstats.js
-msgid "Auto import stopped"
-msgstr "Auto-Import gestoppt"
-
-#: configuration/settings.cfg
-msgid "URL under which the current FIDE Elo data is available in TXT format"
-msgstr "URL, unter der die aktuellen FIDE-Elo-Daten im TXT-Format vorliegen"
-
-#: configuration/settings.cfg
-msgid ""
-"URL under which the current DWZ data of the German Chess Federation is "
-"available in SQL format"
-msgstr "URL, unter der die aktuellen DSB-DWZ-Daten im SQL-Format vorliegen"
-
-#: configuration/settings.cfg
-msgid "Last imported status of the FIDE Elo database"
-msgstr "Letzter importierter Stand der FIDE-Elo-Datenbank"
-
-#: configuration/settings.cfg
-msgid "Last imported status of the German DWZ database"
-msgstr "Letzter importierter Stand der DSB-DWZ-Datenbank"
-
-#: templates/contact-ratings.template.txt
+#: templates/contact-ratings.template.txt:12
 msgid "Ratings"
 msgstr "Wertungen"
 
-#: templates/contact-ratings-clubs.template.txt
+#: templates/contact-ratings-clubs.template.txt:12
 msgid "Clubs"
 msgstr "Vereine"
 
-#: templates/federationids.template.txt
-msgid "No updates necessary."
-msgstr "Keine Aktualisierungen erforderlich."
-
-#: templates/ratinglist.template.txt
+#: templates/search-ratings.template.txt:14
 msgid "(exact match)"
 msgstr "(genaue Übereinstimmung)"
 
-#: templates/ratinglist.template.txt
+#: templates/search-ratings.template.txt:19
 msgid "(partial match)"
 msgstr "(teilweise Übereinstimmung)"
 
-#: templates/ratingstatus.template.txt
+#: templates/ratingstatus.template.txt:12
 msgid "Latest DWZ: %s"
 msgstr "Stand DWZ: %s"
 
-#: templates/ratingstatus.template.txt
+#: templates/ratingstatus.template.txt:13
 msgid "Latest Elo: %s"
 msgstr "Stand Elo: %s"
 
-#: templates/ratingsync.template.txt
-msgid "Start download"
-msgstr "Download starten"
-
-#: templates/ratingsync.template.txt
-msgid "Start synchronization"
-msgstr "Synchronisierung starten"
-
-#: templates/ratingsync.template.txt
-msgid "Start import"
-msgstr "Import starten"
-
-#: templates/memberstats.template.txt
-msgid "No DWZ archives found."
-msgstr "Keine DWZ-Archive gefunden."
-
-#: templates/memberstats.template.txt
-msgid "DWZ archives on disk"
-msgstr "DWZ-Archive auf der Festplatte"
-
-#: templates/memberstats.template.txt
-msgid "Snapshots imported"
-msgstr "Importierte Stichtage"
-
-#: templates/memberstats.template.txt
-msgid "Snapshots missing"
-msgstr "Fehlende Stichtage"
-
-#: templates/memberstats.template.txt
-msgid "Sorry, there is no archive for %s."
-msgstr "Entschuldigung, es gibt kein Archiv für %s."
-
-#: zzbrick_make/dewis.inc.php
-msgid "There is no organisation with the code %s."
-msgstr "Es gibt keine Organisation mit dem Code %s."
-
-#: zzbrick_make/ratings.inc.php
-msgid "Error while unpacking file %s, Code %s"
-msgstr "Fehler beim entpacken der Datei %s, Code %s"
-
-#: zzbrick_make/ratings.inc.php
-msgid "Please wait. Rating sync is only allowed to run once every %s."
+#: zzbrick_request/clubratings.inc.php:34
+msgid ""
+"This club either does not exist anymore or is not a member of the federation "
+"anymore."
 msgstr ""
-"Bitte warten. Die Synchronisierung der Ratingzahlen darf nur einmal alle %s "
-"laufen."
+"Dieser Verein existiert nicht mehr oder ist nicht mehr Mitglied im Verband."
 
-#: zzbrick_make/ratings.inc.php
-msgid "Download %s rating data"
-msgstr "%s-Wertungsdaten herunterladen"
-
-#: zzbrick_make/ratings.inc.php
-msgid "Import %s rating data"
-msgstr "%s-Wertungsdaten importieren"
-
-#: zzbrick_make/ratings.inc.php
-msgid "Synchronize %s rating data"
-msgstr "%s-Wertungsdaten synchronisieren"
-
-#: zzbrick_make/ratings-download.inc.php
-msgid "Failed to download rating file for %s."
-msgstr "Herunterladen der Rating-Datei für %s fehlgeschlagen."
-
-#: zzbrick_make/ratings-download.inc.php
-msgid "File path for downloaded rating file for %s is wrong: %s/%s."
-msgstr "Dateipfad für die Rating-Datei %s ist falsch: %s/%s."
-
-#: zzbrick_make/ratings-import-dwz.inc.php
-msgid "File not found for rating import: %s"
-msgstr "Datei %s für den Rating-Import nicht gefunden."
-
-#: zzbrick_make/ratings-sync.inc.php
-msgid "No rating sync required for %s."
-msgstr "Keine Synchronisation für die %s-Wertungsdaten erforderlich."
-
-#: zzbrick_make/memberstats.inc.php
-msgid "Nothing to import."
-msgstr "Nichts zu importieren."
-
-#: zzbrick_make/memberstats.inc.php
-msgid "Background job queued."
-msgstr "Hintergrundjob in Warteschlange gestellt."
-
-#: zzbrick_make/memberstats.inc.php
-msgid "Memberstats import is already running."
-msgstr "Mitgliederstatistik-Import läuft bereits."
-
-#: zzbrick_make/memberstats.inc.php
-msgid "Imported %s"
-msgstr "%s importiert"
-
-#: zzbrick_request/clubratings.inc.php
-msgid "This club either does not exist anymore or is not a member of the federation anymore."
-msgstr "Dieser Verein existiert nicht mehr oder ist nicht mehr Mitglied im Verband."
-
+# Arena FIDE titles: AFM
 #: zzbrick_tables/fide-players.php
-msgid "Federation"
-msgstr "Verband"
-
-# FIDE titles: GM
-#: zzbrick_tables/fide-players.php
-msgid "Grand Master"
-msgstr "Großmeister"
-
-# FIDE titles: IM
-#: zzbrick_tables/fide-players.php
-msgid "International Master"
-msgstr "Internationaler Meister"
-
-# FIDE titles: FM
-#: zzbrick_tables/fide-players.php
-msgid "FIDE Master"
-msgstr "FIDE-Meister"
-
-# FIDE titles: CM
-#: zzbrick_tables/fide-players.php
-msgid "Candidate Master"
-msgstr "Meisterkandidat"
-
-# Women FIDE titles: WGM
-#: zzbrick_tables/fide-players.php
-msgid "Woman Grand Master"
-msgstr "Frauen-Großmeisterin"
-
-# Women FIDE titles: WIM
-#: zzbrick_tables/fide-players.php
-msgid "Woman International Master"
-msgstr "Internationale Frauen-Meisterin"
-
-# Women FIDE titles: WFM
-#: zzbrick_tables/fide-players.php
-msgid "Woman FIDE Master"
-msgstr "Frauen-FIDE-Meisterin"
-
-# Women FIDE titles: WCM
-#: zzbrick_tables/fide-players.php
-msgid "Woman Candidate Master"
-msgstr "Frauen-Meisterkandidatin"
-
-# Other FIDE titles: IA
-#: zzbrick_tables/fide-players.php
-msgid "International Arbiter"
-msgstr "Internationaler Schiedsrichter"
-
-# Other FIDE titles: FA
-#: zzbrick_tables/fide-players.php
-msgid "FIDE Arbiter"
-msgstr "FIDE-Schiedsrichter"
-
-# Other FIDE titles: NA
-#: zzbrick_tables/fide-players.php
-msgid "National Arbiter"
-msgstr "Nationaler Schiedsrichter"
-
-# Other FIDE titles: IO
-#: zzbrick_tables/fide-players.php
-msgid "International Organizer"
-msgstr "Internationaler Organisator"
-
-# Other FIDE titles: AO
-#: zzbrick_tables/fide-players.php
-msgid "FIDE Associate Organizer"
-msgstr "Assoziierter FIDE-Organisator"
-
-# Other FIDE titles: PO
-#: zzbrick_tables/fide-players.php
-msgid "FIDE Premier Organizer"
-msgstr "FIDE-Premier-Organisator"
-
-# Other FIDE titles: FT
-#: zzbrick_tables/fide-players.php
-msgid "FIDE Trainer"
-msgstr "FIDE-Trainer"
-
-# Other FIDE titles: FST
-#: zzbrick_tables/fide-players.php
-msgid "FIDE Senior Trainer"
-msgstr "FIDE-Senior-Trainer"
-
-# Other FIDE titles: DI
-#: zzbrick_tables/fide-players.php
-msgid "Developmental Instructor"
-msgstr "Ausbilder"
-
-# Other FIDE titles: NI
-#: zzbrick_tables/fide-players.php
-msgid "National Instructor"
-msgstr "Nationaler Ausbilder"
-
-# Other FIDE titles: LSI
-#: zzbrick_tables/fide-players.php
-msgid "Lead School Instructor"
-msgstr "Leitender Schulausbilder"
-
-# Other FIDE titles: SLI
-#: zzbrick_tables/fide-players.php
-msgid "Senior Lead Instructor"
-msgstr "Senior-Lead-Ausbilder"
-
-# Other FIDE titles: SI
-#: zzbrick_tables/fide-players.php
-msgid "School Instructor"
-msgstr "Schulausbilder"
-
-# Other FIDE titles: FI
-#: zzbrick_tables/fide-players.php
-msgid "FIDE Instructor"
-msgstr "FIDE-Ausbilder"
+msgid "Arena FIDE Master"
+msgstr "Arena FIDE-Meister"
 
 # Arena FIDE titles: AGM
 #: zzbrick_tables/fide-players.php
@@ -354,71 +68,117 @@ msgstr "Arena-Großmeister"
 msgid "Arena International Master"
 msgstr "Internationaler Arena-Meister"
 
-# Arena FIDE titles: AFM
-#: zzbrick_tables/fide-players.php
-msgid "Arena FIDE Master"
-msgstr "Arena FIDE-Meister"
-
 # Arena FIDE titles: ACM
 #: zzbrick_tables/fide-players.php
 msgid "Arena Master Candidate"
 msgstr "Arena-Meisterkandidat"
 
-#: zzbrick_tables/memberstats.php
-msgid "Member Statistics"
-msgstr "Mitgliederstatistik"
+# FIDE titles: CM
+#: zzbrick_tables/fide-players.php
+msgid "Candidate Master"
+msgstr "Meisterkandidat"
 
-#: zzbrick_tables/memberstats.php
-msgid "Snapshot Date"
-msgstr "Stichtag"
+# Other FIDE titles: DI
+#: zzbrick_tables/fide-players.php
+msgid "Developmental Instructor"
+msgstr "Ausbilder"
 
-#: zzbrick_tables/memberstats.php
-msgid "Club Code"
-msgstr "ZPS-Nummer"
+# Other FIDE titles: FA
+#: zzbrick_tables/fide-players.php
+msgid "FIDE Arbiter"
+msgstr "FIDE-Schiedsrichter"
 
-#: zzbrick_tables/memberstats.php
-msgid "ZPS code of the club"
-msgstr "ZPS-Nummer des Vereins"
+# Other FIDE titles: AO
+#: zzbrick_tables/fide-players.php
+msgid "FIDE Associate Organizer"
+msgstr "Assoziierter FIDE-Organisator"
 
-#: zzbrick_tables/memberstats.php
-msgid "Club"
-msgstr "Verein"
+# Other FIDE titles: FI
+#: zzbrick_tables/fide-players.php
+msgid "FIDE Instructor"
+msgstr "FIDE-Ausbilder"
 
-# tab heading for birth_year column
-#: zzbrick_tables/memberstats.php
-msgid "Birth"
-msgstr "Geb."
+# FIDE titles: FM
+#: zzbrick_tables/fide-players.php
+msgid "FIDE Master"
+msgstr "FIDE-Meister"
 
-#: zzbrick_tables/memberstats.php
-msgid "Birth Year"
-msgstr "Geburtsjahr"
+# Other FIDE titles: PO
+#: zzbrick_tables/fide-players.php
+msgid "FIDE Premier Organizer"
+msgstr "FIDE-Premier-Organisator"
 
-#: zzbrick_tables/memberstats.php
-msgid "Rating"
-msgstr "Wertung"
+# Other FIDE titles: FST
+#: zzbrick_tables/fide-players.php
+msgid "FIDE Senior Trainer"
+msgstr "FIDE-Senior-Trainer"
 
-# tab heading for sex column
-#: zzbrick_tables/memberstats.php
-msgid "S."
-msgstr "G."
+# Other FIDE titles: FT
+#: zzbrick_tables/fide-players.php
+msgid "FIDE Trainer"
+msgstr "FIDE-Trainer"
 
-#: zzbrick_tables/memberstats.php
-msgid "female"
-msgstr "weiblich"
+# FIDE titles: GM
+#: zzbrick_tables/fide-players.php
+msgid "Grand Master"
+msgstr "Großmeister"
 
-#: zzbrick_tables/memberstats.php
-msgid "male"
-msgstr "männlich"
+# Other FIDE titles: IA
+#: zzbrick_tables/fide-players.php
+msgid "International Arbiter"
+msgstr "Internationaler Schiedsrichter"
 
-#: zzbrick_tables/memberstats.php
-msgid "diverse"
-msgstr "divers"
+# FIDE titles: IM
+#: zzbrick_tables/fide-players.php
+msgid "International Master"
+msgstr "Internationaler Meister"
 
-# tab heading for status column
-#: zzbrick_tables/memberstats.php
-msgid "St."
-msgstr "St."
+# Other FIDE titles: IO
+#: zzbrick_tables/fide-players.php
+msgid "International Organizer"
+msgstr "Internationaler Organisator"
 
-#: zzbrick_tables/memberstats.php
-msgid "Status"
-msgstr "Status"
+# Other FIDE titles: LSI
+#: zzbrick_tables/fide-players.php
+msgid "Lead School Instructor"
+msgstr "Leitender Schulausbilder"
+
+# Other FIDE titles: NA
+#: zzbrick_tables/fide-players.php
+msgid "National Arbiter"
+msgstr "Nationaler Schiedsrichter"
+
+# Other FIDE titles: NI
+#: zzbrick_tables/fide-players.php
+msgid "National Instructor"
+msgstr "Nationaler Ausbilder"
+
+# Other FIDE titles: SI
+#: zzbrick_tables/fide-players.php
+msgid "School Instructor"
+msgstr "Schulausbilder"
+
+# Other FIDE titles: SLI
+#: zzbrick_tables/fide-players.php
+msgid "Senior Lead Instructor"
+msgstr "Senior-Lead-Ausbilder"
+
+# Women FIDE titles: WCM
+#: zzbrick_tables/fide-players.php
+msgid "Woman Candidate Master"
+msgstr "Frauen-Meisterkandidatin"
+
+# Women FIDE titles: WFM
+#: zzbrick_tables/fide-players.php
+msgid "Woman FIDE Master"
+msgstr "Frauen-FIDE-Meisterin"
+
+# Women FIDE titles: WGM
+#: zzbrick_tables/fide-players.php
+msgid "Woman Grand Master"
+msgstr "Frauen-Großmeisterin"
+
+# Women FIDE titles: WIM
+#: zzbrick_tables/fide-players.php
+msgid "Woman International Master"
+msgstr "Internationale Frauen-Meisterin"

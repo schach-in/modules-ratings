@@ -10,6 +10,9 @@
  * @author Gustaf Mossakowski <gustaf@koenige.org>
  * @copyright Copyright © 2024, 2026 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
+ *
+ * Variables
+ * translate_pot = admin
  */
 
 
@@ -38,7 +41,7 @@ function mod_ratings_make_ratings_sync($params) {
 			if (is_array($result))
 				$data[$index] += $result;
 			else
-				wrap_error('Unable to read log line, key `result`: '.json_encode($line));
+				wrap_error(['Unable to read log line, key `result`.', ['data' => $line]]);
 		}
 		$data[$index]['time'] = date('Y-m-d H:i:s', $line['timestamp']);
 	}
@@ -72,7 +75,7 @@ function mod_ratings_make_ratings_sync($params) {
 	switch ($action) {
 	case 'download':
 		$url = wrap_path('ratings_sync', sprintf('download/%s', $data['rating']));
-		if (!$url) wrap_error(wrap_text('No download URL for sync of rating data.'), E_USER_ERROR);
+		if (!$url) wrap_error(['No download URL for sync of rating data.'], E_USER_ERROR);
 		mod_ratings_make_ratings_sync_next($url, $log);
 		break;
 
