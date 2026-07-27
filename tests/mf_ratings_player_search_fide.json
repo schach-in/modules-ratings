@@ -1,0 +1,20 @@
+{
+	"file": "zzform/editing",
+	"variables": ["data"],
+	"data": [
+		{
+			"description": "Known FIDE player",
+			"data": {
+				"first_name": "Magnus",
+				"last_name": "Carlsen",
+				"date_of_birth": "1990-11-30"
+			},
+			"expected": {
+				"player_id_fide": "1503014",
+				"sex": "male",
+				"last_name": "Carlsen",
+				"first_name": "Magnus"
+			}
+		}
+	]
+}
