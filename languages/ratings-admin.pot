@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Zugzwang Project -- ratings module\n"
-"POT-Creation-Date: 2026-07-24 20:29+0000\n"
+"POT-Creation-Date: 2026-07-27 08:59+0000\n"
 "PO-Revision-Date: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -787,6 +787,10 @@ msgstr ""
 
 #: zzbrick_make/ratings-sync.inc.php:44
 msgid "Unable to read log line, key `result`."
+msgstr ""
+
+#: zzbrick_make/ratings-sync.inc.php:69
+msgid "Sync job failed. Read log for details."
 msgstr ""
 
 #: zzbrick_make/ratings-sync.inc.php:78

@@ -66,7 +66,7 @@ function mod_ratings_make_ratings_sync($params) {
 	case 'fail':
 		$action = false;
 		wrap_unlock('sync-'.$rating);
-		wrap_quit(503, 'Sync job failed. Read log for details.');
+		wrap_quit(503, wrap_text('Sync job failed. Read log for details.'));
 		break;
 	}
 	wrap_job_debug(sprintf('JOB LAST ACTION %s, NEXT ACTION %s', $last['action'], $action));
