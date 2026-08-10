@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Zugzwang Project -- ratings module\n"
-"POT-Creation-Date: 2026-07-27 08:59+0000\n"
+"POT-Creation-Date: 2026-08-10 16:35+0000\n"
 "PO-Revision-Date: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -139,140 +139,140 @@ msgstr ""
 msgid "If club code differs from identifier in German database"
 msgstr ""
 
-#: configuration/settings.cfg:24
+#: configuration/settings.cfg:27
 msgid "List of days where download file was corrupt and should not be used"
 msgstr ""
 
-#: configuration/settings.cfg:28
+#: configuration/settings.cfg:31
 msgid "List of days where download file for DWZ was corrupt and should not be used"
 msgstr ""
 
-#: configuration/settings.cfg:32
+#: configuration/settings.cfg:35
 msgid "List of days where download file for Elo was corrupt and should not be used"
 msgstr ""
 
-#: configuration/settings.cfg:36
+#: configuration/settings.cfg:39
 msgid "Maximum no. of entries where a datacheck overview links to an list of all problems (for performance reasons)"
 msgstr ""
 
-#: configuration/settings.cfg:41
+#: configuration/settings.cfg:44
 msgid "folder for downloaded rating archives (DWZ, Elo, …), one subfolder per rating"
 msgstr ""
 
-#: configuration/settings.cfg:47
+#: configuration/settings.cfg:50
 msgid "Timeout in seconds for socket based stream"
 msgstr ""
 
-#: configuration/settings.cfg:52
+#: configuration/settings.cfg:55
 msgid "Establish a connection via SSL to server"
 msgstr ""
 
-#: configuration/settings.cfg:57
+#: configuration/settings.cfg:60
 msgid "URL of DeWIS service"
 msgstr ""
 
-#: configuration/settings.cfg:62
+#: configuration/settings.cfg:65
 msgid "Time to wait between each request to DeWIS"
 msgstr ""
 
-#: configuration/settings.cfg:67
+#: configuration/settings.cfg:70
 msgid "Some federations in the DSB have a club code, too, that is undocumented."
 msgstr ""
 
-#: configuration/settings.cfg:71
+#: configuration/settings.cfg:74
 msgid "URL under which the current DWZ data of the German Chess Federation is available in SQL format"
 msgstr ""
 
-#: configuration/settings.cfg:76
+#: configuration/settings.cfg:79
 msgid "URL under which the current FIDE Elo data is available in TXT format"
 msgstr ""
 
-#: configuration/settings.cfg:81
+#: configuration/settings.cfg:84
 msgid "Name of file with FIDE Elo data"
 msgstr ""
 
-#: configuration/settings.cfg:85
+#: configuration/settings.cfg:88
 msgid "Use rating list from schachbund.de (DSB)"
 msgstr ""
 
-#: configuration/settings.cfg:90
+#: configuration/settings.cfg:93
 msgid "Use rating list from fide.com (FIDE)"
 msgstr ""
 
-#: configuration/settings.cfg:95
+#: configuration/settings.cfg:98
 msgid "use logfile for sync of Elo rating data"
 msgstr ""
 
-#: configuration/settings.cfg:100
+#: configuration/settings.cfg:103
 msgid "List of fields for Elo sync log"
 msgstr ""
 
-#: configuration/settings.cfg:107
-#: configuration/settings.cfg:129
+#: configuration/settings.cfg:110
+#: configuration/settings.cfg:132
 msgid "Logfile tokens might contain spaces?"
 msgstr ""
 
-#: configuration/settings.cfg:112
+#: configuration/settings.cfg:115
 msgid "Validity of entries in Elo sync log"
 msgstr ""
 
-#: configuration/settings.cfg:117
+#: configuration/settings.cfg:120
 msgid "use logfile for memberstats import"
 msgstr ""
 
-#: configuration/settings.cfg:122
+#: configuration/settings.cfg:125
 msgid "List of fields for memberstats import log"
 msgstr ""
 
-#: configuration/settings.cfg:135
+#: configuration/settings.cfg:138
 msgid "Validity of entries in memberstats import log"
 msgstr ""
 
-#: configuration/settings.cfg:140
+#: configuration/settings.cfg:143
 msgid "Categories of contacts or contacts that have members with ratings"
 msgstr ""
 
-#: configuration/settings.cfg:146
+#: configuration/settings.cfg:150
 msgid "Emit a progress log entry per this many source-file bytes consumed by the memberstats loaders"
 msgstr ""
 
-#: configuration/settings.cfg:151
+#: configuration/settings.cfg:155
 msgid "Rows per batched REPLACE/INSERT when loading DWZ snapshot files into memberstats staging tables"
 msgstr ""
 
-#: configuration/settings.cfg:156
+#: configuration/settings.cfg:160
 msgid "Polling interval in seconds for memberstats progress display"
 msgstr ""
 
-#: configuration/settings.cfg:161
+#: configuration/settings.cfg:165
 msgid "Time in seconds without a memberstats log entry after which the worker is considered stuck"
 msgstr ""
 
-#: configuration/settings.cfg:166
+#: configuration/settings.cfg:170
 msgid "Number of memberstats log entries returned to the progress poller (0 = all)"
 msgstr ""
 
-#: configuration/settings.cfg:171
+#: configuration/settings.cfg:175
 msgid "Countdown in seconds before the next snapshot import starts automatically while the memberstats page stays open"
 msgstr ""
 
-#: configuration/settings.cfg:176
+#: configuration/settings.cfg:180
 msgid "nuLiga clubSearch endpoint (GET list and GET by ZPS)"
 msgstr ""
 
-#: configuration/settings.cfg:181
+#: configuration/settings.cfg:185
 msgid "nuLiga clubSearch confederation parameter (e.g. LV0 DSB)"
 msgstr ""
 
-#: configuration/settings.cfg:185
+#: configuration/settings.cfg:189
 msgid "nuLiga clubSearch searchPattern values per state federation (code => label)"
 msgstr ""
 
-#: configuration/settings.cfg:208
+#: configuration/settings.cfg:212
 msgid "Last imported status of the German DWZ database"
 msgstr ""
 
-#: configuration/settings.cfg:212
+#: configuration/settings.cfg:216
 msgid "Last imported status of the FIDE Elo database"
 msgstr ""
 

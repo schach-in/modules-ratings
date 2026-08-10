@@ -1,0 +1,23 @@
+{
+    "dwz_spieler": {
+        "title": "DWZ players"
+    },
+    "fide_players": {
+        "title": "FIDE Players"
+    },
+    "memberstats": {
+        "title": "Member Statistics"
+    },
+    "nuliga_clubs": {
+        "title": "nuLiga Clubs"
+    },
+    "nuliga_venues": {
+        "title": "nuLiga Venues"
+    },
+    "wikidata_players": {
+        "title": "Wikidata Chess Players"
+    },
+    "wikidata_uris": {
+        "title": "Wikipedia Chess Players"
+    }
+}
