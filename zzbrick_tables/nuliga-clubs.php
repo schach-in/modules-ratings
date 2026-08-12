@@ -119,9 +119,9 @@ $zz['fields'][99]['hide_in_list'] = true;
 
 $zz['sql'] = 'SELECT nuliga_clubs.*
 		, contacts.identifier
-		, (CASE WHEN LOCATE("&type=", contact_categories.parameters) > 0 THEN
-			SUBSTRING_INDEX(SUBSTRING_INDEX(contact_categories.parameters, "&type=", -1), "&", 1)
-			ELSE "*" END
+		, SUBSTRING_INDEX(CASE WHEN LOCATE("&alias=", contact_categories.parameters) > 0 THEN
+			SUBSTRING_INDEX(SUBSTRING_INDEX(contact_categories.parameters, "&alias=", -1), "&", 1)
+			ELSE contact_categories.path END, "/", -1
 		) AS contact_scope
 	FROM nuliga_clubs
 	LEFT JOIN contacts_identifiers ok
