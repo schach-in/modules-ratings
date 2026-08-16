@@ -43,7 +43,7 @@ $zz['fields'][4]['sql'] = 'SELECT contacts.contact_id, contact
 		AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
 	LEFT JOIN categories
 		ON contacts.contact_category_id = categories.category_id
-	WHERE categories.parameters LIKE "%&organisation=1%"
+	WHERE categories.parameters LIKE "%&contacts_organisation=1%"
 	ORDER BY contacts_identifiers.identifier, contact';
 $zz['fields'][4]['display_field'] = 'contact';
 $zz['fields'][4]['search'] = 'contacts.contact';
