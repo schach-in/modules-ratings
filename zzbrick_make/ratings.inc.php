@@ -57,10 +57,16 @@ function mod_ratings_make_ratings($params) {
 	wrap_include('syndication', 'zzwrap');
 	if (!wrap_setting('local_access')) {
 		$lock_realm = strtolower(implode('-', $params));
+		$lock = false;
 		if ($data['action'] === 'sync') {
-			$lock = wrap_lock($lock_realm, 'sequential', 600);
-			$lock_msg = wrap_text('Rating sync is already running. Please wait for it to finish.');
-		} else {
+			// Only the sequential worker holds the sync lock. The bootstrap POST
+			// ("Starting background job") must not acquire it.
+			if (!empty($_POST['sequential'])) {
+				$lock = wrap_lock($lock_realm, 'sequential', 600);
+				$lock_msg = wrap_text('Rating sync is already running. Please wait for it to finish.');
+			}
+		} elseif (empty($_POST['sequential'])) {
+			// Manual download/import only — pipeline steps skip this cooldown.
 			$wait_seconds = 300;
 			$lock = wrap_lock($lock_realm, 'wait', $wait_seconds);
 			$lock_msg = sprintf(wrap_text(
