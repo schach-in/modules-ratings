@@ -286,7 +286,7 @@ function mf_ratings_nuliga_gapfill() {
 }
 
 /**
- * Merge id-nuliga identifiers from staging into contacts (matched by ZPS).
+ * Merge id-nuliga-club identifiers from staging into contacts (matched by ZPS).
  *
  * @return array
  */
@@ -324,7 +324,7 @@ function mf_ratings_nuliga_merge_identifiers() {
 		$sql = 'SELECT contact_identifier_id, identifier, current
 			FROM contacts_identifiers
 			WHERE contact_id = %d
-			AND identifier_category_id = /*_ID categories identifiers/id-nuliga _*/';
+			AND identifier_category_id = /*_ID categories identifiers/id-nuliga-club _*/';
 		$sql = sprintf($sql, $contact_id);
 		$existing = wrap_db_fetch($sql, 'contact_identifier_id');
 		$found = false;
@@ -351,7 +351,7 @@ function mf_ratings_nuliga_merge_identifiers() {
 		zzform_insert('contacts-identifiers', [
 			'contact_id' => $contact_id,
 			'identifier' => $nuliga_id,
-			'identifier_category_id' => wrap_category_id('identifiers/id-nuliga'),
+			'identifier_category_id' => wrap_category_id('identifiers/id-nuliga-club'),
 			'current' => 'yes',
 		], E_USER_WARNING);
 		$stats['inserted']++;

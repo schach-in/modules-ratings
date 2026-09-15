@@ -30,7 +30,7 @@ Schach.in clubs without nuLiga row: <strong>%%% item missing %%%</strong>.</p>
 
 <form method="post" action="merge/">
 <p><button type="submit">Merge nuLiga IDs into contacts</button>
-<small>writes <code>identifiers/id-nuliga</code> matched by ZPS</small></p>
+<small>writes <code>identifiers/id-nuliga-club</code> matched by ZPS</small></p>
 </form>
 
 <h2>Import one federation (GET)</h2>

@@ -24,7 +24,7 @@
  * - import: import all regional lists (POST)
  * - DE.xx.xx: import one federation (searchPattern)
  * - gapfill: GET lookup by ZPS for clubs missing in staging
- * - merge: POST write id-nuliga identifiers onto contacts
+ * - merge: POST write id-nuliga-club identifiers onto contacts
  * - clubs: POST enqueue or run hourly import + merge (background job)
  *
  * @param array $params
@@ -120,7 +120,7 @@ function mod_ratings_make_nuliga($params) {
  * Hourly nuLiga import + merge (background job worker).
  *
  * POST without sequential: enqueue worker via job manager.
- * POST with sequential: import all federations, then merge id-nuliga.
+ * POST with sequential: import all federations, then merge id-nuliga-club.
  *
  * @param array $params
  * @return array

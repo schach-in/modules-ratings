@@ -67,3 +67,4 @@
 /* 2026-09-03-2 */	UPDATE categories SET `parameters` = REPLACE(parameters, '&alias=identifiers/id_dsb', '&alias=identifiers/id-dsb') WHERE `parameters` LIKE '%&alias=identifiers/id_dsb%';
 /* 2026-09-03-3 */	UPDATE categories SET `parameters` = REPLACE(parameters, '&alias=identifiers/id_fide', '&alias=identifiers/id-fide') WHERE `parameters` LIKE '%&alias=identifiers/id_fide%';
 /* 2026-09-03-4 */	UPDATE categories SET `parameters` = '&alias=identifiers/id-nuliga&context[contacts_general]=1', path = 'identifiers/id-nuliga' WHERE path = 'identifiers/id_nuliga';
+/* 2026-09-15-1 */	UPDATE categories SET `parameters` = '&alias=identifiers/id-nuliga-club&context[contacts_general]=1', path = 'identifiers/id-nuliga-club' WHERE path = 'identifiers/id-nuliga';

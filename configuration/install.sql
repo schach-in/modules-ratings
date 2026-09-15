@@ -15,7 +15,7 @@
 INSERT INTO categories (`category`, `description`, `main_category_id`, `path`, `parameters`, `sequence`, `last_update`) VALUES ('DSB Passnummer', NULL, /*_ID categories identifiers _*/, 'identifiers/pass-dsb', '&alias=identifiers/pass-dsb&context[contacts_persons]=1&context[contacts_general]=1', 1, NOW());
 INSERT INTO categories (`category`, `description`, `main_category_id`, `path`, `parameters`, `sequence`, `last_update`) VALUES ('DSB PKZ', NULL, /*_ID categories identifiers _*/, 'identifiers/id-dsb', '&alias=identifiers/id-dsb&context[contacts_persons]=1', 2, NOW());
 INSERT INTO categories (`category`, `description`, `main_category_id`, `path`, `parameters`, `sequence`, `last_update`) VALUES ('FIDE ID', NULL, /*_ID categories identifiers _*/, 'identifiers/id-fide', '&alias=identifiers/id-fide&context[contacts_persons]=1', 3, NOW());
-INSERT INTO categories (`category`, `description`, `main_category_id`, `path`, `parameters`, `sequence`, `last_update`) VALUES ('nuLiga club ID', NULL, /*_ID categories identifiers _*/, 'identifiers/id-nuliga', '&alias=identifiers/id-nuliga&context[contacts_general]=1', 4, NOW());
+INSERT INTO categories (`category`, `description`, `main_category_id`, `path`, `parameters`, `sequence`, `last_update`) VALUES ('nuLiga club ID', NULL, /*_ID categories identifiers _*/, 'identifiers/id-nuliga-club', '&alias=identifiers/id-nuliga-club&context[contacts_general]=1', 4, NOW());
 
 
 -- dewis_clubs --
