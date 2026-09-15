@@ -274,7 +274,7 @@ function mf_ratings_memberstats_import($archive, $overwrite) {
  * Compares the current snapshot's vereine (and verbaende when shipped)
  * staging tables with the chronologically previous DWZ archive. Codes
  * that existed before but not now get end_date = YYYY-MM-00 from the
- * current snapshot date, but only when a matching pass_dsb contact
+ * current snapshot date, but only when a matching pass-dsb contact
  * exists with end_date still NULL.
  *
  * Current snapshot codes are read from $current_folder (the archive
@@ -354,7 +354,7 @@ function mf_ratings_memberstats_previous_archive($snapshot_date) {
 }
 
 /**
- * pass_dsb codes from a vereine or verbaende file in an unzipped archive
+ * pass-dsb codes from a vereine or verbaende file in an unzipped archive
  *
  * @param string $folder
  * @param string|array $basenames file stem(s), e.g. vereine or verbaende/verband
@@ -476,10 +476,10 @@ function mf_ratings_memberstats_end_date($snapshot_date) {
 }
 
 /**
- * set end_date on live contacts whose pass_dsb code was removed
+ * set end_date on live contacts whose pass-dsb code was removed
  *
  * @param string $snapshot_date YYYY-MM-DD
- * @param array $codes pass_dsb identifiers no longer in the export
+ * @param array $codes pass-dsb identifiers no longer in the export
  * @param array $category_ids contacts.contact_category_id values to match
  * @param string $log_code_field club_code or verband_code in progress log
  * @return int number of contacts updated
@@ -498,7 +498,7 @@ function mf_ratings_memberstats_contacts_end_date($snapshot_date, $codes, $categ
 		FROM contacts c
 		INNER JOIN contacts_identifiers ci ON ci.contact_id = c.contact_id
 		WHERE ci.identifier IN ('.$in.')
-		AND ci.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
+		AND ci.identifier_category_id = /*_ID categories identifiers/pass-dsb _*/
 		AND c.contact_category_id IN ('.$categories.')
 		AND ISNULL(c.end_date)';
 	$contacts = wrap_db_fetch($sql, 'code');
@@ -508,7 +508,7 @@ function mf_ratings_memberstats_contacts_end_date($snapshot_date, $codes, $categ
 		INNER JOIN contacts_identifiers ci ON ci.contact_id = c.contact_id
 		SET c.end_date = "%s"
 		WHERE ci.identifier IN ('.$in.')
-		AND ci.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
+		AND ci.identifier_category_id = /*_ID categories identifiers/pass-dsb _*/
 		AND c.contact_category_id IN ('.$categories.')
 		AND ISNULL(c.end_date)';
 	$sql = sprintf($sql, wrap_db_escape($end_date));
@@ -1481,7 +1481,7 @@ function mf_ratings_memberstats_verbaende($snapshot_date) {
 		FROM temp_memberstats_verbaende v
 		LEFT JOIN contacts_identifiers ci
 			ON ci.identifier = v.Verband
-			AND ci.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
+			AND ci.identifier_category_id = /*_ID categories identifiers/pass-dsb _*/
 		WHERE ISNULL(ci.contact_identifier_id)
 		AND v.Verband <> ""
 		AND v.Verbandname <> ""';
@@ -1510,7 +1510,7 @@ function mf_ratings_memberstats_verbaende($snapshot_date) {
 		$identifier = [
 			'contact_id' => $contact_id,
 			'identifier' => $verband_code,
-			'identifier_category_id' => wrap_category_id('identifiers/pass_dsb'),
+			'identifier_category_id' => wrap_category_id('identifiers/pass-dsb'),
 			'current' => 'yes'
 		];
 		zzform_insert('contacts_identifiers', $identifier, E_USER_WARNING);
@@ -1537,7 +1537,7 @@ function mf_ratings_memberstats_verbaende($snapshot_date) {
 /**
  * create `contacts` + `contacts_identifiers` for clubs that appear in the
  * current snapshot but have no row at all in contacts_identifiers (under
- * the pass_dsb category)
+ * the pass-dsb category)
  *
  * contacts_identifiers has UNIQUE KEY (identifier_category_id, identifier),
  * so each ZPS code can exist only once per category — regardless of the
@@ -1557,7 +1557,7 @@ function mf_ratings_memberstats_verbaende($snapshot_date) {
  * club_contact_id, but club_code is still populated.
  *
  * Each new club is also linked to its federation parent in
- * `contacts_contacts` (relation/member, published). The parent pass_dsb
+ * `contacts_contacts` (relation/member, published). The parent pass-dsb
  * code is taken from `temp_memberstats_vereine.Verband` (e.g. club `E3401`
  * → parent `E30`), then resolved in `contacts_identifiers` without the
  * `current` filter.
@@ -1585,7 +1585,7 @@ function mf_ratings_memberstats_clubs($snapshot_date, $spieler_table) {
 			ON v.ZPS = codes.code
 		LEFT JOIN contacts_identifiers ci
 			ON ci.identifier = codes.code
-			AND ci.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
+			AND ci.identifier_category_id = /*_ID categories identifiers/pass-dsb _*/
 		WHERE ISNULL(ci.contact_identifier_id)
 		AND NOT ISNULL(v.Vereinname)
 		AND v.Vereinname <> ""';
@@ -1614,7 +1614,7 @@ function mf_ratings_memberstats_clubs($snapshot_date, $spieler_table) {
 		$identifier = [
 			'contact_id' => $contact_id,
 			'identifier' => $club_code,
-			'identifier_category_id' => wrap_category_id('identifiers/pass_dsb'),
+			'identifier_category_id' => wrap_category_id('identifiers/pass-dsb'),
 			'current' => 'yes'
 		];
 		zzform_insert('contacts_identifiers', $identifier, E_USER_WARNING);
@@ -1639,8 +1639,8 @@ function mf_ratings_memberstats_clubs($snapshot_date, $spieler_table) {
  * up in contacts_identifiers without filtering on `current`.
  *
  * @param int $contact_id new club contact
- * @param string $club_code pass_dsb identifier stored on the club
- * @param string $parent_code pass_dsb identifier of the federation (Verband)
+ * @param string $club_code pass-dsb identifier stored on the club
+ * @param string $parent_code pass-dsb identifier of the federation (Verband)
  * @return void
  */
 function mf_ratings_memberstats_club_parent_link($contact_id, $club_code, $parent_code) {
@@ -1648,7 +1648,7 @@ function mf_ratings_memberstats_club_parent_link($contact_id, $club_code, $paren
 
 	$sql = 'SELECT contact_id FROM contacts_identifiers
 		WHERE identifier = "%s"
-		AND identifier_category_id = /*_ID categories identifiers/pass_dsb _*/';
+		AND identifier_category_id = /*_ID categories identifiers/pass-dsb _*/';
 	$sql = sprintf($sql, wrap_db_escape($parent_code));
 	$parent_contact_id = wrap_db_fetch($sql, '', 'single value');
 	if (!$parent_contact_id) {
@@ -1702,7 +1702,7 @@ function mf_ratings_memberstats_insert($snapshot_date, $spieler_table) {
 				, IF(SUBSTRING(s.ZPS, 4, 2) = "00",
 					SUBSTRING(s.ZPS, 1, 3), s.ZPS)
 			)
-			AND ci.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
+			AND ci.identifier_category_id = /*_ID categories identifiers/pass-dsb _*/
 		WHERE s.Spielername <> ""';
 	$sql = sprintf($sql, wrap_db_escape($snapshot_date), $spieler_table);
 	wrap_db_query($sql);

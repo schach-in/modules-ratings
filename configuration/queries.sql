@@ -22,7 +22,7 @@ SELECT contact_id
 FROM dwz_spieler
 LEFT JOIN contacts_identifiers pk
 	ON CONCAT(dwz_spieler.ZPS, "-", IF(dwz_spieler.Mgl_Nr < 100, LPAD(dwz_spieler.Mgl_Nr, 3, "0"), dwz_spieler.Mgl_Nr)) = pk.identifier
-	AND identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
+	AND identifier_category_id = /*_ID categories identifiers/pass-dsb _*/
 	AND pk.current = "yes"
 WHERE contact_id IN (%s);
 
@@ -34,7 +34,7 @@ SELECT contact_id, player_id AS player_id_fide
 FROM fide_players
 LEFT JOIN contacts_identifiers
 	ON contacts_identifiers.identifier = fide_players.player_id
-	AND identifier_category_id = /*_ID categories identifiers/id_fide _*/
+	AND identifier_category_id = /*_ID categories identifiers/id-fide _*/
 	AND contacts_identifiers.current = "yes"
 WHERE contact_id IN (%s);
 
@@ -170,7 +170,7 @@ SELECT PID AS player_id_dsb
 FROM dwz_spieler
 JOIN contacts_identifiers
 	ON contacts_identifiers.identifier = dwz_spieler.PID
-	AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/id_dsb _*/;
+	AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/id-dsb _*/;
 
 -- ratings_federation_dsb_pass --
 SELECT PID AS player_id_dsb
@@ -183,7 +183,7 @@ SELECT PID AS player_id_dsb
 FROM dwz_spieler
 JOIN contacts_identifiers
 	ON contacts_identifiers.identifier = CONCAT(dwz_spieler.ZPS, "-", IF(dwz_spieler.Mgl_Nr < 100, LPAD(dwz_spieler.Mgl_Nr, 3, "0"), dwz_spieler.Mgl_Nr))
-	AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/;
+	AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/pass-dsb _*/;
 
 -- ratings_federation_dsb_id_fide --
 SELECT PID AS player_id_dsb
@@ -196,7 +196,7 @@ SELECT PID AS player_id_dsb
 FROM dwz_spieler
 JOIN contacts_identifiers
 	ON contacts_identifiers.identifier = FIDE_ID
-	AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/id_fide _*/;
+	AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/id-fide _*/;
 
 -- ratings_federation_dsb_name_birth --
 SELECT PID AS player_id_dsb
@@ -238,7 +238,7 @@ LEFT JOIN fide_players
 LEFT JOIN contacts_identifiers
 	ON dwz_spieler.ZPS = contacts_identifiers.identifier
 	AND contacts_identifiers.current = "yes"
-	AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
+	AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/pass-dsb _*/
 LEFT JOIN contacts USING (contact_id)
 WHERE (ISNULL(Status) OR Status != "%s")
 %s

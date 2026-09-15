@@ -24,7 +24,7 @@
  * - import: import all regional lists (POST)
  * - DE.xx.xx: import one federation (searchPattern)
  * - gapfill: GET lookup by ZPS for clubs missing in staging
- * - merge: POST write id_nuliga identifiers onto contacts
+ * - merge: POST write id-nuliga identifiers onto contacts
  * - clubs: POST enqueue or run hourly import + merge (background job)
  *
  * @param array $params
@@ -89,7 +89,7 @@ function mod_ratings_make_nuliga($params) {
 	$sql = 'SELECT COUNT(*) AS missing FROM contacts_identifiers ok
 		LEFT JOIN contacts USING (contact_id)
 		LEFT JOIN nuliga_clubs nc ON nc.zps = ok.identifier
-		WHERE ok.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
+		WHERE ok.identifier_category_id = /*_ID categories identifiers/pass-dsb _*/
 		AND ok.current = "yes"
 		AND contacts.contact_category_id IN (
 			/*_ID categories contact/club _*/,
@@ -120,7 +120,7 @@ function mod_ratings_make_nuliga($params) {
  * Hourly nuLiga import + merge (background job worker).
  *
  * POST without sequential: enqueue worker via job manager.
- * POST with sequential: import all federations, then merge id_nuliga.
+ * POST with sequential: import all federations, then merge id-nuliga.
  *
  * @param array $params
  * @return array

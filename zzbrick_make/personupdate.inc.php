@@ -31,8 +31,8 @@ function mod_ratings_make_personupdate() {
 		LEFT JOIN contacts_identifiers zps
 			ON persons.contact_id = zps.contact_id
 			AND zps.current = "yes"
-			AND zps.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
-		WHERE fide.identifier_category_id = /*_ID categories identifiers/id_fide _*/
+			AND zps.identifier_category_id = /*_ID categories identifiers/pass-dsb _*/
+		WHERE fide.identifier_category_id = /*_ID categories identifiers/id-fide _*/
 		AND fide.current = "yes"';
 	$fide_ids = wrap_db_fetch($sql, 'player_id_fide');
 
@@ -68,8 +68,8 @@ function mod_ratings_make_personupdate() {
 		LEFT JOIN contacts_identifiers fide
 			ON persons.contact_id = fide.contact_id
 			AND fide.current = "yes"
-			AND fide.identifier_category_id = /*_ID categories identifiers/id_fide _*/
-		WHERE zps.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
+			AND fide.identifier_category_id = /*_ID categories identifiers/id-fide _*/
+		WHERE zps.identifier_category_id = /*_ID categories identifiers/pass-dsb _*/
 		AND zps.current = "yes"';
 	$player_passes_dsb = wrap_db_fetch($sql, 'player_pass_dsb');
 
@@ -242,7 +242,7 @@ function mod_ratings_make_personupdate_add_id_fide($new, $contact_id) {
 	}
 	$line = [
 		'contact_id' => $contact_id,
-		'identifier_category_id' => wrap_category_id('identifiers/id_fide'),
+		'identifier_category_id' => wrap_category_id('identifiers/id-fide'),
 		'identifier' => $new,
 		'current' => 'yes'
 	];
@@ -322,7 +322,7 @@ function mod_ratings_make_personupdate_add_zps_code($new, $contact_id) {
 		FROM contacts_identifiers
 		WHERE contact_id = %d
 		AND identifier = "%s"
-		AND identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
+		AND identifier_category_id = /*_ID categories identifiers/pass-dsb _*/
 		AND ISNULL(current)';
 	$sql = sprintf($sql, $contact_id, $new);
 	$pk_id = wrap_db_fetch($sql, '', 'single value');
@@ -343,7 +343,7 @@ function mod_ratings_make_personupdate_add_zps_code($new, $contact_id) {
 	} else {
 		$line = [
 			'contact_id' => $contact_id,
-			'identifier_category_id' => wrap_category_id('identifiers/pass_dsb'),
+			'identifier_category_id' => wrap_category_id('identifiers/pass-dsb'),
 			'identifier' => $new,
 			'current' => 'yes'
 		];

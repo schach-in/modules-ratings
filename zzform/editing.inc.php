@@ -82,12 +82,12 @@ function mf_ratings_player_search_dsb($data) {
 		FROM dwz_spieler
 		LEFT JOIN contacts_identifiers vk
 			ON dwz_spieler.ZPS = vk.identifier
-			AND vk.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
+			AND vk.identifier_category_id = /*_ID categories identifiers/pass-dsb _*/
 			AND vk.current = "yes"
 		LEFT JOIN contacts clubs USING (contact_id)
 		LEFT JOIN contacts_identifiers lvk
 			ON CONCAT(SUBSTRING(dwz_spieler.ZPS, 1, 1), "00") = lvk.identifier
-			AND lvk.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
+			AND lvk.identifier_category_id = /*_ID categories identifiers/pass-dsb _*/
 			AND lvk.current = "yes"
 		WHERE Spielername LIKE _latin1"%s,%s%%"
 		AND Geburtsjahr = %d	
@@ -152,24 +152,24 @@ function mf_ratings_player_search_fide($data) {
  */
 function mf_ratings_person_add($player) {
 	$identifiers = [];
-	$keys = ['player_id_fide', 'player_pass_dsb', 'player_id_dsb'];
-	foreach ($keys as $key) {
+	$paths = ['id-fide', 'pass-dsb', 'id-dsb'];
+	foreach ($paths as $path) {
+		$key = sprintf('player_%s', str_replace('-', '_', $path));
 		if (empty($player[$key])) continue;
-		$identifier_key = substr($key, 7);
-		$identifiers[$identifier_key] = $player[$key];
+		$identifiers[$path] = $player[$key];
 	}
 
 	$id_text = [];
 	$contact_ids = [];
-	foreach ($identifiers as $category => $identifier) {
+	foreach ($identifiers as $path => $identifier) {
 		$sql = 'SELECT contact_id
 			FROM contacts_identifiers
 			WHERE identifier = "%s"
 			AND identifier_category_id = /*_ID categories identifiers/%s _*/';
-		$sql = sprintf($sql, $identifier, $category);
+		$sql = sprintf($sql, $identifier, $path);
 		$id = wrap_db_fetch($sql, '', 'single value');
 		if ($id) $contact_ids[] = $id;
-		$id_text[] = sprintf('%s: %s', $identifier, $category);
+		$id_text[] = sprintf('%s: %s', $identifier, $path);
 	}
 	if (!$identifiers) {
 		// Keine Kennungen vorhanden, Abgleich Vorname, Nachname, Geburtsdatum

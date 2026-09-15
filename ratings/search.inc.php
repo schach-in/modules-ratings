@@ -90,7 +90,7 @@ function mf_ratings_search($q) {
 		LEFT JOIN contacts_identifiers
 			ON contacts.contact_id = contacts_identifiers.contact_id
 			AND contacts_identifiers.current = "yes"
-			AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
+			AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/pass-dsb _*/
 		LEFT JOIN categories
 			ON contacts.contact_category_id = categories.category_id
 		WHERE (contact LIKE "%%%s%%" OR contact_short LIKE "%%%s%%")
@@ -109,7 +109,7 @@ function mf_ratings_search($q) {
 			LEFT JOIN contacts_identifiers
 				ON contacts.contact_id = contacts_identifiers.contact_id
 				AND contacts_identifiers.current = "yes"
-				AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
+				AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/pass-dsb _*/
 			LEFT JOIN categories
 				ON contacts.contact_category_id = categories.category_id
 			WHERE contacts_identifiers.identifier LIKE "%s%%"

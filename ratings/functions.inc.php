@@ -62,11 +62,11 @@ function mf_ratings_ratinglist($conditions, $settings = []) {
 	    	ON wikidata_players.fide_id = fide_players.player_id
 	    LEFT JOIN contacts_identifiers
 	    	ON contacts_identifiers.identifier = dwz_spieler.ZPS
-	    	AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
+	    	AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/pass-dsb _*/
 	    	AND contacts_identifiers.current = "yes"
 	    LEFT JOIN contacts_identifiers federation_identifiers
 	    	ON federation_identifiers.identifier = SUBSTRING(dwz_spieler.ZPS, 1, 3)
-	    	AND federation_identifiers.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
+	    	AND federation_identifiers.identifier_category_id = /*_ID categories identifiers/pass-dsb _*/
 	    	AND federation_identifiers.current = "yes"
 	    LEFT JOIN contacts
 	    	ON contacts.contact_id = IFNULL(contacts_identifiers.contact_id, federation_identifiers.contact_id)
@@ -122,7 +122,7 @@ function mf_ratings_titles($data) {
 		LEFT JOIN contacts_identifiers
 			ON fide_players.player_id = contacts_identifiers.identifier
 		WHERE contacts_identifiers.current = "yes"
-		AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/id_fide _*/
+		AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/id-fide _*/
 		AND contacts_identifiers.contact_id IN (%s)
 		AND NOT ISNULL(fide_players.title)
 	';

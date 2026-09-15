@@ -8,7 +8,7 @@
  * https://www.zugzwang.org/modules/ratings
  *
  * @author Gustaf Mossakowski <gustaf@koenige.org>
- * @copyright Copyright © 2025 Gustaf Mossakowski
+ * @copyright Copyright © 2025-2026 Gustaf Mossakowski
  * @license http://opensource.org/licenses/lgpl-3.0.html LGPL-3.0
  *
  * Variables
@@ -69,7 +69,7 @@ function mod_ratings_make_federationids_dsb() {
  * @param array $records local data in database
  */
 function mod_ratings_make_federationids_update($remote, $records) {
-	$categories = ['pass_dsb', 'id_dsb', 'id_fide'];
+	$paths = ['pass-dsb', 'id-dsb', 'id-fide'];
 	
 	// check existing records
 	$new = $remote;
@@ -77,13 +77,13 @@ function mod_ratings_make_federationids_update($remote, $records) {
 		'update' => [],
 		'insert' => []
 	];
-	foreach ($categories as $category) {
-		$key = sprintf('player_%s', $category);
+	foreach ($paths as $path) {
+		$key = sprintf('player_%s', str_replace('-', '_', $path));
 		if (empty($remote[$key])) continue;
-		$current = sprintf('player_%s_current', $category);
-		$path = sprintf('identifiers/%s', $category);
+		$current = sprintf('%s_current', $key);
+		$full_path = sprintf('identifiers/%s', $path);
 		foreach ($records as $contact_identifier_id => $record) {
-			if ($record['identifier_category_id'] !== wrap_category_id($path)) continue;
+			if ($record['identifier_category_id'] !== wrap_category_id($full_path)) continue;
 			if ($record['identifier'] === $remote[$key]) {
 				if (array_key_exists($current, $remote) AND $remote[$current] !== $record['current']) {
 					$is_current = array_key_exists($current, $remote) ? ($remote[$current] ? 1 : NULL) : 1;
@@ -91,7 +91,7 @@ function mod_ratings_make_federationids_update($remote, $records) {
 						'contact_identifier_id' => $record['contact_identifier_id'],
 						'current' => $is_current ? 'yes' : NULL,
 						'msg' => [
-							'category' => $path,
+							'category' => $full_path,
 							'identifier' => $record['identifier'],
 							'action' => $is_current ? 'activate' : 'deactivate'
 						]
@@ -103,7 +103,7 @@ function mod_ratings_make_federationids_update($remote, $records) {
 					'contact_identifier_id' => $record['contact_identifier_id'],
 					'current' => NULL,
 					'msg' => [
-						'category' => $path,
+						'category' => $full_path,
 						'identifier' => $record['identifier'],
 						'action' => 'deactivate'
 					]
@@ -113,18 +113,18 @@ function mod_ratings_make_federationids_update($remote, $records) {
 	}
 	
 	// add new records?
-	foreach ($categories as $category) {
-		$key = sprintf('player_%s', $category);
+	foreach ($paths as $path) {
+		$key = sprintf('player_%s', str_replace('-', '_', $path));
 		if (empty($new[$key])) continue;
-		$current = sprintf('player_%s_current', $category);
-		$path = sprintf('identifiers/%s', $category);
+		$current = sprintf('%s_current', $key);
+		$full_path = sprintf('identifiers/%s', $path);
 		$actions['insert'][] = [
 			'contact_id' => $new['contact_id'],
 			'identifier' => $new[$key],
-			'identifier_category_id' => wrap_category_id($path),
+			'identifier_category_id' => wrap_category_id($full_path),
 			'current' => array_key_exists($current, $new) ? ($new[$current] ? 'yes' : NULL) : 'yes',
 			'msg' => [
-			   'category' => $path,
+			   'category' => $full_path,
 			   'identifier' => $new[$key],
 			   'action' => 'add'
 			]

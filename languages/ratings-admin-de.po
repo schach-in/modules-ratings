@@ -302,10 +302,6 @@ msgstr "Letzter importierter Stand der FIDE-Elo-Datenbank"
 msgid "Unknown nuLiga federation %s."
 msgstr ""
 
-#: ratings/nuliga.inc.php:296
-msgid "Category identifiers/id_nuliga is not configured."
-msgstr ""
-
 #: ratings/sync.inc.php:53
 msgid "php with ZipArchive class needed to extract files. (%s)"
 msgstr ""

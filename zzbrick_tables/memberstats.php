@@ -40,7 +40,7 @@ $zz['fields'][4]['sql'] = 'SELECT contacts.contact_id, contact
 	LEFT JOIN contacts_identifiers
 		ON contacts_identifiers.contact_id = contacts.contact_id
 		AND contacts_identifiers.current = "yes"
-		AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
+		AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/pass-dsb _*/
 	LEFT JOIN categories
 		ON contacts.contact_category_id = categories.category_id
 	WHERE categories.parameters LIKE "%&contacts_organisation=1%"

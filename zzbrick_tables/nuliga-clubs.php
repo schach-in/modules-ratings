@@ -126,7 +126,7 @@ $zz['sql'] = 'SELECT nuliga_clubs.*
 	FROM nuliga_clubs
 	LEFT JOIN contacts_identifiers ok
 		ON ok.identifier = nuliga_clubs.zps
-		AND ok.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
+		AND ok.identifier_category_id = /*_ID categories identifiers/pass-dsb _*/
 		AND ok.current = "yes"
 	LEFT JOIN contacts
 		ON contacts.contact_id = ok.contact_id

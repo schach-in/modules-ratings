@@ -255,7 +255,7 @@ function mf_ratings_nuliga_gapfill() {
 		FROM contacts_identifiers ok
 		LEFT JOIN contacts USING (contact_id)
 		LEFT JOIN nuliga_clubs nc ON nc.zps = ok.identifier
-		WHERE ok.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
+		WHERE ok.identifier_category_id = /*_ID categories identifiers/pass-dsb _*/
 		AND ok.current = "yes"
 		AND contacts.contact_category_id IN (
 			/*_ID categories contact/club _*/,
@@ -286,19 +286,15 @@ function mf_ratings_nuliga_gapfill() {
 }
 
 /**
- * Merge id_nuliga identifiers from staging into contacts (matched by ZPS).
+ * Merge id-nuliga identifiers from staging into contacts (matched by ZPS).
  *
  * @return array
  */
 function mf_ratings_nuliga_merge_identifiers() {
-	$category_id = wrap_category_id('identifiers/id_nuliga');
-	if (!$category_id)
-		wrap_quit(500, wrap_text('Category identifiers/id_nuliga is not configured.'));
-
 	$sql = 'SELECT ci.contact_id, ci.identifier
 		FROM contacts_identifiers ci
 		INNER JOIN contacts c USING (contact_id)
-		WHERE ci.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
+		WHERE ci.identifier_category_id = /*_ID categories identifiers/pass-dsb _*/
 		AND ci.current = "yes"
 		AND c.contact_category_id IN (
 			/*_ID categories contact/club _*/,
@@ -328,8 +324,8 @@ function mf_ratings_nuliga_merge_identifiers() {
 		$sql = 'SELECT contact_identifier_id, identifier, current
 			FROM contacts_identifiers
 			WHERE contact_id = %d
-			AND identifier_category_id = %d';
-		$sql = sprintf($sql, $contact_id, $category_id);
+			AND identifier_category_id = /*_ID categories identifiers/id-nuliga _*/';
+		$sql = sprintf($sql, $contact_id);
 		$existing = wrap_db_fetch($sql, 'contact_identifier_id');
 		$found = false;
 		foreach ($existing as $record) {
@@ -351,12 +347,11 @@ function mf_ratings_nuliga_merge_identifiers() {
 				]);
 			}
 		}
-		if ($found)
-			continue;
+		if ($found) continue;
 		zzform_insert('contacts-identifiers', [
 			'contact_id' => $contact_id,
 			'identifier' => $nuliga_id,
-			'identifier_category_id' => $category_id,
+			'identifier_category_id' => wrap_category_id('identifiers/id-nuliga'),
 			'current' => 'yes',
 		], E_USER_WARNING);
 		$stats['inserted']++;

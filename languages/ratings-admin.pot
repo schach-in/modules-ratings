@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Zugzwang Project -- ratings module\n"
-"POT-Creation-Date: 2026-08-10 16:35+0000\n"
+"POT-Creation-Date: 2026-09-15 07:45+0000\n"
 "PO-Revision-Date: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -104,34 +104,22 @@ msgid "Import of organisations"
 msgstr ""
 
 #: configuration/routes.cfg:28
-msgid "Player profile on DSB webpage"
-msgstr ""
-
-#: configuration/routes.cfg:33
-msgid "Player profile on DSB webpage with ID"
-msgstr ""
-
-#: configuration/routes.cfg:38
-msgid "Player profile on FIDE webpage"
-msgstr ""
-
-#: configuration/routes.cfg:43
 msgid "Import member statistics from DWZ snapshots"
 msgstr ""
 
-#: configuration/routes.cfg:50
+#: configuration/routes.cfg:35
 msgid "Progress JSON for the memberstats import poller"
 msgstr ""
 
-#: configuration/routes.cfg:56
+#: configuration/routes.cfg:41
 msgid "Import nuLiga club lists into staging tables"
 msgstr ""
 
-#: configuration/routes.cfg:63
+#: configuration/routes.cfg:48
 msgid "Hourly nuLiga clubs import and merge (background job)"
 msgstr ""
 
-#: configuration/routes.cfg:70
+#: configuration/routes.cfg:55
 msgid "Ratings sync"
 msgstr ""
 
@@ -180,108 +168,116 @@ msgid "Some federations in the DSB have a club code, too, that is undocumented."
 msgstr ""
 
 #: configuration/settings.cfg:74
-msgid "URL under which the current DWZ data of the German Chess Federation is available in SQL format"
+msgid "Player profile on DSB webpage with ID"
 msgstr ""
 
 #: configuration/settings.cfg:79
-msgid "URL under which the current FIDE Elo data is available in TXT format"
+msgid "Player profile on DSB webpage"
 msgstr ""
 
 #: configuration/settings.cfg:84
+msgid "Player profile on FIDE webpage"
+msgstr ""
+
+#: configuration/settings.cfg:89
+msgid "URL under which the current DWZ data of the German Chess Federation is available in SQL format"
+msgstr ""
+
+#: configuration/settings.cfg:94
+msgid "URL under which the current FIDE Elo data is available in TXT format"
+msgstr ""
+
+#: configuration/settings.cfg:99
 msgid "Name of file with FIDE Elo data"
 msgstr ""
 
-#: configuration/settings.cfg:88
+#: configuration/settings.cfg:103
 msgid "Use rating list from schachbund.de (DSB)"
 msgstr ""
 
-#: configuration/settings.cfg:93
+#: configuration/settings.cfg:108
 msgid "Use rating list from fide.com (FIDE)"
 msgstr ""
 
-#: configuration/settings.cfg:98
+#: configuration/settings.cfg:113
 msgid "use logfile for sync of Elo rating data"
 msgstr ""
 
-#: configuration/settings.cfg:103
+#: configuration/settings.cfg:118
 msgid "List of fields for Elo sync log"
 msgstr ""
 
-#: configuration/settings.cfg:110
-#: configuration/settings.cfg:132
+#: configuration/settings.cfg:125
+#: configuration/settings.cfg:148
 msgid "Logfile tokens might contain spaces?"
 msgstr ""
 
-#: configuration/settings.cfg:115
+#: configuration/settings.cfg:131
 msgid "Validity of entries in Elo sync log"
 msgstr ""
 
-#: configuration/settings.cfg:120
+#: configuration/settings.cfg:136
 msgid "use logfile for memberstats import"
 msgstr ""
 
-#: configuration/settings.cfg:125
+#: configuration/settings.cfg:141
 msgid "List of fields for memberstats import log"
 msgstr ""
 
-#: configuration/settings.cfg:138
+#: configuration/settings.cfg:154
 msgid "Validity of entries in memberstats import log"
 msgstr ""
 
-#: configuration/settings.cfg:143
+#: configuration/settings.cfg:159
 msgid "Categories of contacts or contacts that have members with ratings"
 msgstr ""
 
-#: configuration/settings.cfg:150
+#: configuration/settings.cfg:166
 msgid "Emit a progress log entry per this many source-file bytes consumed by the memberstats loaders"
 msgstr ""
 
-#: configuration/settings.cfg:155
+#: configuration/settings.cfg:171
 msgid "Rows per batched REPLACE/INSERT when loading DWZ snapshot files into memberstats staging tables"
 msgstr ""
 
-#: configuration/settings.cfg:160
+#: configuration/settings.cfg:176
 msgid "Polling interval in seconds for memberstats progress display"
 msgstr ""
 
-#: configuration/settings.cfg:165
+#: configuration/settings.cfg:181
 msgid "Time in seconds without a memberstats log entry after which the worker is considered stuck"
 msgstr ""
 
-#: configuration/settings.cfg:170
+#: configuration/settings.cfg:186
 msgid "Number of memberstats log entries returned to the progress poller (0 = all)"
 msgstr ""
 
-#: configuration/settings.cfg:175
+#: configuration/settings.cfg:191
 msgid "Countdown in seconds before the next snapshot import starts automatically while the memberstats page stays open"
 msgstr ""
 
-#: configuration/settings.cfg:180
+#: configuration/settings.cfg:196
 msgid "nuLiga clubSearch endpoint (GET list and GET by ZPS)"
 msgstr ""
 
-#: configuration/settings.cfg:185
+#: configuration/settings.cfg:201
 msgid "nuLiga clubSearch confederation parameter (e.g. LV0 DSB)"
 msgstr ""
 
-#: configuration/settings.cfg:189
+#: configuration/settings.cfg:205
 msgid "nuLiga clubSearch searchPattern values per state federation (code => label)"
 msgstr ""
 
-#: configuration/settings.cfg:212
+#: configuration/settings.cfg:228
 msgid "Last imported status of the German DWZ database"
 msgstr ""
 
-#: configuration/settings.cfg:216
+#: configuration/settings.cfg:232
 msgid "Last imported status of the FIDE Elo database"
 msgstr ""
 
 #: ratings/nuliga.inc.php:208
 msgid "Unknown nuLiga federation %s."
-msgstr ""
-
-#: ratings/nuliga.inc.php:296
-msgid "Category identifiers/id_nuliga is not configured."
 msgstr ""
 
 #: ratings/sync.inc.php:53
@@ -753,23 +749,23 @@ msgstr ""
 msgid "Import %s rating data"
 msgstr ""
 
-#: zzbrick_make/ratings.inc.php:62
+#: zzbrick_make/ratings.inc.php:66
 msgid "Rating sync is already running. Please wait for it to finish."
 msgstr ""
 
-#: zzbrick_make/ratings.inc.php:67
+#: zzbrick_make/ratings.inc.php:73
 msgid "Please wait. Rating sync is only allowed to run once every %s."
 msgstr ""
 
-#: zzbrick_make/ratings-download.inc.php:43
+#: zzbrick_make/ratings-download.inc.php:46
 msgid "Unable to download rating file for %s."
 msgstr ""
 
-#: zzbrick_make/ratings-download.inc.php:49
+#: zzbrick_make/ratings-download.inc.php:52
 msgid "No meta data given after download rating file for %s"
 msgstr ""
 
-#: zzbrick_make/ratings-download.inc.php:72
+#: zzbrick_make/ratings-download.inc.php:75
 msgid "File path for downloaded rating file for %s is wrong: %s/%s."
 msgstr ""
 
@@ -785,23 +781,23 @@ msgstr ""
 msgid "Unable to open rating file %s"
 msgstr ""
 
-#: zzbrick_make/ratings-sync.inc.php:44
+#: zzbrick_make/ratings-sync.inc.php:50
 msgid "Unable to read log line, key `result`."
 msgstr ""
 
-#: zzbrick_make/ratings-sync.inc.php:69
+#: zzbrick_make/ratings-sync.inc.php:71
 msgid "Sync job failed. Read log for details."
 msgstr ""
 
-#: zzbrick_make/ratings-sync.inc.php:78
+#: zzbrick_make/ratings-sync.inc.php:84
 msgid "No download URL for sync of rating data."
 msgstr ""
 
-#: zzbrick_make/ratings-sync.inc.php:116
+#: zzbrick_make/ratings-sync.inc.php:121
 msgid "Synchronize %s rating data"
 msgstr ""
 
-#: zzbrick_make/ratings-sync.inc.php:118
+#: zzbrick_make/ratings-sync.inc.php:123
 msgid "Sync %s"
 msgstr ""
 

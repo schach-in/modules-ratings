@@ -58,7 +58,7 @@ function mf_ratings_person_hook_restrict_to_club($record) {
 		FROM dwz_vereine
 		LEFT JOIN contacts_identifiers
 			ON dwz_vereine.ZPS = contacts_identifiers.identifier
-			AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
+			AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/pass-dsb _*/
 		WHERE contacts_identifiers.contact_id = %d
 		AND contacts_identifiers.current = "yes"';
 	/* simpler query

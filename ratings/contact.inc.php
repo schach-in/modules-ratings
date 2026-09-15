@@ -86,7 +86,7 @@ function mf_ratings_clubs_from_code($identifiers) {
 	$club_codes = [];
 	$current_club = NULL;
 	foreach ($identifiers as $identifier) {
-		if ($identifier['path'] !== 'pass_dsb') continue;
+		if ($identifier['path'] !== 'pass-dsb') continue;
 		$club_code = substr($identifier['identifier'], 0 , strpos($identifier['identifier'], '-'));
 		$club_codes[] = $club_code;
 		if ($identifier['current']) $current_club = $club_code;

@@ -23,7 +23,7 @@ function mod_ratings_clubratings($params) {
 		FROM contacts
 		LEFT JOIN contacts_identifiers
 			ON contacts.contact_id = contacts_identifiers.contact_id
-			AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/pass_dsb _*/
+			AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/pass-dsb _*/
 			AND current = "yes"
 		WHERE contacts_identifiers.identifier = "%s"
 	';
