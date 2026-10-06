@@ -157,6 +157,39 @@ LEFT JOIN dwz_spieler dwz_2
 ON dwz_2.FIDE_ID = dwz_spieler.FIDE_ID
 WHERE dwz_2.NU_ID != dwz_spieler.NU_ID;
 
+-- ratings_debug_fide_dsb_elo_match --
+/* DSB player has no FIDE ID, but name and birth year match a FIDE player; FIDE_matches and DSB_matches count players who share that name and year; only DSB names are normalized, FIDE names are looked up via index with equality only, ", Dr." etc. come from a suffix list */
+SELECT DISTINCT dsb.NU_ID
+	, dsb.Spielername
+	, dsb.Geburtsjahr
+	, dsb.DWZ
+	, fide_players.player_id AS FIDE_ID
+	, fide_players.player
+	, fide_players.standard_rating
+	, (SELECT COUNT(*) FROM fide_players fide_names
+		JOIN (SELECT "" AS suffix UNION ALL SELECT ", Dr." UNION ALL SELECT ", Prof." UNION ALL SELECT ", Prof. Dr.") fide_suffixes
+		WHERE fide_names.player = CONCAT(dsb.player_name, fide_suffixes.suffix)
+		AND fide_names.birth = dsb.Geburtsjahr) AS FIDE_matches
+	, (SELECT COUNT(DISTINCT dsb_names.NU_ID) FROM dwz_spieler dsb_names
+		WHERE dsb_names.Spielername = dsb.Spielername
+		AND dsb_names.Geburtsjahr = dsb.Geburtsjahr) AS DSB_matches
+FROM (
+	SELECT NU_ID, Spielername, Geburtsjahr, DWZ
+		, REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(Spielername, ",", ", "), "ä", "ae"), "ü", "ue"), "ß", "ss"), "ö", "oe"), "Ö", "Oe"), "Ä", "Ae"), "Ü", "Ue") AS player_name
+	FROM dwz_spieler
+	WHERE ISNULL(FIDE_ID)
+	AND NOT ISNULL(NU_ID)
+	AND NU_ID != ""
+	AND NOT ISNULL(Geburtsjahr)
+	AND Geburtsjahr != 0
+	AND Spielername != ""
+) dsb
+JOIN (SELECT "" AS suffix UNION ALL SELECT ", Dr." UNION ALL SELECT ", Prof." UNION ALL SELECT ", Prof. Dr.") suffixes
+JOIN fide_players
+	ON fide_players.player = CONCAT(dsb.player_name, suffixes.suffix)
+	AND fide_players.birth = dsb.Geburtsjahr
+ORDER BY dsb.Spielername, dsb.Geburtsjahr, dsb.NU_ID, fide_players.player_id;
+
 -- ratings_federation_dsb --
 /* contacts are linked by nuLiga person ID, or by current DSB pass if they have no nuLiga person ID yet */
 SELECT dwz_spieler.NU_ID AS player_id_nuliga_person
