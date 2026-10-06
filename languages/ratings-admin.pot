@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Zugzwang Project -- ratings module\n"
-"POT-Creation-Date: 2026-10-06 12:07+0000\n"
+"POT-Creation-Date: 2026-10-06 13:06+0000\n"
 "PO-Revision-Date: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -790,12 +790,16 @@ msgstr ""
 msgid "No usable Last-Modified date for rating download %s"
 msgstr ""
 
-#: zzbrick_make/ratings-prepare-dwz.inc.php:58
+#: zzbrick_make/ratings-prepare-dwz.inc.php:64
 msgid "File %s not found for rating import."
 msgstr ""
 
-#: zzbrick_make/ratings-prepare-dwz.inc.php:62
+#: zzbrick_make/ratings-prepare-dwz.inc.php:68
 msgid "File for rating import %s is empty."
+msgstr ""
+
+#: zzbrick_make/ratings-prepare-dwz.inc.php:75
+msgid "File for rating import %s has no usable records."
 msgstr ""
 
 #: zzbrick_make/ratings-prepare-elo.inc.php:44
