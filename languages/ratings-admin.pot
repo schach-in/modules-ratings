@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Zugzwang Project -- ratings module\n"
-"POT-Creation-Date: 2026-10-06 13:06+0000\n"
+"POT-Creation-Date: 2026-10-06 15:51+0000\n"
 "PO-Revision-Date: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -97,6 +97,66 @@ msgstr ""
 
 #: configuration/package.cfg:15
 msgid "Chess player ratings (International Elo and German DWZ)"
+msgstr ""
+
+#: configuration/queries.sql:45
+msgid "Sex of player differs between FIDE and DSB data"
+msgstr ""
+
+#: configuration/queries.sql:54
+msgid "Title of player differs between FIDE and DSB data; DSB puts a women’s title into FIDE_Titel if there is no open title"
+msgstr ""
+
+#: configuration/queries.sql:64
+msgid "Nation of player differs between FIDE and DSB data"
+msgstr ""
+
+#: configuration/queries.sql:73
+msgid "Player has FIDE Elo which is missing in DSB database"
+msgstr ""
+
+#: configuration/queries.sql:81
+msgid "Player has no FIDE Elo, but there is a rating in the DSB database"
+msgstr ""
+
+#: configuration/queries.sql:89
+msgid "FIDE Elo rating is different in DSB database, players >= 2000 Elo"
+msgstr ""
+
+#: configuration/queries.sql:98
+msgid "FIDE Elo rating is different in DSB database, players < 2000 Elo"
+msgstr ""
+
+#: configuration/queries.sql:107
+msgid "FIDE Elo rating is different in DSB database, players < 2000 Elo, where substraction of bonus does not match"
+msgstr ""
+
+#: configuration/queries.sql:118
+msgid "Player has more than one membership entry in the same club"
+msgstr ""
+
+#: configuration/queries.sql:128
+msgid "Player has active status in more than one club"
+msgstr ""
+
+#: configuration/queries.sql:139
+msgid "Player’s first and last name are interchanged"
+msgstr ""
+
+#: configuration/queries.sql:148
+msgid "Player’s name is different"
+msgstr ""
+
+#: configuration/queries.sql:158
+msgid "Different players have same FIDE ID"
+msgstr ""
+
+#: configuration/queries.sql:165
+msgid "DSB player has no FIDE ID, but name and birth year match a FIDE player; FIDE_matches and DSB_matches count players who share that name and year"
+msgstr ""
+
+#: configuration/queries.sql:199
+msgid "contacts are linked by nuLiga person ID, or by current DSB pass if they have no nuLiga person ID yet"
 msgstr ""
 
 #: configuration/routes.cfg:12
