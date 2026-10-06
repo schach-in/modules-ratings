@@ -134,7 +134,7 @@ function mod_ratings_make_nuliga_clubs($params) {
 	}
 
 	if (!array_key_exists('sequential', $_POST)) {
-		wrap_job(wrap_path('nuliga_clubs'), [
+		wrap_job(wrap_path('ratings_nuliga_clubs'), [
 			'sequential' => 1,
 			'job_category_id' => wrap_category_id('jobs/nuliga'),
 			'trigger' => 1,
