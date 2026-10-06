@@ -88,15 +88,22 @@ function mod_ratings_make_ratings_sync($params) {
 	case 'unpack':
 		wrap_include('sync', 'ratings');
 		$return = mf_ratings_file($data['rating']);
-		if ($return) {
-			$filename = wrap_setting('ratings_sync_file['.$data['rating'].']');
+		if (!$return) {
+			wrap_file_log($log, 'write', [time(), 'finish', json_encode(['msg' => 'Nothing to update'])]);
+		} elseif ($filename = wrap_setting('ratings_sync_file['.$data['rating'].']')) {
+			// single data file: move it, zzform sync follows
 			$source = sprintf('%s/%s', $return['destination_folder'], $filename);
 			$dest = sprintf('%s/%s/%s', wrap_setting('tmp_dir'), $rating, $filename);
 			rename($source, $dest);
 			rmdir($return['destination_folder']);
 			wrap_file_log($log, 'write', [time(), 'unpack', json_encode($return)]);
 		} else {
-			wrap_file_log($log, 'write', [time(), 'finish', json_encode(['msg' => 'Nothing to update'])]);
+			// several files (e. g. DWZ): import directly from the folder
+			wrap_file_log($log, 'write', [time(), 'unpack', json_encode($return)]);
+			require_once __DIR__.'/ratings-import.inc.php';
+			$import = mod_ratings_make_ratings_import_folder($data['rating'], $return['destination_folder'], $return['date']);
+			$result = empty($import['errors']) ? 'sync' : 'fail';
+			wrap_file_log($log, 'write', [time(), $result, json_encode($import)]);
 		}
 		$page['extra']['job_continue'] = true;
 		break;

@@ -99,7 +99,7 @@ CREATE TABLE `temp_memberstats_vereine` (
   `ZPS` varchar(5) NOT NULL DEFAULT '',
   `LV` char(1) NOT NULL DEFAULT '',
   `Verband` char(3) NOT NULL DEFAULT '',
-  `Vereinname` varchar(64) NOT NULL DEFAULT '',
+  `Vereinname` varchar(80) NOT NULL DEFAULT '',
   PRIMARY KEY (`ZPS`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

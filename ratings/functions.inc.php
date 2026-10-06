@@ -24,22 +24,26 @@
  */
 function mf_ratings_ratinglist($conditions, $settings = []) {
 	if (!array_key_exists('limit', $settings)) $settings['limit'] = 1000;
-	$sql = 'SELECT PID
+	$sql = 'SELECT NU_ID
 	    FROM dwz_spieler
 	    LEFT JOIN fide_players
 	    	ON dwz_spieler.fide_id = fide_players.player_id
 	    WHERE %s
-	    ORDER BY IFNULL(DWZ, standard_rating) DESC, standard_rating DESC, PID
+	    ORDER BY IFNULL(DWZ, standard_rating) DESC, standard_rating DESC, NU_ID
 	    LIMIT 0, %d
 	';
 	$sql = sprintf($sql
 		, $conditions ? implode(' AND ', $conditions) : ''
 		, $settings['limit']
 	);
-	$data = wrap_db_fetch($sql, 'PID');
+	$data = wrap_db_fetch($sql, 'NU_ID');
 	if (!$data) return [];
+	$nu_ids = [];
+	foreach (array_keys($data) as $nu_id)
+		$nu_ids[] = sprintf('"%s"', wrap_db_escape($nu_id));
+	$nu_ids = implode(',', $nu_ids);
 	
-	$sql = 'SELECT PID, Spielername AS spielername, Geschlecht AS geschlecht
+	$sql = 'SELECT NU_ID, Spielername AS spielername, Geschlecht AS geschlecht
 			, Letzte_Auswertung AS letzte_auswertung
 			, DWZ AS dwz, DWZ_Index AS dwz_index
 			, contact as club
@@ -70,15 +74,15 @@ function mf_ratings_ratinglist($conditions, $settings = []) {
 	    	AND federation_identifiers.current = "yes"
 	    LEFT JOIN contacts
 	    	ON contacts.contact_id = IFNULL(contacts_identifiers.contact_id, federation_identifiers.contact_id)
-	    WHERE PID IN (%s)
+	    WHERE NU_ID IN (%s)
 	    %s
-	    ORDER BY FIELD(PID, %s), Status DESC';
+	    ORDER BY FIELD(NU_ID, %s), Status DESC';
 	$sql = sprintf($sql
-		, implode(',', array_keys($data))
+		, $nu_ids
 		, (!empty($settings['apply_conditions_for_full_query']) ? ' AND '.implode(' AND ', $conditions) : '')
-		, implode(',', array_keys($data))
+		, $nu_ids
 	);
-	$data = wrap_db_fetch($sql, 'PID');
+	$data = wrap_db_fetch($sql, 'NU_ID');
 	
 	$players = [];
 	foreach ($data as $index => $line) {
@@ -87,19 +91,20 @@ function mf_ratings_ratinglist($conditions, $settings = []) {
 			continue;
 		$line = mf_ratings_fidetitle($line);
 		$line = mf_ratings_fideother($line);
-		if (array_key_exists($line['PID'], $players)) {
-			$players[$line['PID']]['memberships'][] = $line;
+		$nu_id = $line['NU_ID'];
+		if (array_key_exists($nu_id, $players)) {
+			$players[$nu_id]['memberships'][] = $line;
 		} else {
-			$players[$line['PID']] = $line;
+			$players[$nu_id] = $line;
 			$contact = explode(',', $line['spielername']);
 			foreach ($contact as $part)
-				$players[$line['PID']]['search_parts'][] = mb_strtolower($part);
-			sort($players[$line['PID']]['search_parts']);
+				$players[$nu_id]['search_parts'][] = mb_strtolower($part);
+			sort($players[$nu_id]['search_parts']);
 			$contact = array_reverse($contact);
-			$players[$line['PID']]['contact'] = implode(' ', $contact);
+			$players[$nu_id]['contact'] = implode(' ', $contact);
 			// only take Wikipedia name for the accents etc.
-			if ($line['person'] AND wrap_filename($line['person']) === wrap_filename($players[$line['PID']]['contact']))
-				$players[$line['PID']]['contact'] = $line['person'];
+			if ($line['person'] AND wrap_filename($line['person']) === wrap_filename($players[$nu_id]['contact']))
+				$players[$nu_id]['contact'] = $line['person'];
 		}
 	}
 	return $players;

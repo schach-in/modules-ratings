@@ -29,28 +29,44 @@ function mod_ratings_make_ratings_import($params) {
 	$dl = mf_ratings_file($params[0]);
 	if (!$dl) return false;
 
-	$path = strtolower($params[0]);
+	$data = mod_ratings_make_ratings_import_folder($params[0], $dl['destination_folder'], $dl['date']);
+	$page['text'] = json_encode($data);
+	$page['content_type'] = 'json';
+	return $page;
+}
+
+/**
+ * import rating data from an unzipped folder
+ *
+ * runs the prepare script for the rating, executes the resulting .sql file,
+ * sets ratings_status and triggers follow-up jobs
+ *
+ * @param string $rating
+ * @param string $folder
+ * @param string $date
+ * @return array
+ */
+function mod_ratings_make_ratings_import_folder($rating, $folder, $date) {
+	$path = strtolower($rating);
 	$filename = __DIR__.'/ratings-prepare-'.$path.'.inc.php';
 	require_once $filename;
 	$function = 'mod_ratings_make_ratings_prepare_'.$path;
 
-	$data = $function([$dl['destination_folder']]);
-	if (empty($data)) {
-		rmdir($dl['destination_folder']);
-		$data['errors'] = mod_ratings_make_ratings_db($path);
-		if (!$data['errors']) {
-			wrap_setting_write('ratings_status['.$params[0].']', $dl['date']);
-			$data['import_successful'] = true;
-			// fan out: re-build the long-form member statistics for any
-			// DWZ snapshots that aren't in `memberstats` yet
-			if ($params[0] === 'DWZ') {
-				if (wrap_path('ratings_memberstats')) wrap_job(wrap_path('ratings_memberstats'));
-			}
-		}
+	$data = $function([$folder]);
+	if (!empty($data)) return $data;
+
+	rmdir($folder);
+	$data['errors'] = mod_ratings_make_ratings_db($path);
+	if ($data['errors']) return $data;
+
+	wrap_setting_write('ratings_status['.$rating.']', $date);
+	$data['import_successful'] = true;
+	// fan out: re-build the long-form member statistics for any
+	// DWZ snapshots that aren't in `memberstats` yet
+	if ($rating === 'DWZ') {
+		if (wrap_path('ratings_memberstats')) wrap_job(wrap_path('ratings_memberstats'));
 	}
-	$page['text'] = json_encode($data);
-	$page['content_type'] = 'json';
-	return $page;
+	return $data;
 }
 
 /**

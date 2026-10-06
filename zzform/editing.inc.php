@@ -71,6 +71,7 @@ function mf_ratings_player_search($federation, $data) {
  */
 function mf_ratings_player_search_dsb($data) {
 	$sql = 'SELECT CONCAT(ZPS, "-", IF(Mgl_Nr < 100, LPAD(Mgl_Nr, 3, "0"), Mgl_Nr)) AS player_pass_dsb
+			, NU_ID AS player_id_nuliga_person
 			, FIDE_ID AS player_id_fide
 			, (CASE WHEN Geschlecht = "W" THEN "female"
 				WHEN Geschlecht = "M" THEN "male"
@@ -108,7 +109,7 @@ function mf_ratings_player_search_dsb($data) {
 	$name = explode(',', $player['Spielername']);
 	$player['last_name'] = $name[0];
 	$player['first_name'] = $name[1];
-	if (!empty($name[2])) $player['title_prefix'] = $name[1];
+	if (!empty($name[2])) $player['title_prefix'] = $name[2];
 	unset($player['Spielername']);
 	return $player;
 }
@@ -152,7 +153,7 @@ function mf_ratings_player_search_fide($data) {
  */
 function mf_ratings_person_add($player) {
 	$identifiers = [];
-	$paths = ['id-fide', 'pass-dsb', 'id-dsb'];
+	$paths = ['id-fide', 'pass-dsb', 'id-nuliga-person'];
 	foreach ($paths as $path) {
 		$key = sprintf('player_%s', str_replace('-', '_', $path));
 		if (empty($player[$key])) continue;

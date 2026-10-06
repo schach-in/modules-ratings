@@ -13,7 +13,7 @@
 
 -- ratings_contact_dsb --
 SELECT contact_id
-	, PID AS player_id_dsb
+	, NU_ID AS player_id_nuliga_person
 	, FIDE_ID AS player_id_fide
 	, CONCAT(dwz_spieler.ZPS, "-", IF(dwz_spieler.Mgl_Nr < 100, LPAD(dwz_spieler.Mgl_Nr, 3, "0"), dwz_spieler.Mgl_Nr)) AS player_pass_dsb
 	, DWZ AS dsb_dwz
@@ -40,7 +40,7 @@ WHERE contact_id IN (%s);
 
 -- ratings_debug_fide_dsb_sex --
 /* Sex of player differs between FIDE and DSB data */
-SELECT PID, ZPS, IF(Mgl_Nr < 100, LPAD(Mgl_Nr, 3, "0"), Mgl_Nr) AS Mgl_Nr, Spielername, FIDE_ID, FIDE_Land, sex, Geschlecht
+SELECT NU_ID, ZPS, IF(Mgl_Nr < 100, LPAD(Mgl_Nr, 3, "0"), Mgl_Nr) AS Mgl_Nr, Spielername, FIDE_ID, FIDE_Land, sex, Geschlecht
 FROM dwz_spieler
 LEFT JOIN fide_players
 	ON fide_players.player_id = dwz_spieler.FIDE_ID
@@ -48,18 +48,18 @@ WHERE IF(sex = "F", "W", "M") != Geschlecht
 AND NOT ISNULL(sex);
 
 -- ratings_debug_fide_dsb_title --
-/* Title of player differs between FIDE and DSB data */
-SELECT PID, ZPS, IF(Mgl_Nr < 100, LPAD(Mgl_Nr, 3, "0"), Mgl_Nr) AS Mgl_Nr, Spielername, FIDE_Titel, FIDE_ID, FIDE_Land, title
+/* Title of player differs between FIDE and DSB data; DSB puts a women’s title into FIDE_Titel if there is no open title */
+SELECT NU_ID, ZPS, IF(Mgl_Nr < 100, LPAD(Mgl_Nr, 3, "0"), Mgl_Nr) AS Mgl_Nr, Spielername, FIDE_ID, FIDE_Land
+	, FIDE_Titel, title, FIDE_Frauentitel, title_women
 FROM dwz_spieler
 LEFT JOIN fide_players
 	ON fide_players.player_id = dwz_spieler.FIDE_ID
-WHERE dwz_spieler.FIDE_Titel != fide_players.title
-OR (ISNULL(dwz_spieler.FIDE_Titel) AND NOT ISNULL(fide_players.title))
-OR (NOT ISNULL(dwz_spieler.FIDE_Titel) AND ISNULL(fide_players.title));
+WHERE NOT (dwz_spieler.FIDE_Titel <=> IFNULL(fide_players.title, fide_players.title_women))
+OR NOT (dwz_spieler.FIDE_Frauentitel <=> fide_players.title_women);
 
 -- ratings_debug_fide_dsb_nation --
 /* Nation of player differs between FIDE and DSB data */
-SELECT PID, ZPS, IF(Mgl_Nr < 100, LPAD(Mgl_Nr, 3, "0"), Mgl_Nr) AS Mgl_Nr, Spielername, FIDE_Titel, FIDE_ID
+SELECT NU_ID, ZPS, IF(Mgl_Nr < 100, LPAD(Mgl_Nr, 3, "0"), Mgl_Nr) AS Mgl_Nr, Spielername, FIDE_Titel, FIDE_ID
 	, FIDE_Land AS DSB_fed, federation AS FIDE_fed
 FROM dwz_spieler
 LEFT JOIN fide_players
@@ -68,7 +68,7 @@ WHERE dwz_spieler.FIDE_Land != fide_players.federation;
 
 -- ratings_debug_fide_dsb_elo_missing --
 /* Player has FIDE Elo which is missing in DSB database */
-SELECT DISTINCT PID, Spielername, FIDE_Elo, FIDE_Titel, FIDE_ID, FIDE_Land, standard_rating
+SELECT DISTINCT NU_ID, Spielername, FIDE_Elo, FIDE_Titel, FIDE_ID, FIDE_Land, standard_rating
 FROM dwz_spieler
 LEFT JOIN fide_players
 	ON fide_players.player_id = dwz_spieler.FIDE_ID
@@ -76,7 +76,7 @@ WHERE ISNULL(dwz_spieler.FIDE_Elo) AND NOT ISNULL(fide_players.standard_rating);
 
 -- ratings_debug_fide_dsb_elo_extra --
 /* Player has no FIDE Elo, but there is a rating in the DSB database */
-SELECT DISTINCT PID, Spielername, FIDE_Elo, FIDE_Titel, FIDE_ID, FIDE_Land, standard_rating
+SELECT DISTINCT NU_ID, Spielername, FIDE_Elo, FIDE_Titel, FIDE_ID, FIDE_Land, standard_rating
 FROM dwz_spieler
 LEFT JOIN fide_players
 	ON fide_players.player_id = dwz_spieler.FIDE_ID
@@ -84,7 +84,7 @@ WHERE NOT ISNULL(dwz_spieler.FIDE_Elo) AND ISNULL(fide_players.standard_rating);
 
 -- ratings_debug_fide_dsb_elo_different_above_2000 --
 /* FIDE Elo rating is different in DSB database, players >= 2000 Elo */
-SELECT DISTINCT PID, Spielername, FIDE_Elo, FIDE_Titel, FIDE_ID, FIDE_Land, standard_rating
+SELECT DISTINCT NU_ID, Spielername, FIDE_Elo, FIDE_Titel, FIDE_ID, FIDE_Land, standard_rating
 FROM dwz_spieler
 LEFT JOIN fide_players
 	ON fide_players.player_id = dwz_spieler.FIDE_ID
@@ -93,7 +93,7 @@ AND fide_players.standard_rating >= 2000;
 
 -- ratings_debug_fide_dsb_elo_different_below_2000 --
 /* FIDE Elo rating is different in DSB database, players < 2000 Elo */
-SELECT DISTINCT PID, Spielername, FIDE_Elo, FIDE_Titel, FIDE_ID, FIDE_Land, standard_rating
+SELECT DISTINCT NU_ID, Spielername, FIDE_Elo, FIDE_Titel, FIDE_ID, FIDE_Land, standard_rating
 FROM dwz_spieler
 LEFT JOIN fide_players
 	ON fide_players.player_id = dwz_spieler.FIDE_ID
@@ -102,7 +102,7 @@ AND fide_players.standard_rating < 2000;
 
 -- ratings_debug_fide_dsb_elo_different_below_2000_recalculation_does_not_match --
 /* FIDE Elo rating is different in DSB database, players < 2000 Elo, where substraction of bonus does not match */
-SELECT DISTINCT PID, Spielername, FIDE_Elo, FIDE_ID, FIDE_Land, standard_rating
+SELECT DISTINCT NU_ID, Spielername, FIDE_Elo, FIDE_ID, FIDE_Land, standard_rating
 	, ROUND(((standard_rating - 800) / 0.6), 0) AS adjusted_rating
 FROM dwz_spieler
 LEFT JOIN fide_players
@@ -113,28 +113,28 @@ HAVING adjusted_rating != dwz_spieler.FIDE_Elo;
 
 -- ratings_debug_dsb_player_twice_in_same_club --
 /* Player has more than one membership entry in the same club */
-SELECT dwz_spieler.PID, dwz_spieler.ZPS, IF(dwz_spieler.Mgl_Nr < 100, LPAD(dwz_spieler.Mgl_Nr, 3, "0"), dwz_spieler.Mgl_Nr) AS Mgl_Nr, dwz_spieler.Status
+SELECT dwz_spieler.NU_ID, dwz_spieler.ZPS, IF(dwz_spieler.Mgl_Nr < 100, LPAD(dwz_spieler.Mgl_Nr, 3, "0"), dwz_spieler.Mgl_Nr) AS Mgl_Nr, dwz_spieler.Status
 	, dwz_spieler.Spielername
 FROM dwz_spieler
 JOIN dwz_spieler duplicates
-	ON duplicates.PID = dwz_spieler.PID
+	ON duplicates.NU_ID = dwz_spieler.NU_ID
 	AND dwz_spieler.ZPS = duplicates.ZPS
 	AND dwz_spieler.Mgl_Nr != duplicates.Mgl_Nr;
 
 -- ratings_debug_dsb_player_active_in_different_clubs --
 /* Player has active status in more than one club */
-SELECT dwz_spieler.PID, dwz_spieler.ZPS, IF(dwz_spieler.Mgl_Nr < 100, LPAD(dwz_spieler.Mgl_Nr, 3, "0"), dwz_spieler.Mgl_Nr) AS Mgl_Nr, dwz_spieler.Status
+SELECT dwz_spieler.NU_ID, dwz_spieler.ZPS, IF(dwz_spieler.Mgl_Nr < 100, LPAD(dwz_spieler.Mgl_Nr, 3, "0"), dwz_spieler.Mgl_Nr) AS Mgl_Nr, dwz_spieler.Status
 	, dwz_spieler.Spielername
 FROM dwz_spieler
 JOIN dwz_spieler duplicates
-	ON duplicates.PID = dwz_spieler.PID
+	ON duplicates.NU_ID = dwz_spieler.NU_ID
 	AND dwz_spieler.Status = "A"
 	AND duplicates.Status = "A"
 	AND dwz_spieler.ZPS != duplicates.ZPS;
 
 -- ratings_debug_fide_dsb_change_last_first --
 /* Player’s first and last name are interchanged */
-SELECT DISTINCT PID, Spielername, FIDE_ID, player
+SELECT DISTINCT NU_ID, Spielername, FIDE_ID, player
 FROM dwz_spieler
 LEFT JOIN fide_players
 ON dwz_spieler.fide_id = fide_players.player_id
@@ -143,7 +143,7 @@ AND SUBSTRING_INDEX(Spielername, ",", -1) = SUBSTRING_INDEX(player, ", ", 1);
 
 -- ratings_debug_fide_dsb_change_name --
 /* Player’s name is different */
-SELECT DISTINCT PID, Spielername, FIDE_ID, player
+SELECT DISTINCT NU_ID, Spielername, FIDE_ID, player
 FROM dwz_spieler
 LEFT JOIN fide_players
 ON dwz_spieler.fide_id = fide_players.player_id
@@ -152,28 +152,45 @@ AND SUBSTRING_INDEX(Spielername, ",", -1) != SUBSTRING_INDEX(player, ", ", 1);
 
 -- ratings_debug_fide_id_for_several_players --
 /* Different players have same FIDE ID */
-SELECT DISTINCT dwz_spieler.PID, dwz_2.PID AS PID2, dwz_spieler.Spielername, dwz_spieler.FIDE_ID FROM dwz_spieler
+SELECT DISTINCT dwz_spieler.NU_ID, dwz_2.NU_ID AS NU_ID2, dwz_spieler.Spielername, dwz_spieler.FIDE_ID FROM dwz_spieler
 LEFT JOIN dwz_spieler dwz_2
 ON dwz_2.FIDE_ID = dwz_spieler.FIDE_ID
-WHERE dwz_2.PID != dwz_spieler.PID;
+WHERE dwz_2.NU_ID != dwz_spieler.NU_ID;
 
--- ratings_federation_dsb_id --
-SELECT PID AS player_id_dsb
+-- ratings_federation_dsb --
+/* contacts are linked by nuLiga person ID, or by current DSB pass if they have no nuLiga person ID yet */
+SELECT dwz_spieler.NU_ID AS player_id_nuliga_person
 	, CONCAT(dwz_spieler.ZPS, "-", IF(dwz_spieler.Mgl_Nr < 100, LPAD(dwz_spieler.Mgl_Nr, 3, "0"), dwz_spieler.Mgl_Nr)) AS player_pass_dsb
 	, IF(
 		(SELECT COUNT(*) FROM dwz_spieler dwz_spieler2
-		WHERE dwz_spieler2.PID = dwz_spieler.PID AND dwz_spieler2.Status = "A") > 1
-		, NULL, IF(Status = "A", 1, NULL)
+		WHERE dwz_spieler2.NU_ID = dwz_spieler.NU_ID AND dwz_spieler2.Status = "A") > 1
+		, NULL, IF(dwz_spieler.Status = "A", 1, NULL)
 	) AS player_pass_dsb_current
-	, FIDE_ID AS player_id_fide
-	, contacts_identifiers.contact_id AS contact_id
+	, dwz_spieler.FIDE_ID AS player_id_fide
+	, links.contact_id
 FROM dwz_spieler
-JOIN contacts_identifiers
-	ON contacts_identifiers.identifier = dwz_spieler.PID
-	AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/id-dsb _*/;
+JOIN (
+	SELECT identifier AS NU_ID, contact_id
+	FROM contacts_identifiers
+	WHERE identifier_category_id = /*_ID categories identifiers/id-nuliga-person _*/
+	UNION
+	SELECT dwz_spieler.NU_ID, contacts_identifiers.contact_id
+	FROM dwz_spieler
+	JOIN contacts_identifiers
+		ON contacts_identifiers.identifier = CONCAT(dwz_spieler.ZPS, "-", IF(dwz_spieler.Mgl_Nr < 100, LPAD(dwz_spieler.Mgl_Nr, 3, "0"), dwz_spieler.Mgl_Nr))
+		AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/pass-dsb _*/
+		AND contacts_identifiers.current = "yes"
+	WHERE NOT EXISTS (
+		SELECT 1 FROM contacts_identifiers nuliga
+		WHERE nuliga.contact_id = contacts_identifiers.contact_id
+		AND nuliga.identifier_category_id = /*_ID categories identifiers/id-nuliga-person _*/
+	)
+) links
+	ON links.NU_ID = dwz_spieler.NU_ID
+ORDER BY links.contact_id, dwz_spieler.Status;
 
 -- ratings_federation_dsb_pass --
-SELECT PID AS player_id_dsb
+SELECT NU_ID AS player_id_nuliga_person
 	, CONCAT(dwz_spieler.ZPS, "-", IF(dwz_spieler.Mgl_Nr < 100, LPAD(dwz_spieler.Mgl_Nr, 3, "0"), dwz_spieler.Mgl_Nr)) AS player_pass_dsb
 	, IF(Status = "A", 1, NULL) AS player_pass_dsb_current
 	, FIDE_ID AS player_id_fide
@@ -186,7 +203,7 @@ JOIN contacts_identifiers
 	AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/pass-dsb _*/;
 
 -- ratings_federation_dsb_id_fide --
-SELECT PID AS player_id_dsb
+SELECT NU_ID AS player_id_nuliga_person
 	, CONCAT(dwz_spieler.ZPS, "-", IF(dwz_spieler.Mgl_Nr < 100, LPAD(dwz_spieler.Mgl_Nr, 3, "0"), dwz_spieler.Mgl_Nr)) AS player_pass_dsb
 	, IF(Status = "A", 1, NULL) AS player_pass_dsb_current
 	, FIDE_ID AS player_id_fide
@@ -199,7 +216,7 @@ JOIN contacts_identifiers
 	AND contacts_identifiers.identifier_category_id = /*_ID categories identifiers/id-fide _*/;
 
 -- ratings_federation_dsb_name_birth --
-SELECT PID AS player_id_dsb
+SELECT NU_ID AS player_id_nuliga_person
 	, CONCAT(dwz_spieler.ZPS, "-", IF(dwz_spieler.Mgl_Nr < 100, LPAD(dwz_spieler.Mgl_Nr, 3, "0"), dwz_spieler.Mgl_Nr)) AS player_pass_dsb
 	, FIDE_ID AS player_id_fide
 	, IF(Status = "A", 1, NULL) AS player_pass_dsb_current
@@ -220,7 +237,7 @@ FROM contacts_identifiers
 WHERE contact_id IN (%s);
 
 -- ratings_players_dsb --
-SELECT PID AS player_id_dsb
+SELECT NU_ID AS player_id_nuliga_person
 	, CONCAT(ZPS, "-", IF(Mgl_Nr < 100, LPAD(Mgl_Nr, 3, "0"), Mgl_Nr)) AS player_pass_dsb
 	, FIDE_ID AS player_id_fide
 	, SUBSTRING_INDEX(Spielername, ",", 1) AS last_name

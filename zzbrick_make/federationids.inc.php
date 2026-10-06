@@ -46,19 +46,30 @@ function mod_ratings_make_federationids() {
  * @return array
  */
 function mod_ratings_make_federationids_dsb() {
-	$sql = wrap_sql_query('ratings_federation_dsb_id');
+	$sql = wrap_sql_query('ratings_federation_dsb');
 	$remote_data = wrap_db_fetch($sql, '_dummy_', 'numeric');
+	if (!$remote_data) return [];
 	$contact_ids = [];
-	foreach ($remote_data as $index => $line)
-		$contact_ids[$index] = $line['contact_id'];
+	foreach ($remote_data as $line)
+		$contact_ids[$line['contact_id']] = $line['contact_id'];
 	
 	$sql = wrap_sql_query('ratings_federation_contact_identifiers');
 	$sql = sprintf($sql, implode(',', $contact_ids));
 	$local_data = wrap_db_fetch($sql, ['contact_id', 'contact_identifier_id']);
 
 	$data = [];
-	foreach ($remote_data as $index => $line)
-		$data += mod_ratings_make_federationids_update($line, $local_data[$contact_ids[$index]]);
+	foreach ($remote_data as $line) {
+		$contact_id = $line['contact_id'];
+		$details = mod_ratings_make_federationids_update($line, $local_data[$contact_id] ?? []);
+		if (!$details) continue;
+		$data[$contact_id]['contact_id'] = $contact_id;
+		foreach ($details as $detail)
+			$data[$contact_id]['details'][] = $detail;
+		// a contact can have several rows (one per membership): re-read after changes
+		$sql = wrap_sql_query('ratings_federation_contact_identifiers');
+		$sql = sprintf($sql, $contact_id);
+		$local_data[$contact_id] = wrap_db_fetch($sql, 'contact_identifier_id');
+	}
 	return $data;
 }
 
@@ -67,9 +78,10 @@ function mod_ratings_make_federationids_dsb() {
  *
  * @param array $remote data from remote source
  * @param array $records local data in database
+ * @return array list of messages
  */
 function mod_ratings_make_federationids_update($remote, $records) {
-	$paths = ['pass-dsb', 'id-dsb', 'id-fide'];
+	$paths = ['pass-dsb', 'id-fide', 'id-nuliga-person'];
 	
 	// check existing records
 	$new = $remote;
@@ -142,7 +154,7 @@ function mod_ratings_make_federationids_update($remote, $records) {
 		});
 	}
 
-	$data = [];	
+	$messages = [];
 	// actions, first update, then insert
 	$types = ['update', 'insert'];
 	foreach ($types as $type) {
@@ -156,9 +168,8 @@ function mod_ratings_make_federationids_update($remote, $records) {
 					$success = zzform_insert('contacts-identifiers', $line); break;
 			}
 			if (!$success) $msg['error'] = true;
-			$data[$new['contact_id']]['contact_id'] = $new['contact_id'];
-			$data[$new['contact_id']]['details'][] = $msg;
+			$messages[] = $msg;
 		}
 	}
-	return $data;
+	return $messages;
 }

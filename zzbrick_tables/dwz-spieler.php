@@ -20,6 +20,15 @@ $zz['title'] = 'DWZ players';
 $zz['table'] = 'dwz_spieler';
 
 $zz['fields'][5]['field_name'] = 'PID';
+$zz['fields'][5]['explanation'] = 'Historic DWZ person ID; empty in liga.nu CSV exports';
+
+$zz['fields'][17]['field_name'] = 'NU_ID';
+$zz['fields'][17]['title'] = 'nuLiga ID';
+$zz['fields'][17]['explanation'] = 'Person ID from the DSB/nuLiga DWZ list';
+$zz['fields'][17]['link'] = [
+	'area' => 'ratings_dsb_profile',
+	'fields' => ['NU_ID']
+];
 
 $zz['fields'][4]['field_name'] = 'Spielername';
 $zz['fields'][4]['title'] = 'Player name';
@@ -39,10 +48,6 @@ $zz['fields'][2]['title_tab'] = 'Mem.';
 $zz['fields'][2]['field_name'] = 'Mgl_Nr';
 $zz['fields'][2]['type'] = 'number';
 $zz['fields'][2]['explanation'] = 'Member number in club';
-$zz['fields'][2]['link'] = [
-	'area' => 'ratings_dsb_profile',
-	'fields' => ['ZPS', 'Mgl_Nr']
-];
 
 $zz['fields'][3]['title_tab'] = 'St';
 $zz['fields'][3]['field_name'] = 'Status';
@@ -88,6 +93,20 @@ $zz['fields'][12]['field_name'] = 'FIDE_Elo';
 $zz['fields'][13]['title'] = 'Title';
 $zz['fields'][13]['field_name'] = 'FIDE_Titel';
 $zz['fields'][13]['hide_in_list_if_empty'] = true;
+
+$zz['fields'][18]['title'] = 'Title women';
+$zz['fields'][18]['field_name'] = 'FIDE_Frauentitel';
+$zz['fields'][18]['hide_in_list_if_empty'] = true;
+
+$zz['fields'][19]['title'] = 'Rapid rating';
+$zz['fields'][19]['field_name'] = 'FIDE_Elo_Schnellschach';
+$zz['fields'][19]['type'] = 'number';
+$zz['fields'][19]['hide_in_list_if_empty'] = true;
+
+$zz['fields'][20]['title'] = 'Blitz rating';
+$zz['fields'][20]['field_name'] = 'FIDE_Elo_Blitz';
+$zz['fields'][20]['type'] = 'number';
+$zz['fields'][20]['hide_in_list_if_empty'] = true;
 
 $zz['fields'][14]['title'] = 'FIDE-ID';
 $zz['fields'][14]['field_name'] = 'FIDE_ID';

@@ -131,8 +131,8 @@ function mf_ratings_by_contact($contact_ids) {
 function mf_ratings_players_dsb($filters = []) {
 	$where = [];
 	$single = false;
-	if (!empty($filters['player_id_dsb'])) {
-		$where[] = sprintf('PID = %d', $filters['player_id_dsb']);
+	if (!empty($filters['player_id_nuliga_person'])) {
+		$where[] = sprintf('NU_ID = "%s"', wrap_db_escape($filters['player_id_nuliga_person']));
 		$single = true;
 	} elseif (!empty($filters['player_pass_dsb'])) {
 		list($zps, $mgl_nr) = explode('-', $filters['player_pass_dsb']);
@@ -144,8 +144,12 @@ function mf_ratings_players_dsb($filters = []) {
 	} else {
 		if (!empty($filters['club_code_dsb']))
 			$where[] = sprintf('ZPS = "%s"', wrap_db_escape($filters['club_code_dsb']));
-		if (!empty($filters['player_id_dsb_excluded']))
-			$where[] = sprintf('PID NOT IN (%s)', wrap_db_escape(implode(',', $filters['player_id_dsb_excluded'])));
+		if (!empty($filters['player_id_nuliga_person_excluded'])) {
+			$excluded = [];
+			foreach ($filters['player_id_nuliga_person_excluded'] as $excluded_id)
+				$excluded[] = sprintf('"%s"', wrap_db_escape($excluded_id));
+			$where[] = sprintf('NU_ID NOT IN (%s)', implode(',', $excluded));
+		}
 		if (!empty($filters['min_age']))
 			$where[] = sprintf('Geburtsjahr <= %d', date('Y') - $filters['min_age']);
 		if (!empty($filters['max_age']))
@@ -183,7 +187,7 @@ function mf_ratings_players_dsb($filters = []) {
 		, !empty($filters['include_passive']) ? 'XX' : 'P' // X being an illegal value, showing all records
 		, $where ? sprintf(' AND %s ', implode(' AND ', $where)) : ''
 	);
-	$data = wrap_db_fetch($sql, 'player_id_dsb');
+	$data = wrap_db_fetch($sql, 'player_id_nuliga_person');
 	if ($single) return reset($data);
 	return $data;
 }

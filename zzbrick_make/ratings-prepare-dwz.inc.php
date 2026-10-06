@@ -22,26 +22,30 @@
  * import DWZ rating data
  * Liest DWZ-Daten aus Dateien in dwz_*-Tabellen ein
  *
+ * Reads the liga.nu dwzliste .csv export (Windows-1252, from 2026-07-22).
+ *
  * @param array $params
  *		[0]: string folder name
  * @return array $data
  */
 function mod_ratings_make_ratings_prepare_dwz($params) {
+	wrap_include('dwz-csv', 'ratings');
+
 	$files = [
 //		1 => [
 //			'filename' => 'verband.sql',
 //			'table' => 'dwz_verbaende'
 //		],
 		2 => [
-			'filename' => 'verbaende.sql',
+			'filename' => 'verbaende.csv',
 			'table' => 'dwz_verbaende'
 		],
 		3 => [
-			'filename' => 'vereine.sql',
+			'filename' => 'vereine.csv',
 			'table' => 'dwz_vereine'
 		],
 		4 => [
-			'filename' => 'spieler.sql',
+			'filename' => 'spieler.csv',
 			'table' => 'dwz_spieler'
 		]
 	];
@@ -58,39 +62,97 @@ function mod_ratings_make_ratings_prepare_dwz($params) {
 			$data['errors'][]['msg'] = wrap_text('File for rating import %s is empty.', ['values' => $file['filename']]);
 			continue;
 		}
-		if ($handle = fopen($filename, 'r')) {
-			$sql = 'TRUNCATE %s';
-			$sql = sprintf($sql, $file['table']);
-			mf_ratings_log('dwz', $sql);
-			while ($line = fgets($handle)) {
-				$line = iconv("ISO-8859-1", "UTF-8", $line);
-				// fix data because the new system does not work correctly
-				// 1. passive players without membership no. are dummy entries for
-				// people in the board of a club who are not members
-				if (preg_match('/^REPLACE INTO `dwz_spieler` VALUES \(\d+,"[0-9A-Z]+",null,"P",.+$/', $line)) continue;
-				// 2. there are some people without names (sic!)
-				if (preg_match('/^REPLACE INTO `dwz_spieler` VALUES \(\d+,"[0-9A-Z]+",\d+,"A","",.+$/', $line)) continue;
-				if (preg_match('/^REPLACE INTO `dwz_spieler` VALUES \(\d+,"[0-9A-Z]+",\d+,"P","",.+$/', $line)) continue;
-				mf_ratings_log('dwz', $line);
-			}
-		}
-		fclose($handle);
+		mf_ratings_prepare_dwz_csv($filename, $file['table']);
 		unlink($filename);
 	}
-
-	// seltsame Änderung in den Daten, statt M steht jetzt NULL in Geschlecht
-	// für männlich
-	$sql = 'UPDATE dwz_spieler SET Geschlecht = "M" WHERE ISNULL(Geschlecht)';
-	mf_ratings_log('dwz', $sql);
 
 	// Keine Spielberechtigung ist NULL statt bisher -
 	$sql = 'UPDATE dwz_spieler SET Spielberechtigung = "-" WHERE ISNULL(Spielberechtigung)';
 	mf_ratings_log('dwz', $sql);
 
-	$deletable[] = 'readme.txt';
-	foreach ($deletable as $file)
-		unlink($params[0].'/'.$file);
+	foreach (scandir($params[0]) as $entry) {
+		if (!preg_match('/^readme\.txt$/i', $entry)) continue;
+		unlink($params[0].'/'.$entry);
+	}
 
 	if (empty($data['errors'])) unset($data['errors']);
 	return $data;
+}
+
+/**
+ * convert a liga.nu dwzliste .csv into REPLACE INTO statements
+ *
+ * @param string $filename
+ * @param string $table
+ * @return void
+ */
+function mf_ratings_prepare_dwz_csv($filename, $table) {
+	$handle = fopen($filename, 'r');
+	if (!$handle) return;
+	$header_line = fgetcsv($handle, 0, ',', '"', '\\');
+	if (!$header_line) {
+		fclose($handle);
+		return;
+	}
+	$header = mf_ratings_dwz_csv_header($header_line);
+
+	$sql = 'TRUNCATE %s';
+	$sql = sprintf($sql, $table);
+	mf_ratings_log('dwz', $sql);
+
+	while (($fields = fgetcsv($handle, 0, ',', '"', '\\')) !== false) {
+		if ($fields === [null]) continue;
+		$row = mf_ratings_dwz_csv_row($header, $fields, 'Windows-1252');
+		$record = mf_ratings_prepare_dwz_record($table, $row);
+		if (!$record) continue;
+		mf_ratings_log('dwz', mf_ratings_prepare_dwz_replace($table, $record));
+	}
+	fclose($handle);
+}
+
+/**
+ * record for a table from a .csv row
+ *
+ * @param string $table
+ * @param array $row
+ * @return array field name => value, [] if the row should be skipped
+ */
+function mf_ratings_prepare_dwz_record($table, $row) {
+	switch ($table) {
+	case 'dwz_spieler':
+		$record = mf_ratings_dwzliste_spieler($row);
+		if (!$record) return [];
+		if (!str_starts_with($record['NU_ID'], 'NU')) return [];
+		return $record;
+	case 'dwz_vereine':
+		return mf_ratings_dwzliste_vereine($row);
+	case 'dwz_verbaende':
+		return mf_ratings_dwzliste_verbaende($row);
+	}
+	return [];
+}
+
+/**
+ * REPLACE INTO statement for a record
+ *
+ * dwz_spieler: empty values are NULL; dwz_vereine, dwz_verbaende: columns
+ * are NOT NULL DEFAULT ''
+ *
+ * @param string $table
+ * @param array $record
+ * @return string
+ */
+function mf_ratings_prepare_dwz_replace($table, $record) {
+	$values = [];
+	foreach ($record as $value) {
+		if ($value === '' AND $table === 'dwz_spieler')
+			$values[] = 'NULL';
+		else
+			$values[] = sprintf('"%s"', wrap_db_escape($value));
+	}
+	return sprintf('REPLACE INTO `%s` (`%s`) VALUES (%s)'
+		, $table
+		, implode('`, `', array_keys($record))
+		, implode(', ', $values)
+	);
 }

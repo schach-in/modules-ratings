@@ -186,10 +186,14 @@ function mod_ratings_make_memberstats($params) {
  * snapshot_date. With $overwrite, existing rows for that date are removed
  * first so a re-import is idempotent.
  *
- * Three on-disk formats are supported because the DSB switched export
+ * Four on-disk formats are supported because the DSB switched export
  * formats over time:
  *  - newer ZIPs (named *-LV-0-sql*.zip) contain spieler.sql / vereine.sql
  *    with REPLACE INTO statements in ISO-8859-1
+ *  - liga.nu *-dwzliste ZIPs (from 2026-07-22) contain spieler.csv /
+ *    vereine.csv / verbaende.csv in Windows-1252 with a header row;
+ *    columns differ from the 2014 CSV (ID, Mitgliedsnummer, …); see
+ *    mf_ratings_memberstats_load_csv()
  *  - intermediate *-csv ZIPs (from ~2014) contain spieler.csv / vereine.csv
  *    with comma-separated values and a header row in ISO-8859-1; see
  *    mf_ratings_memberstats_load_csv()
@@ -1084,14 +1088,16 @@ function mf_ratings_memberstats_load_txt($filename, $target_table, $snapshot_dat
 }
 
 /**
- * stream-load a DWZ .csv dump (comma-separated values, ISO-8859-1) into
- * a temporary table
+ * stream-load a DWZ .csv dump into a temporary table
  *
- * Intermediate DSB exports (~2014, *-LV-0-csv*.zip) ship spieler.csv,
- * vereine.csv and verbaende.csv at the unzip root with a header row.
- * Column names use hyphens (Mgl-Nr, FIDE-Elo, …); DWZ and Index are
- * separate fields. Row mapping reuses the .txt INSERT builders via
- * mf_ratings_memberstats_csv_*_fields().
+ * Two CSV dialects share this loader; the header row picks the mapping:
+ *  - 2014 *-LV-0-csv*.zip: ISO-8859-1, columns ZPS / Mgl-Nr / Spielername
+ *  - 2026-07-22 *-dwzliste*.zip: Windows-1252, columns ID /
+ *    Mitgliedsnummer / Vorname / Nachname, read with mf_ratings_dwzliste_*()
+ *    (ratings/dwz-csv.inc.php). Rows without a membership number are
+ *    skipped (board dummies).
+ * DWZ and Index are separate fields. Row mapping reuses the .txt INSERT
+ * builders via mf_ratings_memberstats_csv_*_fields().
  *
  * @param string $filename source .csv file
  * @param string $target_table temporary table that should receive the rows
@@ -1122,7 +1128,10 @@ function mf_ratings_memberstats_load_csv($filename, $target_table, $snapshot_dat
 	$header_line = fgetcsv($handle, 0, ',', '"', '\\');
 	if (!$header_line)
 		wrap_error(['Empty CSV %s', ['values' => [$filename]]], E_USER_ERROR);
-	$header = mf_ratings_memberstats_csv_header($header_line);
+	wrap_include('dwz-csv', 'ratings');
+	$header = mf_ratings_dwz_csv_header($header_line);
+	$dialect = mf_ratings_memberstats_csv_dialect($header);
+	$encoding = $dialect === 'dwzliste' ? 'Windows-1252' : 'ISO-8859-1';
 
 	$rows_done = 0;
 	$bytes_logged = ftell($handle);
@@ -1136,16 +1145,25 @@ function mf_ratings_memberstats_load_csv($filename, $target_table, $snapshot_dat
 
 	while (($fields = fgetcsv($handle, 0, ',', '"', '\\')) !== false) {
 		if ($fields === [null]) continue;
-		$row = mf_ratings_memberstats_csv_row($header, $fields);
+		$row = mf_ratings_dwz_csv_row($header, $fields, $encoding);
 
 		if (str_starts_with($kind, 'spieler')) {
-			$txt_fields = mf_ratings_memberstats_csv_spieler_fields($row);
+			$txt_fields = $dialect === 'dwzliste'
+				? mf_ratings_memberstats_csv_dwzliste_spieler_fields($row)
+				: mf_ratings_memberstats_csv_spieler_fields($row);
+			if ($txt_fields === false) continue;
 			$sql = mf_ratings_memberstats_txt_spieler($txt_fields, $target_table);
 		} elseif ($kind === 'vereine') {
-			$txt_fields = mf_ratings_memberstats_csv_vereine_fields($row);
+			$txt_fields = $dialect === 'dwzliste'
+				? mf_ratings_memberstats_csv_dwzliste_vereine_fields($row)
+				: mf_ratings_memberstats_csv_vereine_fields($row);
+			if ($txt_fields === false) continue;
 			$sql = mf_ratings_memberstats_txt_vereine($txt_fields, $target_table);
 		} elseif ($kind === 'verbaende') {
-			$txt_fields = mf_ratings_memberstats_csv_verbaende_fields($row);
+			$txt_fields = $dialect === 'dwzliste'
+				? mf_ratings_memberstats_csv_dwzliste_verbaende_fields($row)
+				: mf_ratings_memberstats_csv_verbaende_fields($row);
+			if ($txt_fields === false) continue;
 			$sql = mf_ratings_memberstats_txt_verbaende($txt_fields, $target_table);
 		} else
 			wrap_error(['Unknown staging table %s', ['values' => [$target_table]]], E_USER_ERROR);
@@ -1198,29 +1216,23 @@ function mf_ratings_memberstats_load_csv($filename, $target_table, $snapshot_dat
 	]);
 }
 
-function mf_ratings_memberstats_csv_header($fields) {
-	$header = [];
-	foreach ($fields as $index => $name) {
-		$name = trim((string)$name);
-		if ($name !== '')
-			$name = iconv('ISO-8859-1', 'UTF-8//TRANSLIT', $name);
-		$key = strtolower(str_replace('-', '_', $name));
-		$header[$key] = $index;
-	}
-	return $header;
-}
-
-function mf_ratings_memberstats_csv_row($header, $fields) {
-	$row = [];
-	foreach ($header as $key => $index) {
-		$value = $fields[$index] ?? '';
-		if ($value !== '' AND $value !== null)
-			$value = iconv('ISO-8859-1', 'UTF-8//TRANSLIT', (string)$value);
-		else
-			$value = '';
-		$row[$key] = $value;
-	}
-	return $row;
+/**
+ * CSV dialect from the header keys
+ *
+ * dwzliste: liga.nu export from 2026-07-22 (ID, Mitgliedsnummer, …)
+ * csv2014: ~2014 DSB CSV (ZPS, Mgl-Nr, Spielername, …)
+ *
+ * @param array $header
+ * @return string 'dwzliste' or 'csv2014'
+ */
+function mf_ratings_memberstats_csv_dialect($header) {
+	if (isset($header['id']) AND isset($header['mitgliedsnummer']))
+		return 'dwzliste';
+	if (isset($header['zps_nummer']) AND isset($header['vereinsname']))
+		return 'dwzliste';
+	if (isset($header['verbandnummer']))
+		return 'dwzliste';
+	return 'csv2014';
 }
 
 function mf_ratings_memberstats_csv_spieler_fields($row) {
@@ -1264,6 +1276,58 @@ function mf_ratings_memberstats_csv_verbaende_fields($row) {
 		$row['uebergeordnet'] ?? '',
 		$row['verbandname'] ?? ''
 	];
+}
+
+/**
+ * map liga.nu dwzliste spieler.csv columns onto the .txt field order
+ *
+ * @param array $row
+ * @return array|false false if row is skipped
+ */
+function mf_ratings_memberstats_csv_dwzliste_spieler_fields($row) {
+	$spieler = mf_ratings_dwzliste_spieler($row);
+	if (!$spieler) return false;
+	$dwz_field = $spieler['DWZ'];
+	if ($spieler['DWZ_Index'] !== '') $dwz_field .= '-'.$spieler['DWZ_Index'];
+	return [
+		$spieler['ZPS'],
+		$spieler['Mgl_Nr'],
+		$spieler['Status'],
+		$spieler['Spielername'],
+		$spieler['Geschlecht'],
+		$spieler['Spielberechtigung'],
+		$spieler['Geburtsjahr'],
+		$spieler['Letzte_Auswertung'],
+		$dwz_field,
+		$spieler['FIDE_Elo'],
+		$spieler['FIDE_Titel'],
+		$spieler['FIDE_ID'],
+		$spieler['FIDE_Land']
+	];
+}
+
+/**
+ * map liga.nu dwzliste vereine.csv columns onto the .txt field order
+ *
+ * @param array $row
+ * @return array|false false if row is skipped
+ */
+function mf_ratings_memberstats_csv_dwzliste_vereine_fields($row) {
+	$verein = mf_ratings_dwzliste_vereine($row);
+	if (!$verein) return false;
+	return array_values($verein);
+}
+
+/**
+ * map liga.nu dwzliste verbaende.csv columns onto the .txt field order
+ *
+ * @param array $row
+ * @return array|false false if row is skipped
+ */
+function mf_ratings_memberstats_csv_dwzliste_verbaende_fields($row) {
+	$verband = mf_ratings_dwzliste_verbaende($row);
+	if (!$verband) return false;
+	return array_values($verband);
 }
 
 /**

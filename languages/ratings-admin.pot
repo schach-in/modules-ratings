@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Zugzwang Project -- ratings module\n"
-"POT-Creation-Date: 2026-09-15 07:45+0000\n"
+"POT-Creation-Date: 2026-10-06 12:07+0000\n"
 "PO-Revision-Date: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -91,6 +91,14 @@ msgstr ""
 msgid "Update person data with foreign sources"
 msgstr ""
 
+#: configuration/package.cfg:13
+msgid "ratings module"
+msgstr ""
+
+#: configuration/package.cfg:15
+msgid "Chess player ratings (International Elo and German DWZ)"
+msgstr ""
+
 #: configuration/routes.cfg:12
 msgid "Rating list for a club"
 msgstr ""
@@ -168,111 +176,120 @@ msgid "Some federations in the DSB have a club code, too, that is undocumented."
 msgstr ""
 
 #: configuration/settings.cfg:74
-msgid "Player profile on DSB webpage with ID"
-msgstr ""
-
-#: configuration/settings.cfg:79
 msgid "Player profile on DSB webpage"
 msgstr ""
 
-#: configuration/settings.cfg:84
+#: configuration/settings.cfg:79
 msgid "Player profile on FIDE webpage"
 msgstr ""
 
-#: configuration/settings.cfg:89
-msgid "URL under which the current DWZ data of the German Chess Federation is available in SQL format"
+#: configuration/settings.cfg:84
+msgid "URL under which the current DWZ data of the German Chess Federation is available"
 msgstr ""
 
-#: configuration/settings.cfg:94
+#: configuration/settings.cfg:89
 msgid "URL under which the current FIDE Elo data is available in TXT format"
 msgstr ""
 
-#: configuration/settings.cfg:99
+#: configuration/settings.cfg:94
 msgid "Name of file with FIDE Elo data"
 msgstr ""
 
-#: configuration/settings.cfg:103
+#: configuration/settings.cfg:98
 msgid "Use rating list from schachbund.de (DSB)"
 msgstr ""
 
-#: configuration/settings.cfg:108
+#: configuration/settings.cfg:103
 msgid "Use rating list from fide.com (FIDE)"
 msgstr ""
 
+#: configuration/settings.cfg:108
+msgid "use logfile for sync of DWZ rating data"
+msgstr ""
+
 #: configuration/settings.cfg:113
-msgid "use logfile for sync of Elo rating data"
+msgid "List of fields for DWZ sync log"
 msgstr ""
 
-#: configuration/settings.cfg:118
-msgid "List of fields for Elo sync log"
-msgstr ""
-
-#: configuration/settings.cfg:125
-#: configuration/settings.cfg:148
+#: configuration/settings.cfg:120
+#: configuration/settings.cfg:143
+#: configuration/settings.cfg:166
 msgid "Logfile tokens might contain spaces?"
 msgstr ""
 
+#: configuration/settings.cfg:126
+msgid "Validity of entries in DWZ sync log"
+msgstr ""
+
 #: configuration/settings.cfg:131
-msgid "Validity of entries in Elo sync log"
+msgid "use logfile for sync of Elo rating data"
 msgstr ""
 
 #: configuration/settings.cfg:136
-msgid "use logfile for memberstats import"
+msgid "List of fields for Elo sync log"
 msgstr ""
 
-#: configuration/settings.cfg:141
-msgid "List of fields for memberstats import log"
+#: configuration/settings.cfg:149
+msgid "Validity of entries in Elo sync log"
 msgstr ""
 
 #: configuration/settings.cfg:154
-msgid "Validity of entries in memberstats import log"
+msgid "use logfile for memberstats import"
 msgstr ""
 
 #: configuration/settings.cfg:159
+msgid "List of fields for memberstats import log"
+msgstr ""
+
+#: configuration/settings.cfg:172
+msgid "Validity of entries in memberstats import log"
+msgstr ""
+
+#: configuration/settings.cfg:177
 msgid "Categories of contacts or contacts that have members with ratings"
 msgstr ""
 
-#: configuration/settings.cfg:166
+#: configuration/settings.cfg:184
 msgid "Emit a progress log entry per this many source-file bytes consumed by the memberstats loaders"
 msgstr ""
 
-#: configuration/settings.cfg:171
+#: configuration/settings.cfg:189
 msgid "Rows per batched REPLACE/INSERT when loading DWZ snapshot files into memberstats staging tables"
 msgstr ""
 
-#: configuration/settings.cfg:176
+#: configuration/settings.cfg:194
 msgid "Polling interval in seconds for memberstats progress display"
 msgstr ""
 
-#: configuration/settings.cfg:181
+#: configuration/settings.cfg:199
 msgid "Time in seconds without a memberstats log entry after which the worker is considered stuck"
 msgstr ""
 
-#: configuration/settings.cfg:186
+#: configuration/settings.cfg:204
 msgid "Number of memberstats log entries returned to the progress poller (0 = all)"
 msgstr ""
 
-#: configuration/settings.cfg:191
+#: configuration/settings.cfg:209
 msgid "Countdown in seconds before the next snapshot import starts automatically while the memberstats page stays open"
 msgstr ""
 
-#: configuration/settings.cfg:196
+#: configuration/settings.cfg:214
 msgid "nuLiga clubSearch endpoint (GET list and GET by ZPS)"
 msgstr ""
 
-#: configuration/settings.cfg:201
+#: configuration/settings.cfg:219
 msgid "nuLiga clubSearch confederation parameter (e.g. LV0 DSB)"
 msgstr ""
 
-#: configuration/settings.cfg:205
+#: configuration/settings.cfg:223
 msgid "nuLiga clubSearch searchPattern values per state federation (code => label)"
 msgstr ""
 
-#: configuration/settings.cfg:228
+#: configuration/settings.cfg:246
 msgid "Last imported status of the German DWZ database"
 msgstr ""
 
-#: configuration/settings.cfg:232
+#: configuration/settings.cfg:250
 msgid "Last imported status of the FIDE Elo database"
 msgstr ""
 
@@ -299,7 +316,7 @@ msgstr ""
 #: templates/datachecks.template.txt:18
 #: templates/dewis-members.template.txt:24
 #: templates/dewis-members.template.txt:35
-#: zzbrick_tables/dwz-spieler.php:88
+#: zzbrick_tables/dwz-spieler.php:93
 #: zzbrick_tables/fide-players.php:40
 msgid "Title"
 msgstr ""
@@ -317,7 +334,7 @@ msgstr ""
 #: templates/dewis-federations.template.txt:19
 #: templates/dewis-members.template.txt:36
 #: templates/dewis-organisations.template.txt:20
-#: zzbrick_tables/dwz-spieler.php:29
+#: zzbrick_tables/dwz-spieler.php:38
 #: zzbrick_tables/memberstats.php:34
 #: zzbrick_tables/nuliga-clubs.php:35
 #: zzbrick_tables/nuliga-venues.php:26
@@ -347,7 +364,7 @@ msgstr ""
 
 #: templates/dewis-import.template.txt:19
 #: templates/dewis-members.template.txt:38
-#: zzbrick_tables/dwz-spieler.php:48
+#: zzbrick_tables/dwz-spieler.php:53
 #: zzbrick_tables/memberstats.php:68
 #: zzbrick_tables/memberstats.php:100
 msgid "Status"
@@ -413,7 +430,7 @@ msgid "S."
 msgstr ""
 
 #: templates/dewis-members.template.txt:32
-#: zzbrick_tables/dwz-spieler.php:68
+#: zzbrick_tables/dwz-spieler.php:73
 #: zzbrick_tables/fide-players.php:112
 #: zzbrick_tables/memberstats.php:52
 msgid "Birth"
@@ -424,7 +441,7 @@ msgid "FIDE ID"
 msgstr ""
 
 #: templates/dewis-members.template.txt:34
-#: zzbrick_tables/dwz-spieler.php:85
+#: zzbrick_tables/dwz-spieler.php:90
 msgid "Elo"
 msgstr ""
 
@@ -458,7 +475,7 @@ msgid "Last Sync"
 msgstr ""
 
 #: templates/dewis-update.template.txt:17
-#: zzbrick_tables/dwz-spieler.php:34
+#: zzbrick_tables/dwz-spieler.php:43
 #: zzbrick_tables/nuliga-clubs.php:30
 #: zzbrick_tables/nuliga-clubs.php:155
 msgid "ZPS"
@@ -469,7 +486,7 @@ msgid "Member No."
 msgstr ""
 
 #: templates/dewis-update.template.txt:19
-#: zzbrick_tables/dwz-spieler.php:78
+#: zzbrick_tables/dwz-spieler.php:83
 msgid "DWZ"
 msgstr ""
 
@@ -567,41 +584,41 @@ msgstr ""
 msgid "Imported %s"
 msgstr ""
 
-#: zzbrick_make/memberstats.inc.php:560
-#: zzbrick_make/memberstats.inc.php:738
-#: zzbrick_make/memberstats.inc.php:1004
-#: zzbrick_make/memberstats.inc.php:1113
+#: zzbrick_make/memberstats.inc.php:564
+#: zzbrick_make/memberstats.inc.php:742
+#: zzbrick_make/memberstats.inc.php:1008
+#: zzbrick_make/memberstats.inc.php:1119
 msgid "Unable to open %s"
 msgstr ""
 
-#: zzbrick_make/memberstats.inc.php:638
+#: zzbrick_make/memberstats.inc.php:642
 msgid "No %s.sql, %s.csv or %s.txt found in archive %s"
 msgstr ""
 
-#: zzbrick_make/memberstats.inc.php:812
-#: zzbrick_make/memberstats.inc.php:1076
-#: zzbrick_make/memberstats.inc.php:1191
+#: zzbrick_make/memberstats.inc.php:816
+#: zzbrick_make/memberstats.inc.php:1080
+#: zzbrick_make/memberstats.inc.php:1209
 msgid "%s load failed for %s"
 msgstr ""
 
-#: zzbrick_make/memberstats.inc.php:1036
-#: zzbrick_make/memberstats.inc.php:1151
+#: zzbrick_make/memberstats.inc.php:1040
+#: zzbrick_make/memberstats.inc.php:1169
 msgid "Unknown staging table %s"
 msgstr ""
 
-#: zzbrick_make/memberstats.inc.php:1124
+#: zzbrick_make/memberstats.inc.php:1130
 msgid "Empty CSV %s"
 msgstr ""
 
-#: zzbrick_make/memberstats.inc.php:1500
+#: zzbrick_make/memberstats.inc.php:1564
 msgid "Unable to insert federation for %s (%s)"
 msgstr ""
 
-#: zzbrick_make/memberstats.inc.php:1604
+#: zzbrick_make/memberstats.inc.php:1668
 msgid "Unable to insert contact for %s (%s)"
 msgstr ""
 
-#: zzbrick_make/memberstats.inc.php:1656
+#: zzbrick_make/memberstats.inc.php:1720
 msgid "No parent contact for %s (parent code %s)"
 msgstr ""
 
@@ -757,23 +774,27 @@ msgstr ""
 msgid "Please wait. Rating sync is only allowed to run once every %s."
 msgstr ""
 
-#: zzbrick_make/ratings-download.inc.php:46
+#: zzbrick_make/ratings-download.inc.php:51
 msgid "Unable to download rating file for %s."
 msgstr ""
 
-#: zzbrick_make/ratings-download.inc.php:52
+#: zzbrick_make/ratings-download.inc.php:57
 msgid "No meta data given after download rating file for %s"
 msgstr ""
 
-#: zzbrick_make/ratings-download.inc.php:75
+#: zzbrick_make/ratings-download.inc.php:80
 msgid "File path for downloaded rating file for %s is wrong: %s/%s."
 msgstr ""
 
-#: zzbrick_make/ratings-prepare-dwz.inc.php:54
-msgid "File %s not found for rating import."
+#: zzbrick_make/ratings-download.inc.php:124
+msgid "No usable Last-Modified date for rating download %s"
 msgstr ""
 
 #: zzbrick_make/ratings-prepare-dwz.inc.php:58
+msgid "File %s not found for rating import."
+msgstr ""
+
+#: zzbrick_make/ratings-prepare-dwz.inc.php:62
 msgid "File for rating import %s is empty."
 msgstr ""
 
@@ -793,11 +814,11 @@ msgstr ""
 msgid "No download URL for sync of rating data."
 msgstr ""
 
-#: zzbrick_make/ratings-sync.inc.php:121
+#: zzbrick_make/ratings-sync.inc.php:128
 msgid "Synchronize %s rating data"
 msgstr ""
 
-#: zzbrick_make/ratings-sync.inc.php:123
+#: zzbrick_make/ratings-sync.inc.php:130
 msgid "Sync %s"
 msgstr ""
 
@@ -805,121 +826,148 @@ msgstr ""
 msgid "DWZ players"
 msgstr ""
 
-#: zzbrick_tables/dwz-spieler.php:25
+#: zzbrick_tables/dwz-spieler.php:23
+msgid "Historic DWZ person ID; empty in liga.nu CSV exports"
+msgstr ""
+
+#: zzbrick_tables/dwz-spieler.php:26
+msgid "nuLiga ID"
+msgstr ""
+
+#: zzbrick_tables/dwz-spieler.php:27
+msgid "Person ID from the DSB/nuLiga DWZ list"
+msgstr ""
+
+#: zzbrick_tables/dwz-spieler.php:34
 msgid "Player name"
 msgstr ""
 
-#: zzbrick_tables/dwz-spieler.php:35
+#: zzbrick_tables/dwz-spieler.php:44
 #: zzbrick_tables/memberstats.php:32
 msgid "ZPS code of the club"
 msgstr ""
 
-#: zzbrick_tables/dwz-spieler.php:37
+#: zzbrick_tables/dwz-spieler.php:46
 msgid "Member number"
 msgstr ""
 
-#: zzbrick_tables/dwz-spieler.php:38
+#: zzbrick_tables/dwz-spieler.php:47
 msgid "Mem."
 msgstr ""
 
-#: zzbrick_tables/dwz-spieler.php:41
+#: zzbrick_tables/dwz-spieler.php:50
 msgid "Member number in club"
 msgstr ""
 
-#: zzbrick_tables/dwz-spieler.php:47
+#: zzbrick_tables/dwz-spieler.php:52
 msgid "St"
 msgstr ""
 
-#: zzbrick_tables/dwz-spieler.php:50
-#: zzbrick_tables/dwz-spieler.php:64
+#: zzbrick_tables/dwz-spieler.php:55
+#: zzbrick_tables/dwz-spieler.php:69
 msgid "A"
 msgstr ""
 
-#: zzbrick_tables/dwz-spieler.php:50
+#: zzbrick_tables/dwz-spieler.php:55
 msgid "P"
 msgstr ""
 
-#: zzbrick_tables/dwz-spieler.php:53
+#: zzbrick_tables/dwz-spieler.php:58
 #: zzbrick_tables/fide-players.php:35
 #: zzbrick_tables/memberstats.php:62
 msgid "Sex"
 msgstr ""
 
-#: zzbrick_tables/dwz-spieler.php:54
+#: zzbrick_tables/dwz-spieler.php:59
 msgid "G."
 msgstr ""
 
-#: zzbrick_tables/dwz-spieler.php:57
+#: zzbrick_tables/dwz-spieler.php:62
 #: zzbrick_tables/fide-players.php:37
 msgid "M"
 msgstr ""
 
-#: zzbrick_tables/dwz-spieler.php:57
+#: zzbrick_tables/dwz-spieler.php:62
 msgid "W"
 msgstr ""
 
-#: zzbrick_tables/dwz-spieler.php:60
+#: zzbrick_tables/dwz-spieler.php:65
 msgid "Playing eligibility"
 msgstr ""
 
-#: zzbrick_tables/dwz-spieler.php:61
+#: zzbrick_tables/dwz-spieler.php:66
 msgid "Sb."
 msgstr ""
 
-#: zzbrick_tables/dwz-spieler.php:64
+#: zzbrick_tables/dwz-spieler.php:69
 msgid "-"
 msgstr ""
 
-#: zzbrick_tables/dwz-spieler.php:64
+#: zzbrick_tables/dwz-spieler.php:69
 msgid "D"
 msgstr ""
 
-#: zzbrick_tables/dwz-spieler.php:64
+#: zzbrick_tables/dwz-spieler.php:69
 msgid "E"
 msgstr ""
 
-#: zzbrick_tables/dwz-spieler.php:64
+#: zzbrick_tables/dwz-spieler.php:69
 msgid "G"
 msgstr ""
 
-#: zzbrick_tables/dwz-spieler.php:64
+#: zzbrick_tables/dwz-spieler.php:69
 msgid "J"
 msgstr ""
 
-#: zzbrick_tables/dwz-spieler.php:67
+#: zzbrick_tables/dwz-spieler.php:72
 #: zzbrick_tables/memberstats.php:53
 msgid "Birth Year"
 msgstr ""
 
-#: zzbrick_tables/dwz-spieler.php:72
+#: zzbrick_tables/dwz-spieler.php:77
 msgid "Last evaluation"
 msgstr ""
 
-#: zzbrick_tables/dwz-spieler.php:73
+#: zzbrick_tables/dwz-spieler.php:78
 msgid "DWZ eval."
 msgstr ""
 
-#: zzbrick_tables/dwz-spieler.php:76
+#: zzbrick_tables/dwz-spieler.php:81
 msgid "Week of last tournament evaluation"
 msgstr ""
 
-#: zzbrick_tables/dwz-spieler.php:81
+#: zzbrick_tables/dwz-spieler.php:86
 msgid "I."
 msgstr ""
 
-#: zzbrick_tables/dwz-spieler.php:82
+#: zzbrick_tables/dwz-spieler.php:87
 msgid "DWZ Index"
 msgstr ""
 
-#: zzbrick_tables/dwz-spieler.php:92
+#: zzbrick_tables/dwz-spieler.php:97
+#: zzbrick_tables/fide-players.php:48
+msgid "Title women"
+msgstr ""
+
+#: zzbrick_tables/dwz-spieler.php:101
+#: zzbrick_tables/fide-players.php:83
+msgid "Rapid rating"
+msgstr ""
+
+#: zzbrick_tables/dwz-spieler.php:106
+#: zzbrick_tables/fide-players.php:98
+msgid "Blitz rating"
+msgstr ""
+
+#: zzbrick_tables/dwz-spieler.php:111
 msgid "FIDE-ID"
 msgstr ""
 
-#: zzbrick_tables/dwz-spieler.php:99
+#: zzbrick_tables/dwz-spieler.php:118
 msgid "FIDE country"
 msgstr ""
 
-#: zzbrick_tables/dwz-spieler.php:102
+#: zzbrick_tables/dwz-spieler.php:121
 #: zzbrick_tables/fide-players.php:121
 #: zzbrick_tables/nuliga-clubs.php:116
 #: zzbrick_tables/nuliga-venues.php:57
@@ -951,10 +999,6 @@ msgstr ""
 
 #: zzbrick_tables/fide-players.php:47
 msgid "Title W"
-msgstr ""
-
-#: zzbrick_tables/fide-players.php:48
-msgid "Title women"
 msgstr ""
 
 #: zzbrick_tables/fide-players.php:54
@@ -1005,10 +1049,6 @@ msgstr ""
 msgid "Rapid"
 msgstr ""
 
-#: zzbrick_tables/fide-players.php:83
-msgid "Rapid rating"
-msgstr ""
-
 #: zzbrick_tables/fide-players.php:88
 msgid "Rapid games"
 msgstr ""
@@ -1023,10 +1063,6 @@ msgstr ""
 
 #: zzbrick_tables/fide-players.php:97
 msgid "Blitz"
-msgstr ""
-
-#: zzbrick_tables/fide-players.php:98
-msgid "Blitz rating"
 msgstr ""
 
 #: zzbrick_tables/fide-players.php:103
@@ -1193,7 +1229,7 @@ msgstr ""
 msgid "URI Language"
 msgstr ""
 
-#: zzform/editing.inc.php:194
+#: zzform/editing.inc.php:195
 msgid "Conflicting contact IDs found. Contact IDs: %s, identifiers: %s"
 msgstr ""
 

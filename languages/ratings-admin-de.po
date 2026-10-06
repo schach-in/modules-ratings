@@ -108,13 +108,9 @@ msgstr "Import von Mitgliedern"
 msgid "Import of organisations"
 msgstr "Import von Organisationen"
 
-#: configuration/routes.cfg:28
+#: configuration/settings.cfg:74
 msgid "Player profile on DSB webpage"
 msgstr "Spielerprofil auf der DSB-Website"
-
-#: configuration/routes.cfg:33
-msgid "Player profile on DSB webpage with ID"
-msgstr "Spielerprofil auf der DSB-Webseite mit ID"
 
 #: configuration/routes.cfg:38
 msgid "Player profile on FIDE webpage"
@@ -808,6 +804,18 @@ msgstr ""
 msgid "DWZ players"
 msgstr "DWZ-Spieler"
 
+#: zzbrick_tables/dwz-spieler.php:23
+msgid "Historic DWZ person ID; empty in liga.nu CSV exports"
+msgstr "Frühere DWZ-Personen-ID; in den CSV-Exporten von liga.nu leer"
+
+#: zzbrick_tables/dwz-spieler.php:26
+msgid "nuLiga ID"
+msgstr "nuLiga-ID"
+
+#: zzbrick_tables/dwz-spieler.php:27
+msgid "Person ID from the DSB/nuLiga DWZ list"
+msgstr "Personen-ID aus der DWZ-Liste von DSB/nuLiga"
+
 #: zzbrick_tables/dwz-spieler.php:25
 msgid "Player name"
 msgstr "Spielername"
@@ -947,7 +955,7 @@ msgstr ""
 msgid "Title W"
 msgstr ""
 
-#: zzbrick_tables/fide-players.php:48
+#: zzbrick_tables/dwz-spieler.php:97 zzbrick_tables/fide-players.php:48
 msgid "Title women"
 msgstr ""
 
@@ -997,7 +1005,7 @@ msgstr ""
 msgid "Rapid"
 msgstr ""
 
-#: zzbrick_tables/fide-players.php:83
+#: zzbrick_tables/dwz-spieler.php:101 zzbrick_tables/fide-players.php:83
 msgid "Rapid rating"
 msgstr ""
 
@@ -1017,7 +1025,7 @@ msgstr ""
 msgid "Blitz"
 msgstr ""
 
-#: zzbrick_tables/fide-players.php:98
+#: zzbrick_tables/dwz-spieler.php:106 zzbrick_tables/fide-players.php:98
 msgid "Blitz rating"
 msgstr ""
 

@@ -53,8 +53,8 @@ function mod_ratings_datacheck_path($field_name, $value) {
 	switch ($field_name) {
 	case 'FIDE_ID':
 		return wrap_path('ratings_fide_profile', $value);
-	case 'PID':
-		return wrap_path('ratings_dsb_pid_profile', $value);
+	case 'NU_ID':
+		return wrap_path('ratings_dsb_profile', $value);
 	}
 	return NULL;
 }

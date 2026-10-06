@@ -16,6 +16,8 @@ INSERT INTO categories (`category`, `description`, `main_category_id`, `path`, `
 INSERT INTO categories (`category`, `description`, `main_category_id`, `path`, `parameters`, `sequence`, `last_update`) VALUES ('DSB PKZ', NULL, /*_ID categories identifiers _*/, 'identifiers/id-dsb', '&alias=identifiers/id-dsb&context[contacts_persons]=1', 2, NOW());
 INSERT INTO categories (`category`, `description`, `main_category_id`, `path`, `parameters`, `sequence`, `last_update`) VALUES ('FIDE ID', NULL, /*_ID categories identifiers _*/, 'identifiers/id-fide', '&alias=identifiers/id-fide&context[contacts_persons]=1', 3, NOW());
 INSERT INTO categories (`category`, `description`, `main_category_id`, `path`, `parameters`, `sequence`, `last_update`) VALUES ('nuLiga club ID', NULL, /*_ID categories identifiers _*/, 'identifiers/id-nuliga-club', '&alias=identifiers/id-nuliga-club&context[contacts_general]=1', 4, NOW());
+INSERT INTO categories (`category`, `category_short`, `description`, `main_category_id`, `path`, `parameters`, `sequence`, `last_update`) VALUES ('nuLiga person ID', 'NU', 'Person ID from the DSB/nuLiga DWZ list', /*_ID categories identifiers _*/, 'identifiers/id-nuliga-person', '&alias=identifiers/id-nuliga-person&context[contacts_persons]=1', NULL, NOW());
+INSERT INTO categories (`category`, `category_short`, `description`, `main_category_id`, `path`, `parameters`, `sequence`, `last_update`) VALUES ('nuLiga UUID', 'UUID', 'Person UUID from the DSB/nuLiga REST API', /*_ID categories identifiers _*/, 'identifiers/uuid-nuliga', '&alias=identifiers/uuid-nuliga&context[contacts_persons]=1', NULL, NOW());
 
 
 -- dewis_clubs --
@@ -60,7 +62,8 @@ CREATE TABLE `dewis_members` (
 
 -- dwz_spieler --
 CREATE TABLE `dwz_spieler` (
-  `PID` int unsigned NOT NULL,
+  `PID` int unsigned DEFAULT NULL,
+  `NU_ID` varchar(16) DEFAULT NULL,
   `ZPS` varchar(5) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   `Mgl_Nr` smallint NOT NULL,
   `Status` char(1) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
@@ -75,13 +78,17 @@ CREATE TABLE `dwz_spieler` (
   `FIDE_Titel` char(3) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
   `FIDE_ID` int unsigned DEFAULT NULL,
   `FIDE_Land` char(3) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
+  `FIDE_Frauentitel` char(3) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
+  `FIDE_Elo_Schnellschach` smallint unsigned DEFAULT NULL,
+  `FIDE_Elo_Blitz` smallint unsigned DEFAULT NULL,
   `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`ZPS`,`Mgl_Nr`),
   KEY `FIDE_ID` (`FIDE_ID`),
   KEY `Spielername` (`Spielername`),
   KEY `ZPS` (`ZPS`),
   KEY `Mgl_Nr` (`Mgl_Nr`),
-  KEY `PID` (`PID`)
+  KEY `PID` (`PID`),
+  KEY `NU_ID` (`NU_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
@@ -100,7 +107,7 @@ CREATE TABLE `dwz_vereine` (
   `ZPS` varchar(5) NOT NULL DEFAULT '',
   `LV` char(1) NOT NULL DEFAULT '',
   `Verband` char(3) NOT NULL DEFAULT '',
-  `Vereinname` varchar(64) NOT NULL DEFAULT '',
+  `Vereinname` varchar(80) NOT NULL DEFAULT '',
   PRIMARY KEY (`ZPS`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
