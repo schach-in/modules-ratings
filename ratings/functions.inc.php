@@ -107,7 +107,7 @@ function mf_ratings_ratinglist($conditions, $settings = []) {
 				$players[$nu_id]['contact'] = $line['person'];
 		}
 	}
-	return $players;
+	return array_values($players);
 }
 
 /**
