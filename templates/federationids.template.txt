@@ -19,7 +19,7 @@
 <li>%%% path contacts_profile[person] identifier html="<a href='%s'>" %%% %%% item contact %%% %%% path contacts_profile[person] identifier html=</a> %%%
 <ul>
 %%% loop details %%%
-<li%%% if error %%% class="error" style="background: #C00; color: white;"%%% endif %%%>%%% item action %%% %%% item category %%% %%% item identifier %%%</li>
+<li%%% if error %%% class="error"%%% endif %%%>%%% item action %%% %%% item category %%% %%% item identifier %%%</li>
 %%% loop end %%%
 </ul></li>
 %%% loop end %%%
