@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Zugzwang Project -- ratings module\n"
-"POT-Creation-Date: 2026-10-06 15:51+0000\n"
+"POT-Creation-Date: 2026-10-07 08:58+0000\n"
 "PO-Revision-Date: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -184,10 +184,14 @@ msgid "Import nuLiga club lists into staging tables"
 msgstr ""
 
 #: configuration/routes.cfg:48
-msgid "Hourly nuLiga clubs import and merge (background job)"
+msgid "nuLiga clubs import and merge (background job)"
 msgstr ""
 
 #: configuration/routes.cfg:55
+msgid "Review person data changes with updates from external sources"
+msgstr ""
+
+#: configuration/routes.cfg:61
 msgid "Ratings sync"
 msgstr ""
 
@@ -506,7 +510,7 @@ msgid "Elo"
 msgstr ""
 
 #: templates/dewis-organisations.template.txt:19
-#: templates/personupdate.template.txt:33
+#: templates/persons-review.template.txt:33
 #: zzbrick_tables/fide-players.php:22
 #: zzbrick_tables/memberstats.php:22
 #: zzbrick_tables/nuliga-clubs.php:22
@@ -582,12 +586,12 @@ msgstr ""
 msgid "Sorry, there is no archive for %s."
 msgstr ""
 
-#: templates/personupdate.template.txt:34
+#: templates/persons-review.template.txt:34
 #: zzbrick_tables/wikidata-players.php:39
 msgid "Person"
 msgstr ""
 
-#: templates/personupdate.template.txt:35
+#: templates/persons-review.template.txt:35
 msgid "Changes"
 msgstr ""
 
@@ -694,127 +698,127 @@ msgstr ""
 msgid "nuLiga clubs: %d clubs saved, merge matched %d, inserted %d, updated %d, skipped %d."
 msgstr ""
 
-#: zzbrick_make/personupdate.inc.php:193
+#: zzbrick_make/persons-review.inc.php:193
 msgid "Delete FIDE code? (old: %d)."
 msgstr ""
 
-#: zzbrick_make/personupdate.inc.php:212
+#: zzbrick_make/persons-review.inc.php:212
 msgid "Player name differs: DWZ database %s / DSJ %s"
 msgstr ""
 
-#: zzbrick_make/personupdate.inc.php:240
+#: zzbrick_make/persons-review.inc.php:240
 msgid "FIDE code %d would be added."
 msgstr ""
 
-#: zzbrick_make/personupdate.inc.php:251
+#: zzbrick_make/persons-review.inc.php:251
 msgid "FIDE code %d could not be added."
 msgstr ""
 
-#: zzbrick_make/personupdate.inc.php:254
+#: zzbrick_make/persons-review.inc.php:254
 msgid "FIDE code added."
 msgstr ""
 
-#: zzbrick_make/personupdate.inc.php:269
+#: zzbrick_make/persons-review.inc.php:269
 msgid "FIDE code %d would be corrected to %d."
 msgstr ""
 
-#: zzbrick_make/personupdate.inc.php:278
+#: zzbrick_make/persons-review.inc.php:278
 msgid "FIDE code could not be corrected."
 msgstr ""
 
-#: zzbrick_make/personupdate.inc.php:281
+#: zzbrick_make/persons-review.inc.php:281
 msgid "FIDE code corrected (old: %d, new %d)."
 msgstr ""
 
-#: zzbrick_make/personupdate.inc.php:295
+#: zzbrick_make/persons-review.inc.php:295
 msgid "ZPS code %s would be set to inactive."
 msgstr ""
 
-#: zzbrick_make/personupdate.inc.php:304
+#: zzbrick_make/persons-review.inc.php:304
 msgid "ZPS code %s could not be deactivated."
 msgstr ""
 
-#: zzbrick_make/personupdate.inc.php:307
+#: zzbrick_make/persons-review.inc.php:307
 msgid "ZPS code %s set to inactive."
 msgstr ""
 
-#: zzbrick_make/personupdate.inc.php:331
+#: zzbrick_make/persons-review.inc.php:331
 msgid "ZPS code %s would be set back to active."
 msgstr ""
 
-#: zzbrick_make/personupdate.inc.php:333
+#: zzbrick_make/persons-review.inc.php:333
 msgid "ZPS code %s would be added."
 msgstr ""
 
-#: zzbrick_make/personupdate.inc.php:353
+#: zzbrick_make/persons-review.inc.php:353
 msgid "ZPS code %s could not be added."
 msgstr ""
 
-#: zzbrick_make/personupdate.inc.php:356
+#: zzbrick_make/persons-review.inc.php:356
 msgid "ZPS code %s added."
 msgstr ""
 
-#: zzbrick_make/personupdate.inc.php:372
+#: zzbrick_make/persons-review.inc.php:372
 msgid "Year of birth would be changed from %s to %s."
 msgstr ""
 
-#: zzbrick_make/personupdate.inc.php:375
+#: zzbrick_make/persons-review.inc.php:375
 msgid "Year of birth %s would be added."
 msgstr ""
 
-#: zzbrick_make/personupdate.inc.php:380
+#: zzbrick_make/persons-review.inc.php:380
 msgid "Year of birth NOT changed from %s to %s."
 msgstr ""
 
-#: zzbrick_make/personupdate.inc.php:389
+#: zzbrick_make/persons-review.inc.php:389
 msgid "Year of birth could not be updated."
 msgstr ""
 
-#: zzbrick_make/personupdate.inc.php:392
+#: zzbrick_make/persons-review.inc.php:392
 msgid "Year of birth changed (%d => %d)."
 msgstr ""
 
-#: zzbrick_make/personupdate.inc.php:394
+#: zzbrick_make/persons-review.inc.php:394
 msgid "Year of birth %d added."
 msgstr ""
 
-#: zzbrick_make/personupdate.inc.php:408
+#: zzbrick_make/persons-review.inc.php:408
 msgid "Sex would be corrected to %s."
 msgstr ""
 
-#: zzbrick_make/personupdate.inc.php:413
+#: zzbrick_make/persons-review.inc.php:413
 msgid "Sex NOT corrected to %s."
 msgstr ""
 
-#: zzbrick_make/personupdate.inc.php:423
+#: zzbrick_make/persons-review.inc.php:423
 msgid "Sex could not be corrected."
 msgstr ""
 
-#: zzbrick_make/personupdate.inc.php:426
+#: zzbrick_make/persons-review.inc.php:426
 msgid "Sex corrected (%s)."
 msgstr ""
 
-#: zzbrick_make/personupdate.inc.php:439
+#: zzbrick_make/persons-review.inc.php:439
 msgid "Person with contact ID %d would be deleted"
 msgstr ""
 
-#: zzbrick_make/personupdate.inc.php:445
+#: zzbrick_make/persons-review.inc.php:445
 msgid "Person could not be deleted."
 msgstr ""
 
-#: zzbrick_make/personupdate.inc.php:448
+#: zzbrick_make/persons-review.inc.php:448
 msgid "Person deleted."
 msgstr ""
 
-#: zzbrick_make/personupdate.inc.php:462
+#: zzbrick_make/persons-review.inc.php:462
 msgid "Identifier %s would be updated."
 msgstr ""
 
-#: zzbrick_make/personupdate.inc.php:471
+#: zzbrick_make/persons-review.inc.php:471
 msgid "Identifier could not be updated."
 msgstr ""
 
-#: zzbrick_make/personupdate.inc.php:478
+#: zzbrick_make/persons-review.inc.php:478
 msgid "Identifier updated from %s to %s."
 msgstr ""
 

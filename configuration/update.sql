@@ -75,3 +75,4 @@
 /* 2026-09-30-2 */	DELETE FROM _settings WHERE setting_key = 'ratings_dsb_pid_profile';
 /* 2026-10-06-1 */	ALTER TABLE `dwz_spieler` ADD `FIDE_Frauentitel` char(3) COLLATE 'latin1_general_ci' NULL AFTER `FIDE_Land`, ADD `FIDE_Elo_Schnellschach` smallint unsigned NULL AFTER `FIDE_Frauentitel`, ADD `FIDE_Elo_Blitz` smallint unsigned NULL AFTER `FIDE_Elo_Schnellschach`;
 /* 2026-10-06-2 */	UPDATE webpages SET `parameters` = REPLACE(parameters, '&route=nuliga_clubs', '') WHERE `parameters` LIKE '%&route=nuliga_clubs%';
+/* 2026-10-07-1 */	UPDATE webpages SET content = REPLACE(content, '%%% make personupdate', '%%% make persons-review') WHERE content LIKE '%\%\%\% make personupdate%';

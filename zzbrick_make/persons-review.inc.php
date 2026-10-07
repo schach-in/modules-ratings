@@ -2,7 +2,7 @@
 
 /**
  * ratings module
- * update person records from FIDE and DSB data
+ * review person records with changes from FIDE and DSB data
  *
  * Part of »Zugzwang Project«
  * https://www.zugzwang.org/modules/ratings
@@ -16,7 +16,7 @@
  */
 
 
-function mod_ratings_make_personupdate() {
+function mod_ratings_make_persons_review() {
 	// FIDE-ID
 	$sql = 'SELECT persons.contact_id, person_id, fide.identifier AS player_id_fide
 			, CONCAT(IFNULL(CONCAT(name_particle, " "), ""), last_name, ",", first_name) AS player
@@ -51,7 +51,7 @@ function mod_ratings_make_personupdate() {
 	foreach ($dwz_fide_ids as $fide_id => $person) {
 		$diff = array_diff($person, $fide_ids[$fide_id]);
 		if (!$diff) continue;
-		list($notes, $i) = mod_ratings_make_personupdate_update($diff, $person, $fide_ids[$fide_id], $notes, $i);
+		list($notes, $i) = mf_ratings_persons_update($diff, $person, $fide_ids[$fide_id], $notes, $i);
 	}
 
 	$sql = 'SELECT persons.contact_id, person_id, fide.identifier AS player_id_fide
@@ -88,7 +88,7 @@ function mod_ratings_make_personupdate() {
 	$zps_inaktiv = array_diff(array_keys($player_passes_dsb), array_keys($dwz_player_passes_dsb));
 	foreach ($zps_inaktiv as $code) {
 		if (!$code) continue;
-		$notes[$i] = mod_ratings_make_personupdate_remove_zps_code($player_passes_dsb[$code]['zps_pk_id'], $code);
+		$notes[$i] = mf_ratings_persons_remove_zps_code($player_passes_dsb[$code]['zps_pk_id'], $code);
 		$notes[$i] += $player_passes_dsb[$code];
 		$i++;
 	}
@@ -96,7 +96,7 @@ function mod_ratings_make_personupdate() {
 	foreach ($dwz_player_passes_dsb as $code => $person) {
 		$diff = array_diff($person, $player_passes_dsb[$code]);
 		if (!$diff) continue;
-		list($notes, $i) = mod_ratings_make_personupdate_update($diff, $person, $player_passes_dsb[$code], $notes, $i);
+		list($notes, $i) = mf_ratings_persons_update($diff, $person, $player_passes_dsb[$code], $notes, $i);
 	}
 
 	// Nicht vorhandene ZPS-Codes inaktiv setzen
@@ -128,7 +128,7 @@ function mod_ratings_make_personupdate() {
 			}
 		}
 		if (!$found) {
-			$notes[$i] = mod_ratings_make_personupdate_delete($id);
+			$notes[$i] = mf_ratings_persons_delete($id);
 			// @todo add more information about person
 			$notes[$i] += $person;
 			$i++;
@@ -154,7 +154,7 @@ function mod_ratings_make_personupdate() {
 			if (!$index) break;
 		}
 		if ($found) continue;
-		$notes[$i] = mod_ratings_make_personupdate_change_identifier($person['contact_id'], $person['identifier']);
+		$notes[$i] = mf_ratings_persons_change_identifier($person['contact_id'], $person['identifier']);
 		$notes[$i] += $person;
 		$i++;
 	}
@@ -172,11 +172,11 @@ function mod_ratings_make_personupdate() {
 	if ($_SERVER['REQUEST_METHOD'] !== 'POST')
 		$notes['show_form'] = true;
 
-	$page['text'] = wrap_template('personupdate', $notes);
+	$page['text'] = wrap_template('persons-review', $notes);
 	return $page;
 }
 
-function mod_ratings_make_personupdate_update($diff, $person, $existing, $notes, $i) {
+function mf_ratings_persons_update($diff, $person, $existing, $notes, $i) {
 	foreach ($diff as $field_name => $value) {
 		if ($field_name === 'player') {
 			// Doktortitel ist unwichtig
@@ -185,9 +185,9 @@ function mod_ratings_make_personupdate_update($diff, $person, $existing, $notes,
 		switch ($field_name) {
 		case 'player_id_fide':
 			if (!$existing['player_id_fide']) {
-				$notes[$i] = mod_ratings_make_personupdate_add_id_fide($value, $existing['contact_id']);
+				$notes[$i] = mf_ratings_persons_add_id_fide($value, $existing['contact_id']);
 			} elseif ($value) {
-				$notes[$i] = mod_ratings_make_personupdate_update_id_fide($value, $existing['fide_pk_id'], $existing['player_id_fide']);
+				$notes[$i] = mf_ratings_persons_update_id_fide($value, $existing['fide_pk_id'], $existing['player_id_fide']);
 			} else {
 				$notes[$i]['note'] = wrap_text(
 					'Delete FIDE code? (old: %d).',
@@ -197,15 +197,15 @@ function mod_ratings_make_personupdate_update($diff, $person, $existing, $notes,
 			break;
 		case 'player_pass_dsb':
 			if ($existing['player_pass_dsb']) {
-				$notes[$i] = mod_ratings_make_personupdate_remove_zps_code($existing['zps_pk_id'], $existing['player_pass_dsb']);
+				$notes[$i] = mf_ratings_persons_remove_zps_code($existing['zps_pk_id'], $existing['player_pass_dsb']);
 			}
-			$notes[$i] = mod_ratings_make_personupdate_add_zps_code($value, $existing['contact_id']);
+			$notes[$i] = mf_ratings_persons_add_zps_code($value, $existing['contact_id']);
 			break;
 		case 'geburtsjahr':
-			$notes[$i] = mod_ratings_make_personupdate_update_birth($person['geburtsjahr'], $existing['person_id'], $existing['geburtsjahr']);
+			$notes[$i] = mf_ratings_persons_update_birth($person['geburtsjahr'], $existing['person_id'], $existing['geburtsjahr']);
 			break;
 		case 'sex':
-			$notes[$i] = mod_ratings_make_personupdate_update_sex($person['sex'], $existing['person_id']);
+			$notes[$i] = mf_ratings_persons_update_sex($person['sex'], $existing['person_id']);
 			break;
 		case 'player':
 			$notes[$i]['note'] = wrap_text(
@@ -235,7 +235,7 @@ function mod_ratings_make_personupdate_update($diff, $person, $existing, $notes,
  * @param int $contact_id
  * @return array
  */
-function mod_ratings_make_personupdate_add_id_fide($new, $contact_id) {
+function mf_ratings_persons_add_id_fide($new, $contact_id) {
 	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 		$note['note'] = wrap_text('FIDE code %d would be added.', ['values' => [$new]]);
 		return $note;
@@ -264,7 +264,7 @@ function mod_ratings_make_personupdate_add_id_fide($new, $contact_id) {
  * @param string $old
  * @return array
  */
-function mod_ratings_make_personupdate_update_id_fide($new, $contact_identifier_id, $old) {
+function mf_ratings_persons_update_id_fide($new, $contact_identifier_id, $old) {
 	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 		$note['note'] = wrap_text('FIDE code %d would be corrected to %d.', ['values' => [$old, $new]]);
 		return $note;
@@ -290,7 +290,7 @@ function mod_ratings_make_personupdate_update_id_fide($new, $contact_identifier_
  * @param string $old
  * @return array
  */
-function mod_ratings_make_personupdate_remove_zps_code($contact_identifier_id, $old) {
+function mf_ratings_persons_remove_zps_code($contact_identifier_id, $old) {
 	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 		$note['note'] = wrap_text('ZPS code %s would be set to inactive.', ['values' => [$old]]);
 		return $note;
@@ -317,7 +317,7 @@ function mod_ratings_make_personupdate_remove_zps_code($contact_identifier_id, $
  * @param int $contact_id
  * @return array
  */
-function mod_ratings_make_personupdate_add_zps_code($new, $contact_id) {
+function mf_ratings_persons_add_zps_code($new, $contact_id) {
 	$sql = 'SELECT contact_identifier_id
 		FROM contacts_identifiers
 		WHERE contact_id = %d
@@ -366,7 +366,7 @@ function mod_ratings_make_personupdate_add_zps_code($new, $contact_id) {
  * @param string $old
  * @return array
  */
-function mod_ratings_make_personupdate_update_birth($new, $person_id, $old) {
+function mf_ratings_persons_update_birth($new, $person_id, $old) {
 	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 		if ($old) {
 			$note['note'] = wrap_text('Year of birth would be changed from %s to %s.', ['values' => [$old, $new]]);
@@ -403,7 +403,7 @@ function mod_ratings_make_personupdate_update_birth($new, $person_id, $old) {
  * @param int $person_id
  * @return array
  */
-function mod_ratings_make_personupdate_update_sex($new, $person_id) {
+function mf_ratings_persons_update_sex($new, $person_id) {
 	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 		$note['note'] = wrap_text('Sex would be corrected to %s.', ['values' => [$new]]);
 		$note['checkbox'] = 'sex-'.$person_id;
@@ -434,7 +434,7 @@ function mod_ratings_make_personupdate_update_sex($new, $person_id) {
  * @param int $contact_id
  * @return array
  */
-function mod_ratings_make_personupdate_delete($contact_id) {
+function mf_ratings_persons_delete($contact_id) {
 	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 		$note['note'] = wrap_text('Person with contact ID %d would be deleted', ['values' => [$contact_id]]);
 		return $note;
@@ -456,7 +456,7 @@ function mod_ratings_make_personupdate_delete($contact_id) {
  * @param int $contact_id
  * @return array
  */
-function mod_ratings_make_personupdate_change_identifier($contact_id, $old) {
+function mf_ratings_persons_change_identifier($contact_id, $old) {
 	$note = [];
 	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 		$note['note'] = wrap_text('Identifier %s would be updated.', ['values' => [$old]]);
