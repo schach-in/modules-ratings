@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Zugzwang Project -- ratings module\n"
-"POT-Creation-Date: 2026-10-07 18:36+0000\n"
+"POT-Creation-Date: 2026-10-07 19:03+0000\n"
 "PO-Revision-Date: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -787,20 +787,16 @@ msgstr ""
 msgid "nuLiga clubs: %d clubs saved, merge matched %d, inserted %d, updated %d, skipped %d."
 msgstr ""
 
-#: zzbrick_make/persons-review.inc.php:184
+#: zzbrick_make/persons-review.inc.php:186
 msgid "Delete FIDE code? (old: %d)."
 msgstr ""
 
-#: zzbrick_make/persons-review.inc.php:199
+#: zzbrick_make/persons-review.inc.php:203
 msgid "Player name differs: DWZ database %s / DSJ %s"
 msgstr ""
 
-#: zzbrick_make/persons-review.inc.php:229
-msgid "Year of birth would be changed from %s to %s."
-msgstr ""
-
 #: zzbrick_make/persons-review.inc.php:232
-msgid "Year of birth %s would be added."
+msgid "Year of birth would be changed from %s to %s."
 msgstr ""
 
 #: zzbrick_make/persons-review.inc.php:237
@@ -808,6 +804,7 @@ msgid "Year of birth NOT changed from %s to %s."
 msgstr ""
 
 #: zzbrick_make/persons-review.inc.php:246
+#: zzbrick_make/persons-update.inc.php:294
 msgid "Year of birth could not be updated."
 msgstr ""
 
@@ -815,52 +812,68 @@ msgstr ""
 msgid "Year of birth changed (%d => %d)."
 msgstr ""
 
-#: zzbrick_make/persons-review.inc.php:251
-msgid "Year of birth %d added."
-msgstr ""
-
-#: zzbrick_make/persons-review.inc.php:265
+#: zzbrick_make/persons-review.inc.php:263
 msgid "Sex would be corrected to %s."
 msgstr ""
 
-#: zzbrick_make/persons-review.inc.php:270
+#: zzbrick_make/persons-review.inc.php:268
 msgid "Sex NOT corrected to %s."
 msgstr ""
 
-#: zzbrick_make/persons-review.inc.php:280
+#: zzbrick_make/persons-review.inc.php:278
 msgid "Sex could not be corrected."
 msgstr ""
 
-#: zzbrick_make/persons-review.inc.php:283
+#: zzbrick_make/persons-review.inc.php:281
 msgid "Sex corrected (%s)."
 msgstr ""
 
-#: zzbrick_make/persons-review.inc.php:296
+#: zzbrick_make/persons-review.inc.php:294
 msgid "Person with contact ID %d would be deleted"
 msgstr ""
 
-#: zzbrick_make/persons-review.inc.php:302
+#: zzbrick_make/persons-review.inc.php:300
 msgid "Person could not be deleted."
 msgstr ""
 
-#: zzbrick_make/persons-review.inc.php:305
+#: zzbrick_make/persons-review.inc.php:303
 msgid "Person deleted."
 msgstr ""
 
-#: zzbrick_make/persons-review.inc.php:319
+#: zzbrick_make/persons-review.inc.php:317
 msgid "Identifier %s would be updated."
 msgstr ""
 
-#: zzbrick_make/persons-review.inc.php:328
+#: zzbrick_make/persons-review.inc.php:326
 msgid "Identifier could not be updated."
 msgstr ""
 
-#: zzbrick_make/persons-review.inc.php:335
+#: zzbrick_make/persons-review.inc.php:333
 msgid "Identifier updated from %s to %s."
 msgstr ""
 
 #: zzbrick_make/persons-update.inc.php:132
 msgid "Mismatch of contact IDs found for %s %s"
+msgstr ""
+
+#: zzbrick_make/persons-update.inc.php:285
+msgid "Sex %s would be added."
+msgstr ""
+
+#: zzbrick_make/persons-update.inc.php:287
+msgid "Sex %s could not be added."
+msgstr ""
+
+#: zzbrick_make/persons-update.inc.php:289
+msgid "Sex %s added."
+msgstr ""
+
+#: zzbrick_make/persons-update.inc.php:292
+msgid "Year of birth %s would be added."
+msgstr ""
+
+#: zzbrick_make/persons-update.inc.php:296
+msgid "Year of birth %d added."
 msgstr ""
 
 #: zzbrick_make/ratings.inc.php

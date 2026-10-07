@@ -226,9 +226,83 @@ function mod_ratings_make_persons_update_dsb() {
 			$log[] = mf_ratings_persons_log($action, $line, $result, $contacts);
 		}
 	}
+	$log = array_merge($log, mf_ratings_persons_update_details($contacts));
 	if ($continue)
 		$log['job_continue'] = $continue;
 	return $log;
+}
+
+/**
+ * fill empty sex and year of birth from the DWZ list
+ *
+ * @param array $contacts
+ * @return array
+ */
+function mf_ratings_persons_update_details($contacts) {
+	$sql = 'SELECT contacts.contact_id
+			, persons.person_id
+			, persons.sex
+			, YEAR(persons.date_of_birth) AS birth_year
+		FROM contacts
+		INNER JOIN persons USING (contact_id)
+		WHERE contacts.contact_id IN (%s)
+		AND (ISNULL(persons.date_of_birth) OR ISNULL(persons.sex))';
+	$sql = sprintf($sql, implode(',', array_keys($contacts)));
+	$persons = wrap_db_fetch($sql, 'contact_id');
+	$log = [];
+	foreach ($persons as $contact_id => $person) {
+		$new = $contacts[$contact_id];
+		if (!$person['sex'] AND ($new['sex'] === 'male' OR $new['sex'] === 'female'))
+			$log[] = mf_ratings_persons_update_detail($person, $new, 'sex', $new['sex']);
+		if (!$person['birth_year'] AND $new['birth_year'])
+			$log[] = mf_ratings_persons_update_detail($person, $new, 'date_of_birth', $new['birth_year']);
+	}
+	return $log;
+}
+
+/**
+ * write one empty person field
+ *
+ * @param array $person
+ * @param array $contact
+ * @param string $field
+ * @param string $value
+ * @return array
+ */
+function mf_ratings_persons_update_detail($person, $contact, $field, $value) {
+	$line = [
+		'person_id' => $person['person_id'],
+		$field => $value
+	];
+	$apply = ($_SERVER['REQUEST_METHOD'] === 'POST');
+	if ($apply)
+		$result = zzform_update('persons', $line);
+	else
+		$result = true;
+	$failed = $apply && is_null($result);
+	if ($field === 'sex') {
+		if (!$apply)
+			$text = wrap_text('Sex %s would be added.', ['values' => [$value]]);
+		elseif ($failed)
+			$text = wrap_text('Sex %s could not be added.', ['values' => [$value]]);
+		else
+			$text = wrap_text('Sex %s added.', ['values' => [$value]]);
+	} else {
+		if (!$apply)
+			$text = wrap_text('Year of birth %s would be added.', ['values' => [$value]]);
+		elseif ($failed)
+			$text = wrap_text('Year of birth could not be updated.');
+		else
+			$text = wrap_text('Year of birth %d added.', ['values' => [$value]]);
+	}
+	$note = [
+		'note' => $text,
+		'first_name' => $contact['first_name'],
+		'last_name' => $contact['last_name']
+	];
+	if ($failed)
+		$note['error'] = true;
+	return $note;
 }
 
 /**

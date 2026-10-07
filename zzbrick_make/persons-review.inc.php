@@ -191,9 +191,11 @@ function mf_ratings_persons_update($diff, $person, $existing, $notes, $i) {
 		case 'player_pass_dsb':
 			continue 2; // removed
 		case 'geburtsjahr':
+			if (!$existing['geburtsjahr']) continue 2;
 			$notes[$i] = mf_ratings_persons_update_birth($person['geburtsjahr'], $existing['person_id'], $existing['geburtsjahr']);
 			break;
 		case 'sex':
+			if (!$existing['sex']) continue 2;
 			$notes[$i] = mf_ratings_persons_update_sex($person['sex'], $existing['person_id']);
 			break;
 		case 'player':
@@ -227,12 +229,8 @@ function mf_ratings_persons_update($diff, $person, $existing, $notes, $i) {
  */
 function mf_ratings_persons_update_birth($new, $person_id, $old) {
 	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-		if ($old) {
-			$note['note'] = wrap_text('Year of birth would be changed from %s to %s.', ['values' => [$old, $new]]);
-			$note['checkbox'] = 'birth-'.$person_id;
-		} else {
-			$note['note'] = wrap_text('Year of birth %s would be added.', ['values' => [$new]]);
-		}
+		$note['note'] = wrap_text('Year of birth would be changed from %s to %s.', ['values' => [$old, $new]]);
+		$note['checkbox'] = 'birth-'.$person_id;
 		return $note;
 	}
 	if (empty($_POST['birth-'.$person_id])) {
@@ -247,10 +245,8 @@ function mf_ratings_persons_update_birth($new, $person_id, $old) {
 	if (is_null($result)) {
 		$note['note'] = wrap_text('Year of birth could not be updated.');
 		$note['error'] = true;
-	} elseif ($old) {
-		$note['note'] = wrap_text('Year of birth changed (%d => %d).', ['values' => [$old, $new]]);
 	} else {
-		$note['note'] = wrap_text('Year of birth %d added.', ['values' => [$new]]);
+		$note['note'] = wrap_text('Year of birth changed (%d => %d).', ['values' => [$old, $new]]);
 	}
 	return $note;
 }
