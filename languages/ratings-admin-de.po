@@ -11,7 +11,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Zugzwang Project -- ratings module\n"
-"POT-Creation-Date: 2026-10-07 12:40+0000\n"
+"POT-Creation-Date: 2026-10-07 18:36+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Gustaf Mossakowski <gustaf@koenige.org>\n"
 "Language-Team: \n"
@@ -227,6 +227,11 @@ msgid "Automatically update person data from external sources"
 msgstr ""
 
 #: configuration/routes.cfg:68
+msgid "Deactivate DSB passes that are no longer in the DWZ list"
+msgstr ""
+"DSB-Pässe, die nicht mehr in der DWZ-Liste aufgeführt sind, deaktivieren"
+
+#: configuration/routes.cfg:75
 msgid "Ratings sync"
 msgstr "Synchronisierung der Ratingzahlen"
 
@@ -319,7 +324,7 @@ msgid "List of fields for DWZ sync log"
 msgstr ""
 
 #: configuration/settings.cfg:120 configuration/settings.cfg:143
-#: configuration/settings.cfg:166
+#: configuration/settings.cfg:166 configuration/settings.cfg:189
 msgid "Logfile tokens might contain spaces?"
 msgstr ""
 
@@ -352,66 +357,138 @@ msgid "Validity of entries in memberstats import log"
 msgstr ""
 
 #: configuration/settings.cfg:177
+msgid "use logfile for the person update job"
+msgstr ""
+
+#: configuration/settings.cfg:182
+msgid "List of fields for the person update log"
+msgstr ""
+
+#: configuration/settings.cfg:195
+msgid "Validity of entries in the person update log"
+msgstr ""
+
+#: configuration/settings.cfg:200
 msgid "Categories of contacts or contacts that have members with ratings"
 msgstr ""
 
-#: configuration/settings.cfg:184
+#: configuration/settings.cfg:207
 msgid ""
 "Emit a progress log entry per this many source-file bytes consumed by the "
 "memberstats loaders"
 msgstr ""
 
-#: configuration/settings.cfg:189
+#: configuration/settings.cfg:212
 msgid ""
 "Rows per batched REPLACE/INSERT when loading DWZ snapshot files into "
 "memberstats staging tables"
 msgstr ""
 
-#: configuration/settings.cfg:194
+#: configuration/settings.cfg:217
 msgid "Polling interval in seconds for memberstats progress display"
 msgstr ""
 
-#: configuration/settings.cfg:199
+#: configuration/settings.cfg:222
 msgid ""
 "Time in seconds without a memberstats log entry after which the worker is "
 "considered stuck"
 msgstr ""
 
-#: configuration/settings.cfg:204
+#: configuration/settings.cfg:227
 msgid ""
 "Number of memberstats log entries returned to the progress poller (0 = all)"
 msgstr ""
 
-#: configuration/settings.cfg:209
+#: configuration/settings.cfg:232
 msgid ""
 "Countdown in seconds before the next snapshot import starts automatically "
 "while the memberstats page stays open"
 msgstr ""
 
-#: configuration/settings.cfg:214
+#: configuration/settings.cfg:237
 msgid "nuLiga clubSearch endpoint (GET list and GET by ZPS)"
 msgstr ""
 
-#: configuration/settings.cfg:219
+#: configuration/settings.cfg:242
 msgid "nuLiga clubSearch confederation parameter (e.g. LV0 DSB)"
 msgstr ""
 
-#: configuration/settings.cfg:223
+#: configuration/settings.cfg:246
 msgid ""
 "nuLiga clubSearch searchPattern values per state federation (code => label)"
 msgstr ""
 
-#: configuration/settings.cfg:246
+#: configuration/settings.cfg:269
+msgid "DWZ rows per step when updating person identifiers"
+msgstr ""
+
+#: configuration/settings.cfg:274
 msgid "Last imported status of the German DWZ database"
 msgstr "Letzter importierter Stand der DSB-DWZ-Datenbank"
 
-#: configuration/settings.cfg:250
+#: configuration/settings.cfg:278
 msgid "Last imported status of the FIDE Elo database"
 msgstr "Letzter importierter Stand der FIDE-Elo-Datenbank"
 
 #: ratings/nuliga.inc.php:208
 msgid "Unknown nuLiga federation %s."
 msgstr ""
+
+#: ratings/persons-log.inc.php:49
+msgid "%s %s would be added as active."
+msgstr "%s %s würde als aktiv hinzugefügt werden."
+
+#: ratings/persons-log.inc.php:51
+msgid "%s %s would be added as inactive."
+msgstr "%s %s würde als inaktiv hinzugefügt werden."
+
+#: ratings/persons-log.inc.php:53
+msgid "%s %s could not be added."
+msgstr "%s %s konnte nicht hinzugefügt werden."
+
+#: ratings/persons-log.inc.php:55
+msgid "%s %s added as active."
+msgstr "%s %s als aktiv hinzugefügt."
+
+#: ratings/persons-log.inc.php:57
+msgid "%s %s added as inactive."
+msgstr "%s %s als inaktiv hinzugefügt."
+
+#: ratings/persons-log.inc.php:59
+msgid "%s %s would be deleted."
+msgstr "%s %s würde gelöscht."
+
+#: ratings/persons-log.inc.php:61
+msgid "%s %s could not be deleted."
+msgstr "%s %s konnte nicht gelöscht werden."
+
+#: ratings/persons-log.inc.php:63
+msgid "%s %s deleted."
+msgstr "%s %s gelöscht."
+
+#: ratings/persons-log.inc.php:65
+msgid "%s %s would be set to active."
+msgstr "%s %s würde auf „aktiv“ gesetzt werden."
+
+#: ratings/persons-log.inc.php:67
+msgid "%s %s would be set to inactive."
+msgstr "%s %s würde auf „inaktiv“ gesetzt werden."
+
+#: ratings/persons-log.inc.php:69
+msgid "%s %s could not be set to active."
+msgstr "%s %s konnte nicht als aktiv gesetzt werden."
+
+#: ratings/persons-log.inc.php:71
+msgid "%s %s could not be set to inactive."
+msgstr "%s %s konnte nicht deaktiviert werden."
+
+#: ratings/persons-log.inc.php:73
+msgid "%s %s set to active."
+msgstr "%s %s auf „aktiv“ setzen."
+
+#: ratings/persons-log.inc.php:75
+msgid "%s %s set to inactive."
+msgstr "%s %s auf „inaktiv“ gesetzt."
 
 #: ratings/sync.inc.php:53
 msgid "php with ZipArchive class needed to extract files. (%s)"
@@ -676,6 +753,8 @@ msgid "Duplicate membership."
 msgstr "Doppelte Mitgliedschaft."
 
 #: zzbrick_make/memberstats.inc.php:131 zzbrick_make/nuliga.inc.php:143
+#: zzbrick_make/persons-update.inc.php:30
+#: zzbrick_make/persons-update-passes.inc.php:27
 msgid "Background job queued."
 msgstr "Hintergrundjob in Warteschlange gestellt."
 
@@ -735,177 +814,81 @@ msgid ""
 "skipped %d."
 msgstr ""
 
-#: zzbrick_make/persons-review.inc.php:193
+#: zzbrick_make/persons-review.inc.php:184
 msgid "Delete FIDE code? (old: %d)."
 msgstr "FIDE-Code löschen? (Alt: %d)."
 
-#: zzbrick_make/persons-review.inc.php:212
+#: zzbrick_make/persons-review.inc.php:199
 msgid "Player name differs: DWZ database %s / DSJ %s"
 msgstr "Spielername weicht ab: DWZ-DB %s / DSJ %s"
 
-#: zzbrick_make/persons-review.inc.php:240
-msgid "FIDE code %d would be added."
-msgstr "FIDE-Code %d würde ergänzt."
-
-#: zzbrick_make/persons-review.inc.php:251
-msgid "FIDE code %d could not be added."
-msgstr "FIDE-Code %d konnte nicht ergänzt werden."
-
-#: zzbrick_make/persons-review.inc.php:254
-msgid "FIDE code added."
-msgstr "FIDE-Code ergänzt."
-
-#: zzbrick_make/persons-review.inc.php:269
-msgid "FIDE code %d would be corrected to %d."
-msgstr "FIDE-Code %d würde zu %d korrigiert."
-
-#: zzbrick_make/persons-review.inc.php:278
-msgid "FIDE code could not be corrected."
-msgstr "FIDE-Code konnte nicht korrigiert werden."
-
-#: zzbrick_make/persons-review.inc.php:281
-msgid "FIDE code corrected (old: %d, new %d)."
-msgstr "FIDE-Code korrigiert (alt: %d, neu %d)."
-
-#: zzbrick_make/persons-review.inc.php:295
-msgid "ZPS code %s would be set to inactive."
-msgstr "ZPS-Code %s würde auf inaktiv gesetzt."
-
-#: zzbrick_make/persons-review.inc.php:304
-msgid "ZPS code %s could not be deactivated."
-msgstr "ZPS-Code %s konnte nicht deaktiviert werden."
-
-#: zzbrick_make/persons-review.inc.php:307
-msgid "ZPS code %s set to inactive."
-msgstr "ZPS-Code %s auf inaktiv gesetzt."
-
-#: zzbrick_make/persons-review.inc.php:331
-msgid "ZPS code %s would be set back to active."
-msgstr "ZPS-Code %s würde wieder auf aktiv gesetzt."
-
-#: zzbrick_make/persons-review.inc.php:333
-msgid "ZPS code %s would be added."
-msgstr "ZPS-Code %s würde ergänzt."
-
-#: zzbrick_make/persons-review.inc.php:353
-msgid "ZPS code %s could not be added."
-msgstr "ZPS-Code %s konnte nicht ergänzt werden."
-
-#: zzbrick_make/persons-review.inc.php:356
-msgid "ZPS code %s added."
-msgstr "ZPS-Code %s ergänzt."
-
-#: zzbrick_make/persons-review.inc.php:372
+#: zzbrick_make/persons-review.inc.php:229
 msgid "Year of birth would be changed from %s to %s."
 msgstr "Geburtsjahr würde geändert von %s zu %s."
 
-#: zzbrick_make/persons-review.inc.php:375
+#: zzbrick_make/persons-review.inc.php:232
 msgid "Year of birth %s would be added."
 msgstr "Geburtsjahr %s würde ergänzt."
 
-#: zzbrick_make/persons-review.inc.php:380
+#: zzbrick_make/persons-review.inc.php:237
 msgid "Year of birth NOT changed from %s to %s."
 msgstr "Geburtsjahr NICHT geändert von %s zu %s."
 
-#: zzbrick_make/persons-review.inc.php:389
+#: zzbrick_make/persons-review.inc.php:246
 msgid "Year of birth could not be updated."
 msgstr "Geburtsjahr konnte nicht aktualisiert werden."
 
-#: zzbrick_make/persons-review.inc.php:392
+#: zzbrick_make/persons-review.inc.php:249
 msgid "Year of birth changed (%d => %d)."
 msgstr "Geburtsjahr geändert (%d => %d)."
 
-#: zzbrick_make/persons-review.inc.php:394
+#: zzbrick_make/persons-review.inc.php:251
 msgid "Year of birth %d added."
 msgstr "Geburtsjahr %d ergänzt."
 
-#: zzbrick_make/persons-review.inc.php:408
+#: zzbrick_make/persons-review.inc.php:265
 msgid "Sex would be corrected to %s."
 msgstr "Geschlecht würde korrigiert zu %s."
 
-#: zzbrick_make/persons-review.inc.php:413
+#: zzbrick_make/persons-review.inc.php:270
 msgid "Sex NOT corrected to %s."
 msgstr "Geschlecht NICHT korrigiert zu %s."
 
-#: zzbrick_make/persons-review.inc.php:423
+#: zzbrick_make/persons-review.inc.php:280
 msgid "Sex could not be corrected."
 msgstr "Geschlecht konnte nicht korrigiert werden."
 
-#: zzbrick_make/persons-review.inc.php:426
+#: zzbrick_make/persons-review.inc.php:283
 msgid "Sex corrected (%s)."
 msgstr "Geschlecht korrigiert (%s)."
 
-#: zzbrick_make/persons-review.inc.php:439
+#: zzbrick_make/persons-review.inc.php:296
 msgid "Person with contact ID %d would be deleted"
 msgstr "Person mit Kontakt-ID %d würde gelöscht"
 
-#: zzbrick_make/persons-review.inc.php:445
+#: zzbrick_make/persons-review.inc.php:302
 msgid "Person could not be deleted."
 msgstr "Person konnte nicht gelöscht werden."
 
-#: zzbrick_make/persons-review.inc.php:448
+#: zzbrick_make/persons-review.inc.php:305
 msgid "Person deleted."
 msgstr "Person gelöscht."
 
-#: zzbrick_make/persons-review.inc.php:462
+#: zzbrick_make/persons-review.inc.php:319
 msgid "Identifier %s would be updated."
 msgstr "Kennung %s würde aktualisiert."
 
-#: zzbrick_make/persons-review.inc.php:471
+#: zzbrick_make/persons-review.inc.php:328
 msgid "Identifier could not be updated."
 msgstr "Kennung konnte nicht aktualisiert werden."
 
-#: zzbrick_make/persons-review.inc.php:478
+#: zzbrick_make/persons-review.inc.php:335
 msgid "Identifier updated from %s to %s."
 msgstr "Kennung wurde von %s auf %s aktualisiert."
 
-#: zzbrick_make/persons-update.inc.php:72
+#: zzbrick_make/persons-update.inc.php:132
 msgid "Mismatch of contact IDs found for %s %s"
 msgstr "Es wurden nicht übereinstimmende Kontakt-IDs für %s %s gefunden"
-
-#: zzbrick_make/persons-update.inc.php:222
-msgid "%s %s would be added as active."
-msgstr "%s %s würde als aktiv hinzugefügt werden."
-
-#: zzbrick_make/persons-update.inc.php:224
-msgid "%s %s would be added as inactive."
-msgstr "%s %s würde als inaktiv hinzugefügt werden."
-
-#: zzbrick_make/persons-update.inc.php:226
-msgid "%s %s could not be added."
-msgstr "%s %s konnte nicht hinzugefügt werden."
-
-#: zzbrick_make/persons-update.inc.php:228
-msgid "%s %s added as active."
-msgstr "%s %s als aktiv hinzugefügt."
-
-#: zzbrick_make/persons-update.inc.php:230
-msgid "%s %s added as inactive."
-msgstr "%s %s als inaktiv hinzugefügt."
-
-#: zzbrick_make/persons-update.inc.php:232
-msgid "%s %s would be set to active."
-msgstr "%s %s würde auf „aktiv“ gesetzt werden."
-
-#: zzbrick_make/persons-update.inc.php:234
-msgid "%s %s would be set to inactive."
-msgstr "%s %s würde auf „inaktiv“ gesetzt werden."
-
-#: zzbrick_make/persons-update.inc.php:236
-msgid "%s %s could not be set to active."
-msgstr "%s %s konnte nicht als aktiv gesetzt werden."
-
-#: zzbrick_make/persons-update.inc.php:238
-msgid "%s %s could not be set to inactive."
-msgstr "%s %s konnte nicht deaktiviert werden."
-
-#: zzbrick_make/persons-update.inc.php:240
-msgid "%s %s set to active."
-msgstr "%s %s auf „aktiv“ setzen."
-
-#: zzbrick_make/persons-update.inc.php:242
-msgid "%s %s set to inactive."
-msgstr "%s %s auf „inaktiv“ gesetzt."
 
 #: zzbrick_make/ratings.inc.php
 msgid "Download %s rating data"
@@ -1377,8 +1360,3 @@ msgid ""
 msgstr ""
 "Falsche Übermittlung: ZPS vom Verein weicht von ZPS der Person ab: %s, "
 "Verein: %s"
-
-#~ msgid ""
-#~ "URL under which the current DWZ data of the German Chess Federation is "
-#~ "available in SQL format"
-#~ msgstr "URL, unter der die aktuellen DSB-DWZ-Daten im SQL-Format vorliegen"

@@ -84,15 +84,6 @@ function mod_ratings_make_persons_review() {
 	$sql = sprintf($sql, implode('","', array_keys($player_passes_dsb)));
 	$dwz_player_passes_dsb = wrap_db_fetch($sql, 'player_pass_dsb');
 
-	// Nicht in aktueller DWZ-Datenbank = inaktiv
-	$zps_inaktiv = array_diff(array_keys($player_passes_dsb), array_keys($dwz_player_passes_dsb));
-	foreach ($zps_inaktiv as $code) {
-		if (!$code) continue;
-		$notes[$i] = mf_ratings_persons_remove_zps_code($player_passes_dsb[$code]['zps_pk_id'], $code);
-		$notes[$i] += $player_passes_dsb[$code];
-		$i++;
-	}
-
 	foreach ($dwz_player_passes_dsb as $code => $person) {
 		$diff = array_diff($person, $player_passes_dsb[$code]);
 		if (!$diff) continue;
@@ -185,9 +176,11 @@ function mf_ratings_persons_update($diff, $person, $existing, $notes, $i) {
 		switch ($field_name) {
 		case 'player_id_fide':
 			if (!$existing['player_id_fide']) {
-				$notes[$i] = mf_ratings_persons_add_id_fide($value, $existing['contact_id']);
+				// removed
+				continue 2;
 			} elseif ($value) {
-				$notes[$i] = mf_ratings_persons_update_id_fide($value, $existing['fide_pk_id'], $existing['player_id_fide']);
+				// removed
+				continue 2;
 			} else {
 				$notes[$i]['note'] = wrap_text(
 					'Delete FIDE code? (old: %d).',
@@ -196,11 +189,7 @@ function mf_ratings_persons_update($diff, $person, $existing, $notes, $i) {
 			}
 			break;
 		case 'player_pass_dsb':
-			if ($existing['player_pass_dsb']) {
-				$notes[$i] = mf_ratings_persons_remove_zps_code($existing['zps_pk_id'], $existing['player_pass_dsb']);
-			}
-			$notes[$i] = mf_ratings_persons_add_zps_code($value, $existing['contact_id']);
-			break;
+			continue 2; // removed
 		case 'geburtsjahr':
 			$notes[$i] = mf_ratings_persons_update_birth($person['geburtsjahr'], $existing['person_id'], $existing['geburtsjahr']);
 			break;
@@ -226,136 +215,6 @@ function mf_ratings_persons_update($diff, $person, $existing, $notes, $i) {
 		$i++;
 	}
 	return [$notes, $i];
-}
-
-/**
- * add field contacts_identifiers.identifier for a given contact_identifier_id
- *
- * @param string $new
- * @param int $contact_id
- * @return array
- */
-function mf_ratings_persons_add_id_fide($new, $contact_id) {
-	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-		$note['note'] = wrap_text('FIDE code %d would be added.', ['values' => [$new]]);
-		return $note;
-	}
-	$line = [
-		'contact_id' => $contact_id,
-		'identifier_category_id' => wrap_category_id('identifiers/id-fide'),
-		'identifier' => $new,
-		'current' => 'yes'
-	];
-	$result = zzform_insert('contacts-identifiers', $line);
-	if (!$result) {
-		$note['note'] = wrap_text('FIDE code %d could not be added.', ['values' => [$new]]);
-		$note['error'] = true;
-	} else {
-		$note['note'] = wrap_text('FIDE code added.');
-	}
-	return $note;
-}
-
-/**
- * update field contacts_identifiers.identifier for a given contact_identifier_id
- *
- * @param string $new
- * @param int $contact_identifier_id
- * @param string $old
- * @return array
- */
-function mf_ratings_persons_update_id_fide($new, $contact_identifier_id, $old) {
-	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-		$note['note'] = wrap_text('FIDE code %d would be corrected to %d.', ['values' => [$old, $new]]);
-		return $note;
-	}
-	$line = [
-		'contact_identifier_id' => $contact_identifier_id,
-		'identifier' => $new
-	];
-	$result = zzform_update('contacts-identifiers', $line);
-	if (is_null($result)) {
-		$note['note'] = wrap_text('FIDE code could not be corrected.');
-		$note['error'] = true;
-	} else {
-		$note['note'] = wrap_text('FIDE code corrected (old: %d, new %d).', ['values' => [$old, $new]]);
-	}
-	return $note;
-}
-
-/**
- * remove status field contacts_identifiers.current for given contact_identifier_id
- *
- * @param int $contact_identifier_id
- * @param string $old
- * @return array
- */
-function mf_ratings_persons_remove_zps_code($contact_identifier_id, $old) {
-	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-		$note['note'] = wrap_text('ZPS code %s would be set to inactive.', ['values' => [$old]]);
-		return $note;
-	}
-	$line = [
-		'contact_identifier_id' => $contact_identifier_id,
-		'current' => ''
-	];
-	$result = zzform_update('contacts-identifiers', $line);
-	if (is_null($result)) {
-		$note['note'] = wrap_text('ZPS code %s could not be deactivated.', ['values' => [$old]]);
-		$note['error'] = true;
-	} else {
-		$note['note'] = wrap_text('ZPS code %s set to inactive.', ['values' => [$old]]);
-	}
-	return $note;
-}
-
-/**
- * add field contacts_identifiers.identifier for given identifier_category_id
- * check if it was active before and re-activate it if possible
- *
- * @param string $new
- * @param int $contact_id
- * @return array
- */
-function mf_ratings_persons_add_zps_code($new, $contact_id) {
-	$sql = 'SELECT contact_identifier_id
-		FROM contacts_identifiers
-		WHERE contact_id = %d
-		AND identifier = "%s"
-		AND identifier_category_id = /*_ID categories identifiers/pass-dsb _*/
-		AND ISNULL(current)';
-	$sql = sprintf($sql, $contact_id, $new);
-	$pk_id = wrap_db_fetch($sql, '', 'single value');
-	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-		if ($pk_id) {
-			$note['note'] = wrap_text('ZPS code %s would be set back to active.', ['values' => [$new]]);
-		} else {
-			$note['note'] = wrap_text('ZPS code %s would be added.', ['values' => [$new]]);
-		}
-		return $note;
-	}
-	if ($pk_id) {
-		$line = [
-			'contact_identifier_id' => $pk_id,
-			'current' => 'yes'
-		];
-		$result = zzform_update('contacts-identifiers', $line);
-	} else {
-		$line = [
-			'contact_id' => $contact_id,
-			'identifier_category_id' => wrap_category_id('identifiers/pass-dsb'),
-			'identifier' => $new,
-			'current' => 'yes'
-		];
-		$result = zzform_insert('contacts-identifiers', $line);
-	}
-	if (is_null($result)) {
-		$note['note'] = wrap_text('ZPS code %s could not be added.', ['values' => [$new]]);
-		$note['error'] = true;
-	} else {
-		$note['note'] = wrap_text('ZPS code %s added.', ['values' => [$new]]);
-	}
-	return $note;
 }
 
 /**

@@ -35,6 +35,16 @@ function mod_ratings_make_persons_update() {
 	if (!empty($data['job_continue'])) {
 		$page['extra']['job_continue'] = $data['job_continue'];
 		unset($data['job_continue']);
+	} elseif ($_SERVER['REQUEST_METHOD'] === 'POST' AND array_key_exists('sequential', $_POST)) {
+		$url = wrap_path('ratings_persons_update_passes');
+		if ($url) {
+			wrap_job($url, [
+				'sequential' => 1,
+				'trigger' => 1,
+			]);
+		} else {
+			wrap_error('No URL for the DSB pass update.', E_USER_WARNING);
+		}
 	}
 	$page['query_strings'][] = 'zps';
 	$page['query_strings'][] = 'mgl';
@@ -153,13 +163,22 @@ function mod_ratings_make_persons_update_dsb() {
 	$identifiers = wrap_db_fetch($sql, ['contact_id', 'contact_identifier_id']);
 
 	$actions = [
+		'delete' => [],
 		'clear' => [],
 		'update' => [],
 		'insert' => []
 	];
+	$category_id_fide = wrap_category_id('identifiers/id-fide');
 	foreach ($contacts as $contact_id => $contact) {
 		foreach ($identifiers[$contact_id] ?? [] as $idf) {
 			if (empty($contact['identifiers'][$idf['identifier_category_id']][$idf['identifier']])) {
+				// one FIDE ID per contact; the previous number is removed
+				if ((int) $idf['identifier_category_id'] === (int) $category_id_fide
+					AND !empty($contact['identifiers'][$category_id_fide])
+				) {
+					$actions['delete'][] = $idf;
+					continue;
+				}
 				// check for current
 				if ($idf['current']) {
 					foreach ($contact['identifiers'][$idf['identifier_category_id']] ?? [] as $new) {
@@ -191,11 +210,14 @@ function mod_ratings_make_persons_update_dsb() {
 		}
 	}
 	$log = [];
+	wrap_include('persons-log', 'ratings');
 	foreach ($actions as $action => $lines) {
 		foreach ($lines as $line) {
 			if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				if ($action === 'insert')
 					$result = zzform_insert('contacts-identifiers', $line);
+				elseif ($action === 'delete')
+					$result = zzform_delete('contacts-identifiers', $line['contact_identifier_id']);
 				else
 					$result = zzform_update('contacts-identifiers', $line);
 			} else {
@@ -221,14 +243,27 @@ function mf_ratings_persons_update_cursor() {
 	if ($_SERVER['REQUEST_METHOD'] !== 'POST' OR !array_key_exists('sequential', $_POST))
 		return [$_GET['zps'] ?? '', $_GET['mgl'] ?? ''];
 
+	$cursor = mf_ratings_persons_update_continue();
+	return [$cursor['zps'] ?? '', (string) ($cursor['mgl'] ?? '')];
+}
+
+/**
+ * last continue line in the persons-update log
+ *
+ * @return array
+ */
+function mf_ratings_persons_update_continue() {
+	if ($_SERVER['REQUEST_METHOD'] !== 'POST' OR !array_key_exists('sequential', $_POST))
+		return [];
+
 	wrap_include('file', 'zzwrap');
 	$rows = wrap_file_log('ratings/persons-update');
-	if (!$rows) return ['', ''];
+	if (!$rows) return [];
 	$last = end($rows);
-	if (($last['action'] ?? '') !== 'continue') return ['', ''];
+	if (($last['action'] ?? '') !== 'continue') return [];
 	$cursor = json_decode($last['result'] ?? '', true);
-	if (!is_array($cursor)) return ['', ''];
-	return [$cursor['zps'] ?? '', (string) ($cursor['mgl'] ?? '')];
+	if (!is_array($cursor)) return [];
+	return $cursor;
 }
 
 /**
@@ -257,65 +292,4 @@ function mf_ratings_persons_identifiers(&$contact, $line, $path) {
 		'identifier' => $line[$key],
 		'current' => $current
 	];
-}
-
-/**
- * log one identifier change
- *
- * @param string $action clear, update or insert
- * @param array $line
- * @param mixed $result
- * @param array $contacts
- * @return array
- */
-function mf_ratings_persons_log($action, $line, $result, $contacts) {
-	static $categories = [];
-	if (!$categories) {
-		$sql = 'SELECT category_id, category
-			FROM categories
-			WHERE category_id IN (
-				/*_ID categories identifiers/id-nuliga-person _*/
-				, /*_ID categories identifiers/id-fide _*/
-				, /*_ID categories identifiers/pass-dsb _*/
-			)';
-		$categories = wrap_db_fetch($sql, 'category_id');
-	}
-
-	$values = [
-		$categories[$line['identifier_category_id']]['category'] ?? '',
-		$line['identifier']
-	];
-	$active = !empty($line['current']);
-	$apply = ($_SERVER['REQUEST_METHOD'] === 'POST');
-	$failed = $apply && ($action === 'insert' ? !$result : is_null($result));
-	if ($action === 'insert' && !$apply && $active)
-		$text = wrap_text('%s %s would be added as active.', ['values' => $values]);
-	elseif ($action === 'insert' && !$apply)
-		$text = wrap_text('%s %s would be added as inactive.', ['values' => $values]);
-	elseif ($action === 'insert' && $failed)
-		$text = wrap_text('%s %s could not be added.', ['values' => $values]);
-	elseif ($action === 'insert' && $active)
-		$text = wrap_text('%s %s added as active.', ['values' => $values]);
-	elseif ($action === 'insert')
-		$text = wrap_text('%s %s added as inactive.', ['values' => $values]);
-	elseif (!$apply && $active)
-		$text = wrap_text('%s %s would be set to active.', ['values' => $values]);
-	elseif (!$apply)
-		$text = wrap_text('%s %s would be set to inactive.', ['values' => $values]);
-	elseif ($failed && $active)
-		$text = wrap_text('%s %s could not be set to active.', ['values' => $values]);
-	elseif ($failed)
-		$text = wrap_text('%s %s could not be set to inactive.', ['values' => $values]);
-	elseif ($active)
-		$text = wrap_text('%s %s set to active.', ['values' => $values]);
-	else
-		$text = wrap_text('%s %s set to inactive.', ['values' => $values]);
-	$note = [
-		'note' => $text,
-		'first_name' => $contacts[$line['contact_id']]['first_name'],
-		'last_name' => $contacts[$line['contact_id']]['last_name']
-	];
-	if ($failed)
-		$note['error'] = true;
-	return $note;
 }
