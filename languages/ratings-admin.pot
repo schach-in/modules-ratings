@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Zugzwang Project -- ratings module\n"
-"POT-Creation-Date: 2026-10-07 08:58+0000\n"
+"POT-Creation-Date: 2026-10-07 12:40+0000\n"
 "PO-Revision-Date: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -192,6 +192,10 @@ msgid "Review person data changes with updates from external sources"
 msgstr ""
 
 #: configuration/routes.cfg:61
+msgid "Automatically update person data from external sources"
+msgstr ""
+
+#: configuration/routes.cfg:68
 msgid "Ratings sync"
 msgstr ""
 
@@ -587,12 +591,18 @@ msgid "Sorry, there is no archive for %s."
 msgstr ""
 
 #: templates/persons-review.template.txt:34
+#: templates/persons-update.template.txt:19
 #: zzbrick_tables/wikidata-players.php:39
 msgid "Person"
 msgstr ""
 
 #: templates/persons-review.template.txt:35
+#: templates/persons-update.template.txt:20
 msgid "Changes"
+msgstr ""
+
+#: templates/persons-update.template.txt:32
+msgid "Start person update"
 msgstr ""
 
 #: templates/ratings-sync.template.txt:17
@@ -820,6 +830,54 @@ msgstr ""
 
 #: zzbrick_make/persons-review.inc.php:478
 msgid "Identifier updated from %s to %s."
+msgstr ""
+
+#: zzbrick_make/persons-update.inc.php:72
+msgid "Mismatch of contact IDs found for %s %s"
+msgstr ""
+
+#: zzbrick_make/persons-update.inc.php:222
+msgid "%s %s would be added as active."
+msgstr ""
+
+#: zzbrick_make/persons-update.inc.php:224
+msgid "%s %s would be added as inactive."
+msgstr ""
+
+#: zzbrick_make/persons-update.inc.php:226
+msgid "%s %s could not be added."
+msgstr ""
+
+#: zzbrick_make/persons-update.inc.php:228
+msgid "%s %s added as active."
+msgstr ""
+
+#: zzbrick_make/persons-update.inc.php:230
+msgid "%s %s added as inactive."
+msgstr ""
+
+#: zzbrick_make/persons-update.inc.php:232
+msgid "%s %s would be set to active."
+msgstr ""
+
+#: zzbrick_make/persons-update.inc.php:234
+msgid "%s %s would be set to inactive."
+msgstr ""
+
+#: zzbrick_make/persons-update.inc.php:236
+msgid "%s %s could not be set to active."
+msgstr ""
+
+#: zzbrick_make/persons-update.inc.php:238
+msgid "%s %s could not be set to inactive."
+msgstr ""
+
+#: zzbrick_make/persons-update.inc.php:240
+msgid "%s %s set to active."
+msgstr ""
+
+#: zzbrick_make/persons-update.inc.php:242
+msgid "%s %s set to inactive."
 msgstr ""
 
 #: zzbrick_make/ratings.inc.php

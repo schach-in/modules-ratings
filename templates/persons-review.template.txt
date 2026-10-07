@@ -1,5 +1,5 @@
 # ratings module
-# HTML output: person update
+# HTML output: persons review
 #
 # Part of »Zugzwang Project«
 # https://www.zugzwang.org/modules/ratings

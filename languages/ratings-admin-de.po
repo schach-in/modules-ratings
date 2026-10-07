@@ -11,7 +11,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Zugzwang Project -- ratings module\n"
-"POT-Creation-Date: 2026-10-07 08:58+0000\n"
+"POT-Creation-Date: 2026-10-07 12:40+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Gustaf Mossakowski <gustaf@koenige.org>\n"
 "Language-Team: \n"
@@ -103,6 +103,7 @@ msgstr "Wertungsmodul"
 #: configuration/package.cfg:15
 msgid "Chess player ratings (International Elo and German DWZ)"
 msgstr ""
+"Wertungszahlen für Schachspieler (internationales Elo und deutsche DWZ)"
 
 #: configuration/queries.sql:45
 msgid "Sex of player differs between FIDE and DSB data"
@@ -222,6 +223,10 @@ msgid "Review person data changes with updates from external sources"
 msgstr ""
 
 #: configuration/routes.cfg:61
+msgid "Automatically update person data from external sources"
+msgstr ""
+
+#: configuration/routes.cfg:68
 msgid "Ratings sync"
 msgstr "Synchronisierung der Ratingzahlen"
 
@@ -616,13 +621,19 @@ msgid "Sorry, there is no archive for %s."
 msgstr "Entschuldigung, es gibt kein Archiv für %s."
 
 #: templates/persons-review.template.txt:34
+#: templates/persons-update.template.txt:19
 #: zzbrick_tables/wikidata-players.php:39
 msgid "Person"
 msgstr "Person"
 
 #: templates/persons-review.template.txt:35
+#: templates/persons-update.template.txt:20
 msgid "Changes"
 msgstr "Änderungen"
+
+#: templates/persons-update.template.txt:32
+msgid "Start person update"
+msgstr "Personenaktualisierung starten"
 
 #: templates/ratings-sync.template.txt:17
 msgid "Timestamp"
@@ -847,6 +858,54 @@ msgstr "Kennung konnte nicht aktualisiert werden."
 #: zzbrick_make/persons-review.inc.php:478
 msgid "Identifier updated from %s to %s."
 msgstr "Kennung wurde von %s auf %s aktualisiert."
+
+#: zzbrick_make/persons-update.inc.php:72
+msgid "Mismatch of contact IDs found for %s %s"
+msgstr "Es wurden nicht übereinstimmende Kontakt-IDs für %s %s gefunden"
+
+#: zzbrick_make/persons-update.inc.php:222
+msgid "%s %s would be added as active."
+msgstr "%s %s würde als aktiv hinzugefügt werden."
+
+#: zzbrick_make/persons-update.inc.php:224
+msgid "%s %s would be added as inactive."
+msgstr "%s %s würde als inaktiv hinzugefügt werden."
+
+#: zzbrick_make/persons-update.inc.php:226
+msgid "%s %s could not be added."
+msgstr "%s %s konnte nicht hinzugefügt werden."
+
+#: zzbrick_make/persons-update.inc.php:228
+msgid "%s %s added as active."
+msgstr "%s %s als aktiv hinzugefügt."
+
+#: zzbrick_make/persons-update.inc.php:230
+msgid "%s %s added as inactive."
+msgstr "%s %s als inaktiv hinzugefügt."
+
+#: zzbrick_make/persons-update.inc.php:232
+msgid "%s %s would be set to active."
+msgstr "%s %s würde auf „aktiv“ gesetzt werden."
+
+#: zzbrick_make/persons-update.inc.php:234
+msgid "%s %s would be set to inactive."
+msgstr "%s %s würde auf „inaktiv“ gesetzt werden."
+
+#: zzbrick_make/persons-update.inc.php:236
+msgid "%s %s could not be set to active."
+msgstr "%s %s konnte nicht als aktiv gesetzt werden."
+
+#: zzbrick_make/persons-update.inc.php:238
+msgid "%s %s could not be set to inactive."
+msgstr "%s %s konnte nicht deaktiviert werden."
+
+#: zzbrick_make/persons-update.inc.php:240
+msgid "%s %s set to active."
+msgstr "%s %s auf „aktiv“ setzen."
+
+#: zzbrick_make/persons-update.inc.php:242
+msgid "%s %s set to inactive."
+msgstr "%s %s auf „inaktiv“ gesetzt."
 
 #: zzbrick_make/ratings.inc.php
 msgid "Download %s rating data"
