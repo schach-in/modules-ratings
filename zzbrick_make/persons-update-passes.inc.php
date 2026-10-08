@@ -49,7 +49,7 @@ function mf_ratings_persons_update_passes() {
 			, persons.first_name
 			, persons.last_name
 		FROM contacts_identifiers
-		LEFT JOIN persons USING (contact_id)
+		INNER JOIN persons USING (contact_id)
 		LEFT JOIN dwz_spieler
 			ON dwz_spieler.ZPS = SUBSTRING_INDEX(contacts_identifiers.identifier, "-", 1)
 			AND dwz_spieler.Mgl_Nr = SUBSTRING_INDEX(contacts_identifiers.identifier, "-", -1)
