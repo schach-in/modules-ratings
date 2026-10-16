@@ -31,4 +31,5 @@
 
 <p><input type="submit" value="%%% text Start person update %%%"></p>
 </form>
+%%% script default/form-submit-once.js %%%
 </div>

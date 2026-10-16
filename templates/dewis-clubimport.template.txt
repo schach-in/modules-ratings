@@ -33,6 +33,7 @@
 </tbody>
 </table>
 </form>
+%%% script default/form-submit-once.js %%%
 %%% script vxjs/src/core.js %%%
 %%% script vxjs/src/widgets/sortable.js %%%
 <script>

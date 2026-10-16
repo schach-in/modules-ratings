@@ -49,6 +49,7 @@
 <form enctype="multipart/form-data" action="%%% page url_path %%%" method="post">
 <p><input type="submit" name="submit_%%% item path %%%" value="Import starten"> – danach geduldig sein! </p>
 </form>
+%%% script default/form-submit-once.js %%%
 </div>
 %%% endif %%%
 %%% endif %%%

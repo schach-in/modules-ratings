@@ -20,4 +20,5 @@
 %%% switch end %%%
 "></p>
 </form>
+%%% script default/form-submit-once.js %%%
 </div>

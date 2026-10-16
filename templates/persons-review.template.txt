@@ -48,4 +48,5 @@ es sich um Fehler handeln kann.</li>
 
 <p><input type="submit" value="Personenupdate starten"></p>
 </form>
+%%% script default/form-submit-once.js %%%
 </div>
